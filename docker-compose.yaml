@@ -1,0 +1,6 @@
+include:
+  - metadata/kafka.yaml
+  - metadata/minio.yaml
+  - metadata/mongo.yaml
+  - metadata/postgres.yaml
+  - metadata/redis.yaml

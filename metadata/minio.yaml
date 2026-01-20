@@ -1,0 +1,33 @@
+services:
+  learning-platform-minio:
+    image: quay.io/minio/minio:latest
+    container_name: learning-platform-minio
+    restart: on-failure
+    env_file:
+      - ../.env
+    command: ["server", "--console-address", ":9001", "/data"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data-learning-platform:/data
+
+  learning-platform-minio-buckets:
+    image: quay.io/minio/mc:latest
+    container_name: learning-platform-minio-buckets
+    depends_on:
+      - learning-platform-minio
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO...';
+      until /usr/bin/mc alias set dockerminio http://learning-platform-minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do
+        sleep 2;
+      done;
+      echo 'MinIO is up, creating bucket';
+      /usr/bin/mc mb --ignore-existing dockerminio/$MINIO_BUCKET;
+      exit 0;
+      "
+
+volumes:
+  minio-data-learning-platform:

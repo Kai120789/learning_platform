@@ -1,0 +1,39 @@
+services:
+  learning-platform-zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    container_name: learning-platform-zookeeper
+    env_file:
+      - ../.env
+    ports:
+      - 2181:2181
+
+  learning-platform-kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    container_name: learning-platform-kafka
+    depends_on:
+      - learning-platform-zookeeper
+    environment:      
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'learning-platform-zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://learning-platform-kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3000
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_HOSTNAME: learning-platform-kafka
+    ports:
+      - 9092:9092
+
+  learning-platform-kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: learning-platform-kafka-ui
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+      KAFKA_CLUSTERS_0_NAME: learning-platform-dev
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: learning-platform-kafka:29092
+    ports:
+      - 9999:8080
