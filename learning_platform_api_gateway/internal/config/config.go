@@ -11,6 +11,7 @@ type Config struct {
 	ServerAddress  string
 	DBDSN          string
 	AuthServiceUrl string
+	RedisUrl       string
 }
 
 func GetConfig() *Config {
@@ -22,6 +23,7 @@ func GetConfig() *Config {
 	cfg.ServerAddress = getEnvStringValue("SERVER_ADDRESS")
 	cfg.DBDSN = getEnvStringValue("DBDSN")
 	cfg.AuthServiceUrl = getEnvStringValue("AUTH_SERVICE_URL")
+	cfg.RedisUrl = getEnvStringValue("REDIS_URL")
 
 	return cfg
 }
