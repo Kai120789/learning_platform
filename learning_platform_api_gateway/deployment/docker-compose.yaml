@@ -1,0 +1,13 @@
+services:
+  learning-platform-api-gateway:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    container_name: learning-platform-api-gateway
+    restart: on-failure
+    depends_on:
+      - learning-platform-redis
+    ports:
+      - "8001:8001"
+    volumes:
+      - ..:/app
