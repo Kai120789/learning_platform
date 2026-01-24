@@ -24,7 +24,7 @@ func Start() {
 		log.Fatal("error connect to redis", zap.Error(err))
 	}
 
-	_ = redisConn
+	defer redisConn.Close()
 
 	// TODO: init handler
 
