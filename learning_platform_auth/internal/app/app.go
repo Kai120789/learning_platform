@@ -5,6 +5,8 @@ import (
 	"go.uber.org/zap"
 	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/service"
+	"learning-platform/auth/internal/storage/postgres"
+	"learning-platform/auth/internal/storage/redis"
 	"learning-platform/auth/internal/transport/grpc"
 	"learning-platform/auth/pkg/logger"
 )
@@ -19,11 +21,23 @@ func Start() {
 
 	log := zapLog.ZapLogger
 
-	// TODO: connect postgres
+	postgresConn, err := postgres.Connection(cfg.DBDSN, log)
+	if err != nil {
+		log.Fatal("error connect to postgres", zap.Error(err))
+	}
+	defer postgresConn.Close()
 
-	// TODO: connect redis
+	postgresStorage := postgres.New(postgresConn, log)
 
-	service := service.New(cfg, log, nil)
+	redisConn, err := redis.Connection(cfg.RedisUrl)
+	if err != nil {
+		log.Fatal("error connect to redis", zap.Error(err))
+	}
+	defer redisConn.Close()
+
+	redisStorage := redis.New(redisConn, log)
+
+	service := service.New(cfg, log, postgresStorage, redisStorage)
 
 	gRPCServer := grpc.New(cfg, log, service)
 

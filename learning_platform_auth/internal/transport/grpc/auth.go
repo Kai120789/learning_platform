@@ -10,6 +10,8 @@ type AuthService interface {
 	LogoutAll()
 	ChangePassword()
 	ForceChangePassword()
+	ChangeEmail()
+	ForceChangeEmail()
 }
 
 type AuthGRPCServer struct {
