@@ -4,4 +4,6 @@ include:
   - metadata/mongo.yaml
   - metadata/postgres.yaml
   - metadata/redis.yaml
+
   - learning_platform_api_gateway/deployment/docker-compose.yaml
+  - learning_platform_auth/deployment/docker-compose.yaml

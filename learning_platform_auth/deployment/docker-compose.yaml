@@ -1,0 +1,14 @@
+services:
+  learning-platform-auth:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    container_name: learning-platform-auth
+    restart: on-failure
+    depends_on:
+      - learning-platform-redis
+      - learning-platform-postgres
+    ports:
+      - "50051:50051"
+    volumes:
+      - ..:/app
