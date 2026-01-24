@@ -2,13 +2,11 @@ package app
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/config"
 	"learning-platform/api-gateway/internal/redis"
 	"learning-platform/api-gateway/pkg/logger"
 	"net/http"
-	"sync"
-
-	"go.uber.org/zap"
 )
 
 func Start() {
@@ -37,18 +35,8 @@ func Start() {
 		Handler: http.NewServeMux(),
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
-		log.Info("http server started", zap.String("address", cfg.ServerAddress))
-		if err := server.ListenAndServe(); err != nil {
-			log.Error("failed to start http server", zap.Error(err))
-		}
-	}()
-
-	// TODO: start grpc
-
-	wg.Wait()
+	log.Info("http server started", zap.String("address", cfg.ServerAddress))
+	if err := server.ListenAndServe(); err != nil {
+		log.Error("failed to start http server", zap.Error(err))
+	}
 }
