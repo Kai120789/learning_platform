@@ -815,7 +815,7 @@ const file_auth_auth_proto_rawDesc = "" +
 	"\x06Logout\x12\x13.auth.LogoutRequest\x1a\x14.auth.LogoutResponse\x12<\n" +
 	"\tLogoutAll\x12\x16.auth.LogoutAllRequest\x1a\x17.auth.LogoutAllResponse\x12K\n" +
 	"\x0eChangePassword\x12\x1b.auth.ChangePasswordRequest\x1a\x1c.auth.ChangePasswordResponse\x12Z\n" +
-	"\x13ForceChangePassword\x12 .auth.ForceChangePasswordRequest\x1a!.auth.ForceChangePasswordResponseBLZJgithub.com/Kai120789/learning_platform/learning_platform_proto/gen/go/authb\x06proto3"
+	"\x13ForceChangePassword\x12 .auth.ForceChangePasswordRequest\x1a!.auth.ForceChangePasswordResponseBSZQgithub.com/Kai120789/learning_platform/learning_platform_proto/protos/gen/go/authb\x06proto3"
 
 var (
 	file_auth_auth_proto_rawDescOnce sync.Once
