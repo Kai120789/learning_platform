@@ -3,15 +3,13 @@ package service
 import (
 	"go.uber.org/zap"
 	"learning-platform/auth/internal/config"
-	"learning-platform/auth/internal/storage/postgres"
-	"learning-platform/auth/internal/storage/redis"
+	"learning-platform/auth/internal/redis"
 )
 
 type AuthService struct {
-	config   *config.Config
-	logger   *zap.Logger
-	postgres *postgres.PostgresStorage
-	redis    *redis.RedisStorage
+	config *config.Config
+	logger *zap.Logger
+	redis  *redis.RedisStorage
 }
 
 type AuthStorage interface {
@@ -20,14 +18,12 @@ type AuthStorage interface {
 func New(
 	config *config.Config,
 	logger *zap.Logger,
-	postgres *postgres.PostgresStorage,
 	redis *redis.RedisStorage,
 ) *AuthService {
 	return &AuthService{
-		config:   config,
-		logger:   logger,
-		postgres: postgres,
-		redis:    redis,
+		config: config,
+		logger: logger,
+		redis:  redis,
 	}
 }
 
