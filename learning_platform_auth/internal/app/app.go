@@ -26,11 +26,11 @@ func Start() {
 	}
 	defer redisConn.Close()
 
-	redis := redis.New(redisConn, log)
+	redisStorage := redis.New(redisConn, log)
 
-	service := service.New(cfg, log, redis)
+	serviceLayer := service.New(cfg, log, redisStorage)
 
-	gRPCServer := grpc.New(cfg, log, service)
+	gRPCServer := grpc.New(cfg, log, serviceLayer)
 
 	log.Info("grpc server started", zap.String("address", cfg.GRPCServerAddress))
 	if err := gRPCServer.Run(); err != nil {
