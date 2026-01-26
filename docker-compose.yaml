@@ -7,3 +7,4 @@ include:
 
   - learning_platform_api_gateway/deployment/docker-compose.yaml
   - learning_platform_auth/deployment/docker-compose.yaml
+  - learning_platform_users/deployment/docker-compose.yaml
