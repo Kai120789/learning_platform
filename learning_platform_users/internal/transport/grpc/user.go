@@ -2,22 +2,19 @@ package grpc
 
 import (
 	"context"
+	"github.com/Kai120789/learning_platform_models/models"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
-	"learning-platform/users/internal/service"
 )
 
-type UserGRPCServer struct {
-	userGRPC.UnimplementedUserServer
-	service service.Service
-}
-
-func NewUserGRPCServer(service service.Service) userGRPC.UserServer {
-	return &UserGRPCServer{
-		service: service,
-	}
+type UserService interface {
+	CreateUser(userDto dto.CreateUser) (*int64, error)
+	GetUser(userId int64) (*models.User, error)
+	ChangePassword(userId int64, newPasswordHash string) error
+	ChangeEmail(userId int64, newEmail string) error
+	GetUserData(userId int64) (*dto.UserData, error)
 }
 
 func (g *UserGRPCServer) CreateUser(
@@ -33,7 +30,7 @@ func (g *UserGRPCServer) CreateUser(
 		PasswordHash: in.GetPasswordHash(),
 	}
 
-	userId, err := g.service.UserService.CreateUser(userDto)
+	userId, err := g.UserService.CreateUser(userDto)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
@@ -47,15 +44,15 @@ func (g *UserGRPCServer) GetUser(
 	ctx context.Context,
 	in *userGRPC.GetUserRequest,
 ) (*userGRPC.GetUserResponse, error) {
-	res, err := g.service.UserService.GetUser(in.GetUserId())
+	res, err := g.UserService.GetUser(in.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
 	return &userGRPC.GetUserResponse{
-		UserId:       res.UserId,
+		UserId:       res.Id,
 		Email:        res.Email,
-		PasswordHash: res.PasswordHash,
+		PasswordHash: res.Password,
 	}, nil
 }
 
@@ -63,14 +60,36 @@ func (g *UserGRPCServer) GetUserData(
 	ctx context.Context,
 	in *userGRPC.GetUserDataRequest,
 ) (*userGRPC.GetUserDataResponse, error) {
-	return nil, nil
+	res, err := g.UserService.GetUserData(in.GetUserId())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get user data")
+	}
+
+	return &userGRPC.GetUserDataResponse{
+		UserId: res.UserId,
+		Email:  res.Email,
+		UserInfo: &userGRPC.UpdateUserInfoResponse{
+			Name:     res.UserInfo.Name,
+			Surname:  res.UserInfo.Surname,
+			Lastname: res.UserInfo.Lastname,
+			City:     res.UserInfo.City,
+			About:    res.UserInfo.About,
+			Role:     stringToProtoRole(res.UserInfo.Role),
+			Status:   stringToProtoStatus(res.UserInfo.Status),
+			Class:    res.UserInfo.Class,
+		},
+		UserSettings: &userGRPC.UpdateUserSettingsResponse{
+			Is_2FaEnabled:          res.UserSettings.Is2FaEnabled,
+			IsNotificationsEnabled: res.UserSettings.IsNotificationsEnabled,
+		},
+	}, nil
 }
 
 func (g *UserGRPCServer) ChangePassword(
 	ctx context.Context,
 	in *userGRPC.ChangePasswordRequest,
 ) (*userGRPC.ChangePasswordResponse, error) {
-	err := g.service.UserService.ChangePassword(in.GetUserId(), in.GetNewPassword())
+	err := g.UserService.ChangePassword(in.GetUserId(), in.GetNewPassword())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to change user password")
 	}
@@ -81,25 +100,11 @@ func (g *UserGRPCServer) ChangeEmail(
 	ctx context.Context,
 	in *userGRPC.ChangeEmailRequest,
 ) (*userGRPC.ChangeEmailResponse, error) {
-	err := g.service.UserService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
+	err := g.UserService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to change user email")
 	}
 	return &userGRPC.ChangeEmailResponse{}, nil
-}
-
-func (g *UserGRPCServer) UpdateUserInfo(
-	ctx context.Context,
-	in *userGRPC.UpdateUserInfoRequest,
-) (*userGRPC.UpdateUserInfoResponse, error) {
-	return nil, nil
-}
-
-func (g *UserGRPCServer) UpdateUserSettings(
-	ctx context.Context,
-	in *userGRPC.UpdateUserSettingsRequest,
-) (*userGRPC.UpdateUserSettingsResponse, error) {
-	return nil, nil
 }
 
 func protoRoleToString(role userGRPC.UserRole) string {
@@ -112,5 +117,31 @@ func protoRoleToString(role userGRPC.UserRole) string {
 		return "ADMIN"
 	default:
 		return "UNSPECIFIED"
+	}
+}
+
+func stringToProtoRole(role string) userGRPC.UserRole {
+	switch role {
+	case "TUTOR":
+		return userGRPC.UserRole_TUTOR
+	case "STUDENT":
+		return userGRPC.UserRole_STUDENT
+	case "ADMIN":
+		return userGRPC.UserRole_ADMIN
+	default:
+		return userGRPC.UserRole_USER_ROLE_UNSPECIFIED
+	}
+}
+
+func stringToProtoStatus(status string) userGRPC.Status {
+	switch status {
+	case "ACTIVE":
+		return userGRPC.Status_ACTIVE
+	case "INACTIVE":
+		return userGRPC.Status_INACTIVE
+	case "BANNED":
+		return userGRPC.Status_BANNED
+	default:
+		return userGRPC.Status_STATUS_UNSPECIFIED
 	}
 }

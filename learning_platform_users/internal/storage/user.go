@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
@@ -44,8 +45,8 @@ func (s *UserStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	return &id, nil
 }
 
-func (s *UserStorage) GetUser(userId int64) (*dto.GetUser, error) {
-	var res dto.GetUser
+func (s *UserStorage) GetUser(userId int64) (*models.User, error) {
+	var user models.User
 	query := `
 		SELECT *
 		FROM users
@@ -55,9 +56,9 @@ func (s *UserStorage) GetUser(userId int64) (*dto.GetUser, error) {
 	row := s.conn.QueryRow(context.Background(), query, userId)
 
 	err := row.Scan(
-		&res.UserId,
-		&res.Email,
-		&res.PasswordHash,
+		&user.Id,
+		&user.Email,
+		&user.Password,
 	)
 
 	if err != nil {
@@ -65,7 +66,7 @@ func (s *UserStorage) GetUser(userId int64) (*dto.GetUser, error) {
 		return nil, err
 	}
 
-	return &res, nil
+	return &user, nil
 }
 
 func (s *UserStorage) ChangePassword(userId int64, newPasswordHash string) error {
