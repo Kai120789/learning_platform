@@ -23,3 +23,7 @@ func NewUserInfoService(
 		storage: storage,
 	}
 }
+
+func (s *UserInfoService) CreateUserInfo(userId int64, userDto dto.CreateUser) error {
+	return s.storage.CreateUserInfo(userId, userDto)
+}

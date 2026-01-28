@@ -20,3 +20,7 @@ func NewUserSettingsService(
 		storage: storage,
 	}
 }
+
+func (s *UserSettingsService) CreateUserSettings(userId int64) error {
+	return s.storage.CreateUserSettings(userId)
+}

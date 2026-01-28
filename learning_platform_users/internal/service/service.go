@@ -22,7 +22,7 @@ func New(
 ) *Service {
 	userInfoService := NewUserInfoService(logger, storage.UserInfoStorage)
 	userSettingsService := NewUserSettingsService(logger, storage.UserSettingsStorage)
-	userService := NewUserService(logger, storage.UserStorage, *userInfoService, *userSettingsService)
+	userService := NewUserService(logger, storage.UserStorage, userInfoService, userSettingsService)
 
 	return &Service{
 		UserService:         userService,

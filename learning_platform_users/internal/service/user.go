@@ -8,8 +8,8 @@ import (
 type UserService struct {
 	logger              *zap.Logger
 	storage             UserStorage
-	userInfoService     UserInfoService
-	userSettingsService UserSettingsService
+	userInfoService     UserInfo
+	userSettingsService UserSettings
 }
 
 type UserStorage interface {
@@ -17,11 +17,19 @@ type UserStorage interface {
 	GetUser(userId int64) (*dto.GetUser, error)
 }
 
+type UserInfo interface {
+	CreateUserInfo(userId int64, userDto dto.CreateUser) error
+}
+
+type UserSettings interface {
+	CreateUserSettings(userId int64) error
+}
+
 func NewUserService(
 	logger *zap.Logger,
 	storage UserStorage,
-	userInfoService UserInfoService,
-	userSettingsService UserSettingsService,
+	userInfoService UserInfo,
+	userSettingsService UserSettings,
 ) *UserService {
 	return &UserService{
 		logger:              logger,
@@ -38,13 +46,13 @@ func (s *UserService) CreateUser(userDto dto.CreateUser) (*int64, error) {
 		return nil, err
 	}
 
-	err = s.userInfoService.storage.CreateUserInfo(*userId, userDto)
+	err = s.userInfoService.CreateUserInfo(*userId, userDto)
 	if err != nil {
 		s.logger.Error("error create user info", zap.Error(err))
 		return nil, err
 	}
 
-	err = s.userSettingsService.storage.CreateUserSettings(*userId)
+	err = s.userSettingsService.CreateUserSettings(*userId)
 	if err != nil {
 		s.logger.Error("error create user settings", zap.Error(err))
 		return nil, err
