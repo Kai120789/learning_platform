@@ -6,20 +6,17 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/service"
 )
-
-type RegisterUseCase interface {
-	CreateUser(userDto dto.CreateUser) (*int64, error)
-}
 
 type UserGRPCServer struct {
 	userGRPC.UnimplementedUserServer
-	register RegisterUseCase
+	service service.Service
 }
 
-func NewUserGRPCServer(register RegisterUseCase) userGRPC.UserServer {
+func NewUserGRPCServer(service service.Service) userGRPC.UserServer {
 	return &UserGRPCServer{
-		register: register,
+		service: service,
 	}
 }
 
@@ -36,7 +33,7 @@ func (g *UserGRPCServer) CreateUser(
 		PasswordHash: in.PasswordHash,
 	}
 
-	userId, err := g.register.CreateUser(userDto)
+	userId, err := g.service.UserService.CreateUser(userDto)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
@@ -50,7 +47,16 @@ func (g *UserGRPCServer) GetUser(
 	ctx context.Context,
 	in *userGRPC.GetUserRequest,
 ) (*userGRPC.GetUserResponse, error) {
-	return nil, nil
+	res, err := g.service.UserService.GetUser(in.UserId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get user")
+	}
+
+	return &userGRPC.GetUserResponse{
+		UserId:       res.UserId,
+		Email:        res.Email,
+		PasswordHash: res.PasswordHash,
+	}, nil
 }
 
 func (g *UserGRPCServer) GetUserData(

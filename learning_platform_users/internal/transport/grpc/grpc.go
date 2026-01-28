@@ -8,6 +8,7 @@ import (
 	goGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"learning-platform/users/internal/config"
+	"learning-platform/users/internal/service"
 	"net"
 )
 
@@ -20,13 +21,13 @@ type GRPCServer struct {
 func New(
 	logger *zap.Logger,
 	config *config.Config,
-	register RegisterUseCase,
+	service service.Service,
 ) *GRPCServer {
 	gRPCServer := goGRPC.NewServer(goGRPC.ChainUnaryInterceptor(
 		recovery.UnaryServerInterceptor(),
 	))
 
-	userGRPC.RegisterUserServer(gRPCServer, NewUserGRPCServer(register))
+	userGRPC.RegisterUserServer(gRPCServer, NewUserGRPCServer(service))
 
 	reflection.Register(gRPCServer)
 
