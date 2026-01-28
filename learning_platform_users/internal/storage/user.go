@@ -67,3 +67,35 @@ func (s *UserStorage) GetUser(userId int64) (*dto.GetUser, error) {
 
 	return &res, nil
 }
+
+func (s *UserStorage) ChangePassword(userId int64, newPasswordHash string) error {
+	query := `
+		UPDATE users
+		SET password = $2
+		WHERE id = $1
+	`
+
+	_, err := s.conn.Exec(context.Background(), query, userId, newPasswordHash)
+	if err != nil {
+		s.logger.Error("update password in users table error", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+func (s *UserStorage) ChangeEmail(userId int64, newEmail string) error {
+	query := `
+		UPDATE users
+		SET email = $2
+		WHERE id = $1
+	`
+
+	_, err := s.conn.Exec(context.Background(), query, userId, newEmail)
+	if err != nil {
+		s.logger.Error("update email in users table error", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
