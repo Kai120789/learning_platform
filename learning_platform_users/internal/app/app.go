@@ -33,8 +33,7 @@ func StartApp() {
 		UserInfoStorage:     storageLayer.UserInfoStorage,
 		UserSettingsStorage: storageLayer.UserSettingsStorage,
 	})
-
-	grpcServer := grpc.New(log, cfg, serviceLayer)
+	grpcServer := grpc.New(log, cfg, serviceLayer.RegisterUseCase)
 
 	log.Info("grpc server started", zap.String("address", cfg.GRPCServerAddress))
 	if err := grpcServer.Run(); err != nil {

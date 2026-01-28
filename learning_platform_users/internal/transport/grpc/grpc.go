@@ -20,13 +20,13 @@ type GRPCServer struct {
 func New(
 	logger *zap.Logger,
 	config *config.Config,
-	service UserService,
+	register RegisterUseCase,
 ) *GRPCServer {
 	gRPCServer := goGRPC.NewServer(goGRPC.ChainUnaryInterceptor(
 		recovery.UnaryServerInterceptor(),
 	))
 
-	userGRPC.RegisterUserServer(gRPCServer, NewUserGRPCServer(service))
+	userGRPC.RegisterUserServer(gRPCServer, NewUserGRPCServer(register))
 
 	reflection.Register(gRPCServer)
 

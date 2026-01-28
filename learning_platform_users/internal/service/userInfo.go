@@ -1,18 +1,22 @@
 package service
 
-import "go.uber.org/zap"
+import (
+	"go.uber.org/zap"
+	"learning-platform/users/internal/dto"
+)
 
 type UserInfoService struct {
 	logger  *zap.Logger
-	storage *UserInfoStorage
+	storage UserInfoStorage
 }
 
 type UserInfoStorage interface {
+	CreateUserInfo(userId int64, userDto dto.CreateUser) error
 }
 
 func NewUserInfoService(
 	logger *zap.Logger,
-	storage *UserInfoStorage,
+	storage UserInfoStorage,
 ) *UserInfoService {
 	return &UserInfoService{
 		logger:  logger,

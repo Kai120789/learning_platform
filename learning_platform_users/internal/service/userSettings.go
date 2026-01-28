@@ -4,14 +4,16 @@ import "go.uber.org/zap"
 
 type UserSettingsService struct {
 	logger  *zap.Logger
-	storage *UserSettingsStorage
+	storage UserSettingsStorage
 }
 
-type UserSettingsStorage interface{}
+type UserSettingsStorage interface {
+	CreateUserSettings(userId int64) error
+}
 
 func NewUserSettingsService(
 	logger *zap.Logger,
-	storage *UserSettingsStorage,
+	storage UserSettingsStorage,
 ) *UserSettingsService {
 	return &UserSettingsService{
 		logger:  logger,
