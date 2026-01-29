@@ -3,7 +3,7 @@ module learning-platform/users
 go 1.25.6
 
 require (
-	github.com/Kai120789/learning_platform_proto v0.1.0
+	github.com/Kai120789/learning_platform_proto v0.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/joho/godotenv v1.5.1

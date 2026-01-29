@@ -45,7 +45,7 @@ func (s *UserStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	return &id, nil
 }
 
-func (s *UserStorage) GetUser(userId int64) (*models.User, error) {
+func (s *UserStorage) GetUserById(userId int64) (*models.User, error) {
 	var user models.User
 	query := `
 		SELECT *
@@ -62,7 +62,31 @@ func (s *UserStorage) GetUser(userId int64) (*models.User, error) {
 	)
 
 	if err != nil {
-		s.logger.Error("get user from db error", zap.Error(err))
+		s.logger.Error("get user by id from db error", zap.Error(err))
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (s *UserStorage) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	query := `
+		SELECT *
+		FROM users
+		WHERE email = $1
+	`
+
+	row := s.conn.QueryRow(context.Background(), query, email)
+
+	err := row.Scan(
+		&user.Id,
+		&user.Email,
+		&user.Password,
+	)
+
+	if err != nil {
+		s.logger.Error("get user by email from db error", zap.Error(err))
 		return nil, err
 	}
 

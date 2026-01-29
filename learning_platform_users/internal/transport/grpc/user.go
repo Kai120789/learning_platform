@@ -11,7 +11,8 @@ import (
 
 type UserService interface {
 	CreateUser(userDto dto.CreateUser) (*int64, error)
-	GetUser(userId int64) (*models.User, error)
+	GetUserById(userId int64) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 	ChangePassword(userId int64, newPasswordHash string) error
 	ChangeEmail(userId int64, newEmail string) error
 	GetUserData(userId int64) (*dto.UserData, error)
@@ -40,16 +41,32 @@ func (g *UserGRPCServer) CreateUser(
 	}, nil
 }
 
-func (g *UserGRPCServer) GetUser(
+func (g *UserGRPCServer) GetUserById(
 	ctx context.Context,
-	in *userGRPC.GetUserRequest,
-) (*userGRPC.GetUserResponse, error) {
-	res, err := g.UserService.GetUser(in.GetUserId())
+	in *userGRPC.GetUserByIdRequest,
+) (*userGRPC.GetUserByIdResponse, error) {
+	res, err := g.UserService.GetUserById(in.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
-	return &userGRPC.GetUserResponse{
+	return &userGRPC.GetUserByIdResponse{
+		UserId:       res.Id,
+		Email:        res.Email,
+		PasswordHash: res.Password,
+	}, nil
+}
+
+func (g *UserGRPCServer) GetUserByEmail(
+	ctx context.Context,
+	in *userGRPC.GetUserByEmailRequest,
+) (*userGRPC.GetUserByEmailResponse, error) {
+	res, err := g.UserService.GetUserByEmail(in.GetEmail())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get user")
+	}
+
+	return &userGRPC.GetUserByEmailResponse{
 		UserId:       res.Id,
 		Email:        res.Email,
 		PasswordHash: res.Password,

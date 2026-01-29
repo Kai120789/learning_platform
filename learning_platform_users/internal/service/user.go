@@ -15,7 +15,8 @@ type UserService struct {
 
 type UserStorage interface {
 	CreateUser(userDto dto.CreateUser) (*int64, error)
-	GetUser(userId int64) (*models.User, error)
+	GetUserById(userId int64) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 	ChangePassword(userId int64, newPasswordHash string) error
 	ChangeEmail(userId int64, newEmail string) error
 }
@@ -67,7 +68,7 @@ func (s *UserService) CreateUser(userDto dto.CreateUser) (*int64, error) {
 }
 
 func (s *UserService) GetUserData(userId int64) (*dto.UserData, error) {
-	user, err := s.storage.GetUser(userId)
+	user, err := s.storage.GetUserById(userId)
 	if err != nil {
 		s.logger.Error("get user error", zap.Error(err))
 		return nil, nil
@@ -88,8 +89,12 @@ func (s *UserService) GetUserData(userId int64) (*dto.UserData, error) {
 	return formUserDto(user, userInfo, userSettings), nil
 }
 
-func (s *UserService) GetUser(userId int64) (*models.User, error) {
-	return s.storage.GetUser(userId)
+func (s *UserService) GetUserById(userId int64) (*models.User, error) {
+	return s.storage.GetUserById(userId)
+}
+
+func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
+	return s.storage.GetUserByEmail(email)
 }
 
 func (s *UserService) ChangePassword(userId int64, newPasswordHash string) error {
