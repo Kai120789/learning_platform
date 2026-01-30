@@ -1,15 +1,23 @@
 package config
 
 import (
+	"fmt"
 	"github.com/joho/godotenv"
 	"os"
+	"strconv"
 )
 
 type Config struct {
-	GRPCServerAddress string
-	LogLevel          string
-	DBDSN             string
-	RedisUrl          string
+	GRPCServerAddress    string
+	LogLevel             string
+	DBDSN                string
+	RedisUrl             string
+	UserServiceUrl       string
+	AccessTokenLifeTime  int64
+	RefreshTokenLifeTime int64
+	Issuer               string
+	SignedKey            string
+	Salt                 string
 }
 
 func GetConfig() *Config {
@@ -21,6 +29,13 @@ func GetConfig() *Config {
 	cfg.GRPCServerAddress = getEnvStringValue("GRPC_SERVER_ADDRESS")
 	cfg.DBDSN = getEnvStringValue("DBDSN")
 	cfg.RedisUrl = getEnvStringValue("REDIS_URL")
+	cfg.UserServiceUrl = getEnvStringValue("USER_SERVICE_URL")
+	cfg.Issuer = getEnvStringValue("ISSUER")
+	cfg.SignedKey = getEnvStringValue("SIGNED_KEY")
+	cfg.Salt = getEnvStringValue("SALT")
+
+	cfg.AccessTokenLifeTime = getEnvIntValue("ACCESS_TOKEN_LIVE_TIME", 5)
+	cfg.RefreshTokenLifeTime = getEnvIntValue("REFRESH_TOKEN_LIVE_TIME", 7)
 
 	return cfg
 }
@@ -35,4 +50,14 @@ func getEnvStringValue(envName string) string {
 	}
 
 	return cfgValue
+}
+
+func getEnvIntValue(envName string, fallbackValue int64) int64 {
+	cfgValue, err := strconv.Atoi(os.Getenv(envName))
+	if err != nil {
+		fmt.Errorf("string to int convert error: %w", err)
+		return fallbackValue
+	}
+
+	return int64(cfgValue)
 }
