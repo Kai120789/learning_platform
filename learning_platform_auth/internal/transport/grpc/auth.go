@@ -11,8 +11,8 @@ import (
 type AuthService interface {
 	Login(request dto.LoginRequest) (*dto.LoginResponse, error)
 	Register(request dto.RegisterRequest) (*dto.RegisterResponse, error)
-	RefreshTokens()
-	Logout()
+	RefreshTokens(accessToken string) (*string, error)
+	Logout(accessToken string) error
 	LogoutAll()
 	ChangePassword()
 	ForceChangePassword()
@@ -80,14 +80,26 @@ func (g *AuthGRPCServer) RefreshTokens(
 	ctx context.Context,
 	in *authGRPC.RefreshTokensRequest,
 ) (*authGRPC.RefreshTokensResponse, error) {
-	return nil, nil
+	newAccessToken, err := g.service.RefreshTokens(in.GetAccessToken())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to refresh tokens")
+	}
+
+	return &authGRPC.RefreshTokensResponse{
+		AccessToken: *newAccessToken,
+	}, nil
 }
 
 func (g *AuthGRPCServer) Logout(
 	ctx context.Context,
 	in *authGRPC.LogoutRequest,
 ) (*authGRPC.LogoutResponse, error) {
-	return nil, nil
+	err := g.service.Logout(in.AccessToken)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed logout user")
+	}
+
+	return &authGRPC.LogoutResponse{}, nil
 }
 
 func (g *AuthGRPCServer) LogoutAll(

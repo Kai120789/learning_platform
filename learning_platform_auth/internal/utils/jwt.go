@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type CustomClaims struct {
+type CustomJwtClaims struct {
 	UserId    int64  `json:"user_id"`
 	UserEmail string `json:"user_email"`
 	SessionId string `json:"session_id"`
@@ -17,7 +17,7 @@ type CustomClaims struct {
 
 func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, error) {
 	sessionId := uuid.New().String()
-	accessClaims := CustomClaims{
+	accessClaims := CustomJwtClaims{
 		createJwtDto.UserId,
 		createJwtDto.UserEmail,
 		sessionId,
@@ -51,4 +51,20 @@ func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, e
 		RefreshToken: signedRefreshToken,
 		SessionId:    sessionId,
 	}, nil
+}
+
+func GetAccessTokenClaims(accessToken string, signedKey string) (*CustomJwtClaims, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &CustomJwtClaims{}, func(token *jwt.Token) (any, error) {
+		return []byte(signedKey), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*CustomJwtClaims)
+	if !ok {
+		return nil, err
+	}
+
+	return claims, nil
 }

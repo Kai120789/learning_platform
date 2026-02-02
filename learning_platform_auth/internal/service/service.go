@@ -22,6 +22,7 @@ type AuthApi interface {
 
 type RedisStorage interface {
 	SetTokens(userId int64, tokenBundle dto.TokenBundle) error
+	DeleteTokens(accessToken string, userId int64) error
 }
 
 func New(
@@ -117,9 +118,56 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 	}, nil
 }
 
-func (s *AuthService) RefreshTokens() {}
+func (s *AuthService) RefreshTokens(accessToken string) (*string, error) {
+	accessClaims, err := utils.GetAccessTokenClaims(accessToken, s.config.SignedKey)
+	if err != nil {
+		s.logger.Error("get access token claims error", zap.Error(err))
+		return nil, err
+	}
 
-func (s *AuthService) Logout() {}
+	err = s.redis.DeleteTokens(accessToken, accessClaims.UserId)
+	if err != nil {
+		s.logger.Error("delete token error", zap.Error(err))
+		return nil, err
+	}
+
+	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
+		UserId:      accessClaims.UserId,
+		UserEmail:   accessClaims.UserEmail,
+		SignedKey:   s.config.SignedKey,
+		Issuer:      s.config.Issuer,
+		AccessTime:  s.config.AccessTokenLifeTime,
+		RefreshTime: s.config.RefreshTokenLifeTime,
+	}, s.logger)
+	if err != nil {
+		s.logger.Error("create jwt tokens error", zap.Error(err))
+		return nil, err
+	}
+
+	err = s.redis.SetTokens(accessClaims.UserId, *tokenBundle)
+	if err != nil {
+		s.logger.Error("set tokens error")
+		return nil, err
+	}
+
+	return &tokenBundle.AccessToken, nil
+}
+
+func (s *AuthService) Logout(accessToken string) error {
+	accessClaims, err := utils.GetAccessTokenClaims(accessToken, s.config.SignedKey)
+	if err != nil {
+		s.logger.Error("get access token claims error", zap.Error(err))
+		return err
+	}
+
+	err = s.redis.DeleteTokens(accessToken, accessClaims.UserId)
+	if err != nil {
+		s.logger.Error("delete token error", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
 
 func (s *AuthService) LogoutAll() {}
 

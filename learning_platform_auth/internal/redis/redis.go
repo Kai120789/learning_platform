@@ -7,18 +7,25 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
+	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/dto"
 )
 
 type RedisStorage struct {
 	client *redis.Client
 	logger *zap.Logger
+	config *config.Config
 }
 
-func New(client *redis.Client, logger *zap.Logger) *RedisStorage {
+func New(
+	client *redis.Client,
+	logger *zap.Logger,
+	config *config.Config,
+) *RedisStorage {
 	return &RedisStorage{
 		client: client,
 		logger: logger,
+		config: config,
 	}
 }
 
@@ -79,6 +86,48 @@ func (r *RedisStorage) SetTokens(userId int64, tokenBundle dto.TokenBundle) erro
 			return err
 		}
 	}
+	return nil
+}
+
+func (r *RedisStorage) DeleteTokens(accessToken string, userId int64) error {
+	_, err := r.client.Del(
+		context.Background(),
+		fmt.Sprintf("tokenBundle:%s", accessToken),
+	).Result()
+	if err != nil {
+		r.logger.Error("error delete tokens from redis", zap.Error(err))
+		return err
+	}
+
+	redisTokens, err := r.client.HGet(
+		context.Background(),
+		fmt.Sprintf("userAccess:%d", userId),
+		"access_tokens",
+	).Result()
+	if err != nil {
+		r.logger.Error("error get user-access from redis", zap.Error(err))
+		return err
+	}
+
+	var tokens []string
+	err = json.Unmarshal([]byte(redisTokens), &tokens)
+	if err != nil {
+		r.logger.Error("error unmarshal tokens from redis", zap.Error(err))
+		return err
+	}
+
+	for i := 0; i < len(tokens); i++ {
+		if tokens[i] == accessToken {
+			tokens = append(tokens[:i], tokens[i+1:]...)
+		}
+	}
+
+	err = r.setUserAccess(userId, tokens)
+	if err != nil {
+		r.logger.Error("error set new tokens in user-access to redis", zap.Error(err))
+		return err
+	}
+
 	return nil
 }
 

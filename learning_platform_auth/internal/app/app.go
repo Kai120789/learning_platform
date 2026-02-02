@@ -27,7 +27,7 @@ func Start() {
 	}
 	defer redisConn.Close()
 
-	redisStorage := redis.New(redisConn, log)
+	redisStorage := redis.New(redisConn, log, cfg)
 
 	userGrpcConn, err := grpc.NewUserGrpcClient(cfg.UserServiceUrl, log)
 	if err != nil {
