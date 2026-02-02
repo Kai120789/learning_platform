@@ -3,12 +3,14 @@ package grpc
 import (
 	"context"
 	authGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/auth"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"learning-platform/auth/internal/dto"
 )
 
 type AuthService interface {
 	Login(request dto.LoginRequest) (*dto.LoginResponse, error)
-	Register()
+	Register(request dto.RegisterRequest) (*dto.RegisterResponse, error)
 	RefreshTokens()
 	Logout()
 	LogoutAll()
@@ -34,7 +36,6 @@ func (g *AuthGRPCServer) Login(
 	in *authGRPC.LoginRequest,
 ) (*authGRPC.LoginResponse, error) {
 	email := in.GetEmail()
-
 	password := in.GetPassword()
 
 	res, err := g.service.Login(dto.LoginRequest{
@@ -42,7 +43,7 @@ func (g *AuthGRPCServer) Login(
 		Password: password,
 	})
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "failed to login user")
 	}
 
 	return &authGRPC.LoginResponse{
@@ -55,7 +56,24 @@ func (g *AuthGRPCServer) Register(
 	ctx context.Context,
 	in *authGRPC.RegisterRequest,
 ) (*authGRPC.RegisterResponse, error) {
-	return nil, nil
+	request := dto.RegisterRequest{
+		Email:        in.GetEmail(),
+		Name:         in.GetName(),
+		Surname:      in.GetSurname(),
+		LastName:     in.GetLastName(),
+		Role:         protoAuthRoleToString(in.GetRole()),
+		PasswordHash: in.GetPassword(),
+	}
+
+	res, err := g.service.Register(request)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to register user")
+	}
+
+	return &authGRPC.RegisterResponse{
+		UserId:      res.UserId,
+		AccessToken: res.AccessToken,
+	}, nil
 }
 
 func (g *AuthGRPCServer) RefreshTokens(
@@ -105,4 +123,15 @@ func (g *AuthGRPCServer) ForceChangeEmail(
 	in *authGRPC.ForceChangeEmailRequest,
 ) (*authGRPC.ForceChangeEmailResponse, error) {
 	return nil, nil
+}
+
+func protoAuthRoleToString(role authGRPC.UserRole) string {
+	switch role {
+	case authGRPC.UserRole_TUTOR:
+		return "TUTOR"
+	case authGRPC.UserRole_STUDENT:
+		return "STUDENT"
+	default:
+		return "UNSPECIFIED"
+	}
 }

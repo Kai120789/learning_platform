@@ -36,3 +36,36 @@ func (a *UserApi) GetUserByEmail(email string) (*dto.GetUser, error) {
 		PasswordHash: res.GetPasswordHash(),
 	}, nil
 }
+
+func (a *UserApi) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := a.client.CreateUser(ctx, &userGRPC.CreateUserRequest{
+		Email:        newUser.Email,
+		Name:         newUser.Name,
+		Surname:      newUser.Surname,
+		LastName:     &newUser.LastName,
+		Role:         stringToProtoUserRole(newUser.Role),
+		PasswordHash: newUser.PasswordHash,
+	})
+	if err != nil {
+		a.logger.Error("failed to send create user grpc query", zap.Error(err))
+		return nil, err
+	}
+
+	return &res.UserId, nil
+}
+
+func stringToProtoUserRole(role string) userGRPC.UserRole {
+	switch role {
+	case "TUTOR":
+		return userGRPC.UserRole_TUTOR
+	case "STUDENT":
+		return userGRPC.UserRole_STUDENT
+	case "ADMIN":
+		return userGRPC.UserRole_ADMIN
+	default:
+		return userGRPC.UserRole_USER_ROLE_UNSPECIFIED
+	}
+}
