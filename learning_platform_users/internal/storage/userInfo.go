@@ -25,9 +25,14 @@ func NewUserInfoStorage(
 
 func (s *UserInfoStorage) CreateUserInfo(userId int64, userDto dto.CreateUser) error {
 	query := `
-		INSERT INTO user_info (user_id, name, surname, lastname, role) 
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO user_info (user_id, name, surname, lastname, role, status) 
+		VALUES ($1, $2, $3, $4, $5, $6)
 	`
+
+	status := "ACTIVE"
+	if userDto.Role == "TUTOR" {
+		status = "INACTIVE"
+	}
 
 	_, err := s.conn.Exec(
 		context.Background(),
@@ -37,6 +42,7 @@ func (s *UserInfoStorage) CreateUserInfo(userId int64, userDto dto.CreateUser) e
 		userDto.Surname,
 		userDto.LastName,
 		userDto.Role,
+		status,
 	)
 
 	if err != nil {
