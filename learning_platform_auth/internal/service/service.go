@@ -48,16 +48,21 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		AccessTime:  s.config.AccessTokenLifeTime,
 		RefreshTime: s.config.RefreshTokenLifeTime,
 	}, s.logger)
+	if err != nil {
+		s.logger.Error("create jwt tokens error", zap.Error(err))
+		return nil, err
+	}
 
-	_ = tokenBundle
-
-	err = s.redis.SetTokens("testAccessToken", "testRefreshToken", "testSid")
+	err = s.redis.SetTokens(user.UserId, *tokenBundle)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
 	}
 
-	return &dto.LoginResponse{}, nil
+	return &dto.LoginResponse{
+		AccessToken: tokenBundle.AccessToken,
+		UserId:      user.UserId,
+	}, nil
 }
 
 func (s *AuthService) Register() {}
