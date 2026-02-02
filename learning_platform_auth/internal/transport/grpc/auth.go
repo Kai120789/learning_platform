@@ -57,12 +57,12 @@ func (g *AuthGRPCServer) Register(
 	in *authGRPC.RegisterRequest,
 ) (*authGRPC.RegisterResponse, error) {
 	request := dto.RegisterRequest{
-		Email:        in.GetEmail(),
-		Name:         in.GetName(),
-		Surname:      in.GetSurname(),
-		LastName:     in.GetLastName(),
-		Role:         protoAuthRoleToString(in.GetRole()),
-		PasswordHash: in.GetPassword(),
+		Email:    in.GetEmail(),
+		Name:     in.GetName(),
+		Surname:  in.GetSurname(),
+		LastName: in.GetLastName(),
+		Role:     protoAuthRoleToString(in.GetRole()),
+		Password: in.GetPassword(),
 	}
 
 	res, err := g.service.Register(request)

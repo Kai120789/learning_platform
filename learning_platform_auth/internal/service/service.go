@@ -2,6 +2,7 @@ package service
 
 import (
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/dto"
 	"learning-platform/auth/internal/utils"
@@ -44,6 +45,15 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		return nil, err
 	}
 
+	err = bcrypt.CompareHashAndPassword(
+		[]byte(user.PasswordHash),
+		[]byte(loginData.Password),
+	)
+	if err != nil {
+		s.logger.Error("attempt login with incorrect password", zap.Error(err))
+		return nil, err
+	}
+
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
 		UserId:      user.UserId,
 		UserEmail:   user.Email,
@@ -70,6 +80,12 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 }
 
 func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterResponse, error) {
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(registerData.Password), int(s.config.Salt))
+	if err != nil {
+		return nil, err
+	}
+	registerData.Password = string(passwordHash)
+
 	userId, err := s.api.CreateUser(registerData)
 	if err != nil {
 		s.logger.Error("create user error", zap.Error(err))

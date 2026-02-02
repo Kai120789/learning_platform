@@ -17,7 +17,7 @@ type Config struct {
 	RefreshTokenLifeTime int64
 	Issuer               string
 	SignedKey            string
-	Salt                 string
+	Salt                 int64
 }
 
 func GetConfig() *Config {
@@ -32,8 +32,8 @@ func GetConfig() *Config {
 	cfg.UserServiceUrl = getEnvStringValue("USER_SERVICE_URL")
 	cfg.Issuer = getEnvStringValue("ISSUER")
 	cfg.SignedKey = getEnvStringValue("SIGNED_KEY")
-	cfg.Salt = getEnvStringValue("SALT")
 
+	cfg.Salt = getEnvIntValue("SALT", 10)
 	cfg.AccessTokenLifeTime = getEnvIntValue("ACCESS_TOKEN_LIVE_TIME", 5)
 	cfg.RefreshTokenLifeTime = getEnvIntValue("REFRESH_TOKEN_LIVE_TIME", 7)
 

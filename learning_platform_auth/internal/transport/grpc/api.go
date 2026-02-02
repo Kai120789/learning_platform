@@ -47,7 +47,7 @@ func (a *UserApi) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
 		Surname:      newUser.Surname,
 		LastName:     &newUser.LastName,
 		Role:         stringToProtoUserRole(newUser.Role),
-		PasswordHash: newUser.PasswordHash,
+		PasswordHash: newUser.Password,
 	})
 	if err != nil {
 		a.logger.Error("failed to send create user grpc query", zap.Error(err))
