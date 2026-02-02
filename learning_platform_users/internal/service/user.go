@@ -71,19 +71,19 @@ func (s *UserService) GetUserData(userId int64) (*dto.UserData, error) {
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
 		s.logger.Error("get user error", zap.Error(err))
-		return nil, nil
+		return nil, err
 	}
 
 	userInfo, err := s.userInfoService.GetUserInfo(userId)
 	if err != nil {
 		s.logger.Error("get user info error", zap.Error(err))
-		return nil, nil
+		return nil, err
 	}
 
 	userSettings, err := s.userSettingsService.GetUserSettings(userId)
 	if err != nil {
 		s.logger.Error("get user settings error", zap.Error(err))
-		return nil, nil
+		return nil, err
 	}
 
 	return formUserDto(user, userInfo, userSettings), nil
