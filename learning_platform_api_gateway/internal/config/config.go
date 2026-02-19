@@ -9,8 +9,8 @@ import (
 type Config struct {
 	LogLevel       string
 	ServerAddress  string
-	DBDSN          string
 	AuthServiceUrl string
+	UserServiceUrl string
 	RedisUrl       string
 }
 
@@ -21,8 +21,8 @@ func GetConfig() *Config {
 
 	cfg.LogLevel = getEnvStringValue("LOG_LEVEL")
 	cfg.ServerAddress = getEnvStringValue("SERVER_ADDRESS")
-	cfg.DBDSN = getEnvStringValue("DBDSN")
 	cfg.AuthServiceUrl = getEnvStringValue("AUTH_SERVICE_URL")
+	cfg.UserServiceUrl = getEnvStringValue("USER_SERVICE_URL")
 	cfg.RedisUrl = getEnvStringValue("REDIS_URL")
 
 	return cfg

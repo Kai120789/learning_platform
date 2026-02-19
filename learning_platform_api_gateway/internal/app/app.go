@@ -5,6 +5,8 @@ import (
 	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/config"
 	"learning-platform/api-gateway/internal/redis"
+	"learning-platform/api-gateway/internal/service"
+	"learning-platform/api-gateway/internal/transport/grpc"
 	"learning-platform/api-gateway/pkg/logger"
 	"net/http"
 )
@@ -25,6 +27,22 @@ func Start() {
 	}
 
 	defer redisConn.Close()
+
+	client, err := grpc.NewClient(
+		cfg.UserServiceUrl,
+		cfg.AuthServiceUrl,
+		log,
+	)
+	if err != nil {
+		log.Fatal("init grpc client error", zap.Error(err))
+	}
+
+	serviceLayer := service.New(&service.Client{
+		UserClient: client.UserClient,
+		AuthClient: client.AuthClient,
+	}, log)
+
+	_ = serviceLayer
 
 	// TODO: init handler
 
