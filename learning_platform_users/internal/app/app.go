@@ -34,7 +34,7 @@ func StartApp() {
 		UserSettingsStorage: storageLayer.UserSettingsStorage,
 	})
 
-	grpcServer := grpc.New(log, cfg, grpc.UserGRPCServer{
+	grpcServer := grpc.New(log, cfg, &grpc.UserGRPCServer{
 		UserService:         serviceLayer.UserService,
 		UserInfoService:     serviceLayer.UserInfoService,
 		UserSettingsService: serviceLayer.UserSettingsService,

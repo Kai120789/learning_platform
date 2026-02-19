@@ -39,7 +39,7 @@ func NewUserGRPCServer(
 func New(
 	logger *zap.Logger,
 	config *config.Config,
-	service UserGRPCServer,
+	service *UserGRPCServer,
 ) *GRPCServer {
 	gRPCServer := goGRPC.NewServer(goGRPC.ChainUnaryInterceptor(
 		recovery.UnaryServerInterceptor(),
