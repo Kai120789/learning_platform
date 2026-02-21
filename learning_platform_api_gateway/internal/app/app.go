@@ -7,6 +7,8 @@ import (
 	"learning-platform/api-gateway/internal/redis"
 	"learning-platform/api-gateway/internal/service"
 	"learning-platform/api-gateway/internal/transport/grpc"
+	"learning-platform/api-gateway/internal/transport/http/handler"
+	"learning-platform/api-gateway/internal/transport/http/router"
 	"learning-platform/api-gateway/pkg/logger"
 	"net/http"
 )
@@ -44,13 +46,19 @@ func Start() {
 
 	_ = serviceLayer
 
-	// TODO: init handler
+	handlerLayer := handler.New(&handler.Service{
+		AuthService: serviceLayer.AuthService,
+		UserService: serviceLayer.UserService,
+	}, log)
 
-	// TODO: init router
+	r := router.New(&router.Handler{
+		AuthHandler: handlerLayer.AuthHandler,
+		UserHandler: handlerLayer.UserHandler,
+	})
 
 	server := &http.Server{
 		Addr:    cfg.ServerAddress,
-		Handler: http.NewServeMux(),
+		Handler: r,
 	}
 
 	log.Info("http server started", zap.String("address", cfg.ServerAddress))
