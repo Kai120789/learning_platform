@@ -122,7 +122,9 @@ func (u *UserClient) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
 		return nil, err
 	}
 
-	return &res.UserId, nil
+	resUserId := res.GetUserId()
+
+	return &resUserId, nil
 }
 
 func stringToProtoUserRole(role string) userGRPC.UserRole {
