@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	userGrpc "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
 	"go.uber.org/zap"
 	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/redis"
@@ -29,17 +28,7 @@ func Start() {
 
 	redisStorage := redis.New(redisConn, log, cfg)
 
-	userGrpcConn, err := grpc.NewUserGrpcClient(cfg.UserServiceUrl, log)
-	if err != nil {
-		log.Error("user grpc connect error", zap.Error(err))
-	}
-	defer userGrpcConn.Close()
-
-	userClient := userGrpc.NewUserClient(userGrpcConn)
-
-	userApi := grpc.NewUserApi(userClient, log)
-
-	serviceLayer := service.New(cfg, log, redisStorage, userApi)
+	serviceLayer := service.New(cfg, log, redisStorage)
 
 	gRPCServer := grpc.New(cfg, log, serviceLayer)
 

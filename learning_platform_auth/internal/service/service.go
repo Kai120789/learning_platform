@@ -12,12 +12,6 @@ type AuthService struct {
 	config *config.Config
 	logger *zap.Logger
 	redis  RedisStorage
-	api    AuthApi
-}
-
-type AuthApi interface {
-	GetUserByEmail(email string) (*dto.GetUser, error)
-	CreateUser(newUser dto.RegisterRequest) (*int64, error)
 }
 
 type RedisStorage interface {
@@ -29,35 +23,18 @@ func New(
 	config *config.Config,
 	logger *zap.Logger,
 	redis RedisStorage,
-	api AuthApi,
 ) *AuthService {
 	return &AuthService{
 		config: config,
 		logger: logger,
 		redis:  redis,
-		api:    api,
 	}
 }
 
 func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, error) {
-	user, err := s.api.GetUserByEmail(loginData.Email)
-	if err != nil {
-		s.logger.Error("get user by email error", zap.Error(err))
-		return nil, err
-	}
-
-	err = bcrypt.CompareHashAndPassword(
-		[]byte(user.PasswordHash),
-		[]byte(loginData.Password),
-	)
-	if err != nil {
-		s.logger.Error("attempt login with incorrect password", zap.Error(err))
-		return nil, err
-	}
-
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
-		UserId:      user.UserId,
-		UserEmail:   user.Email,
+		UserId:      loginData.UserId,
+		UserEmail:   loginData.Email,
 		SignedKey:   s.config.SignedKey,
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,
@@ -68,7 +45,7 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		return nil, err
 	}
 
-	err = s.redis.SetTokens(user.UserId, *tokenBundle)
+	err = s.redis.SetTokens(loginData.UserId, *tokenBundle)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
@@ -76,25 +53,13 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 
 	return &dto.LoginResponse{
 		AccessToken: tokenBundle.AccessToken,
-		UserId:      user.UserId,
+		UserId:      loginData.UserId,
 	}, nil
 }
 
 func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterResponse, error) {
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(registerData.Password), int(s.config.Salt))
-	if err != nil {
-		return nil, err
-	}
-	registerData.Password = string(passwordHash)
-
-	userId, err := s.api.CreateUser(registerData)
-	if err != nil {
-		s.logger.Error("create user error", zap.Error(err))
-		return nil, err
-	}
-
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
-		UserId:      *userId,
+		UserId:      registerData.UserId,
 		UserEmail:   registerData.Email,
 		SignedKey:   s.config.SignedKey,
 		Issuer:      s.config.Issuer,
@@ -106,14 +71,14 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 		return nil, err
 	}
 
-	err = s.redis.SetTokens(*userId, *tokenBundle)
+	err = s.redis.SetTokens(registerData.UserId, *tokenBundle)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
 	}
 
 	return &dto.RegisterResponse{
-		UserId:      *userId,
+		UserId:      registerData.UserId,
 		AccessToken: tokenBundle.AccessToken,
 	}, nil
 }
@@ -151,6 +116,31 @@ func (s *AuthService) RefreshTokens(accessToken string) (*string, error) {
 	}
 
 	return &tokenBundle.AccessToken, nil
+}
+
+func (s *AuthService) CheckPassword(password string, passwordHash string) (bool, error) {
+	err := bcrypt.CompareHashAndPassword(
+		[]byte(passwordHash),
+		[]byte(password),
+	)
+	if err != nil {
+		s.logger.Error("attempt login with incorrect password", zap.Error(err))
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (s *AuthService) GeneratePasswordHash(password string) (*string, error) {
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), int(s.config.Salt))
+	if err != nil {
+		s.logger.Error("generate hash for password error", zap.Error(err))
+		return nil, err
+	}
+
+	resPasswordHash := string(passwordHash)
+
+	return &resPasswordHash, nil
 }
 
 func (s *AuthService) Logout(accessToken string) error {

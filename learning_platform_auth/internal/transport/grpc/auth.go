@@ -12,6 +12,8 @@ type AuthService interface {
 	Login(request dto.LoginRequest) (*dto.LoginResponse, error)
 	Register(request dto.RegisterRequest) (*dto.RegisterResponse, error)
 	RefreshTokens(accessToken string) (*string, error)
+	CheckPassword(password string, passwordHash string) (bool, error)
+	GeneratePasswordHash(password string) (*string, error)
 	Logout(accessToken string) error
 	LogoutAll()
 	ChangePassword()
@@ -35,12 +37,10 @@ func (g *AuthGRPCServer) Login(
 	ctx context.Context,
 	in *authGRPC.LoginRequest,
 ) (*authGRPC.LoginResponse, error) {
-	email := in.GetEmail()
-	password := in.GetPassword()
-
 	res, err := g.service.Login(dto.LoginRequest{
-		Email:    email,
-		Password: password,
+		UserId:   in.GetUserId(),
+		Email:    in.GetEmail(),
+		Password: in.GetPassword(),
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to login user")
@@ -57,6 +57,7 @@ func (g *AuthGRPCServer) Register(
 	in *authGRPC.RegisterRequest,
 ) (*authGRPC.RegisterResponse, error) {
 	request := dto.RegisterRequest{
+		UserId:   in.GetUserId(),
 		Email:    in.GetEmail(),
 		Name:     in.GetName(),
 		Surname:  in.GetSurname(),
@@ -88,6 +89,30 @@ func (g *AuthGRPCServer) RefreshTokens(
 	return &authGRPC.RefreshTokensResponse{
 		AccessToken: *newAccessToken,
 	}, nil
+}
+
+func (g *AuthGRPCServer) CheckPassword(
+	ctx context.Context,
+	in *authGRPC.CheckPasswordRequest,
+) (*authGRPC.CheckPasswordResponse, error) {
+	isValid, err := g.service.CheckPassword(in.GetPassword(), in.GetPasswordHash())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed valid password")
+	}
+
+	return &authGRPC.CheckPasswordResponse{IsValid: isValid}, nil
+}
+
+func (g *AuthGRPCServer) GeneratePasswordHash(
+	ctx context.Context,
+	in *authGRPC.GeneratePasswordHashRequest,
+) (*authGRPC.GeneratePasswordHashResponse, error) {
+	passwordHash, err := g.service.GeneratePasswordHash(in.GetPassword())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed generate hash for password")
+	}
+
+	return &authGRPC.GeneratePasswordHashResponse{PasswordHash: *passwordHash}, nil
 }
 
 func (g *AuthGRPCServer) Logout(

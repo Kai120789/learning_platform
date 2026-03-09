@@ -1,6 +1,7 @@
 package dto
 
 type LoginRequest struct {
+	UserId   int64
 	Email    string
 	Password string
 }
