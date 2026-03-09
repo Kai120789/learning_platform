@@ -13,8 +13,9 @@ type Client struct {
 }
 
 func New(client *Client, logger *zap.Logger) *Service {
+	userService := NewUserService(client.UserClient, logger)
 	return &Service{
-		AuthService: NewAuthService(client.AuthClient, logger),
-		UserService: NewUserService(client.UserClient, logger),
+		AuthService: NewAuthService(client.AuthClient, logger, userService),
+		UserService: userService,
 	}
 }

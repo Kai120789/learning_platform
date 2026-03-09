@@ -43,11 +43,12 @@ func NewAuthClient(connection *grpc.ClientConn, logger *zap.Logger) *AuthClient 
 	}
 }
 
-func (a *AuthClient) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {
+func (a *AuthClient) Login(req dto.LoginRequest, userId int64) (*dto.LoginResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	grpcBody := &authGRPC.LoginRequest{
+		UserId:   userId,
 		Email:    req.Email,
 		Password: req.Password,
 	}
@@ -64,11 +65,12 @@ func (a *AuthClient) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {
 	}, nil
 }
 
-func (a *AuthClient) Register(req dto.RegisterRequest) (*dto.RegisterResponse, error) {
+func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.RegisterResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	grpcBody := &authGRPC.RegisterRequest{
+		UserId:   userId,
 		Email:    req.Email,
 		Name:     req.Name,
 		Surname:  req.Surname,
@@ -102,6 +104,39 @@ func (a *AuthClient) RefreshTokens(accessToken string) (*string, error) {
 	resAccessToken := res.AccessToken
 
 	return &resAccessToken, nil
+}
+
+func (a *AuthClient) CheckPassword(password string, passwordHash string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := a.client.CheckPassword(ctx, &authGRPC.CheckPasswordRequest{
+		Password:     password,
+		PasswordHash: passwordHash,
+	})
+	if err != nil {
+		a.logger.Error("failed to send check password grpc request", zap.Error(err))
+		return false, err
+	}
+
+	return res.GetIsValid(), nil
+}
+
+func (a *AuthClient) GeneratePasswordHash(password string) (*string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := a.client.GeneratePasswordHash(ctx, &authGRPC.GeneratePasswordHashRequest{
+		Password: password,
+	})
+	if err != nil {
+		a.logger.Error("failed to send check password grpc request", zap.Error(err))
+		return nil, err
+	}
+
+	passwordHash := res.GetPasswordHash()
+
+	return &passwordHash, nil
 }
 
 func (a *AuthClient) Logout(accessToken string) error {

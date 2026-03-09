@@ -1,11 +1,11 @@
 package dto
 
 type LoginRequest struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type LoginResponse struct {
-	AccessToken string
-	UserId      int64
+	AccessToken string `json:"access_token"`
+	UserId      int64  `json:"user_id"`
 }

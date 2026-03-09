@@ -23,8 +23,8 @@ func New(handler *Handler) http.Handler {
 		UserRouter: *NewUserRouter(),
 	}
 
-	router.UserRouter.UserRoutes(r, handler)
-	router.AuthRouter.AuthRoutes(r, handler)
+	router.UserRouter.UserRoutes(r, handler.UserHandler)
+	router.AuthRouter.AuthRoutes(r, handler.AuthHandler)
 
 	return r
 }
