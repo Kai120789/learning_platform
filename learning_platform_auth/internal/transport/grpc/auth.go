@@ -4,8 +4,10 @@ import (
 	"context"
 	authGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/auth"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"learning-platform/auth/internal/dto"
+	"strings"
 )
 
 type AuthService interface {
@@ -81,7 +83,12 @@ func (g *AuthGRPCServer) RefreshTokens(
 	ctx context.Context,
 	in *authGRPC.RefreshTokensRequest,
 ) (*authGRPC.RefreshTokensResponse, error) {
-	newAccessToken, err := g.service.RefreshTokens(in.GetAccessToken())
+	accessTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "incorrect token")
+	}
+
+	newAccessToken, err := g.service.RefreshTokens(*accessTokenFromHeaders)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to refresh tokens")
 	}
@@ -119,7 +126,12 @@ func (g *AuthGRPCServer) Logout(
 	ctx context.Context,
 	in *authGRPC.LogoutRequest,
 ) (*authGRPC.LogoutResponse, error) {
-	err := g.service.Logout(in.AccessToken)
+	accessTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "incorrect token")
+	}
+
+	err = g.service.Logout(*accessTokenFromHeaders)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed logout user")
 	}
@@ -171,4 +183,20 @@ func protoAuthRoleToString(role authGRPC.UserRole) string {
 	default:
 		return "UNSPECIFIED"
 	}
+}
+
+func getAuthTokenFromMetadata(ctx context.Context) (*string, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "no metadata")
+	}
+
+	authHeader := md["authorization"]
+	if len(authHeader) == 0 {
+		return nil, status.Error(codes.Unauthenticated, "no token in metadata")
+	}
+
+	token := strings.TrimPrefix(authHeader[0], "Bearer ")
+
+	return &token, nil
 }
