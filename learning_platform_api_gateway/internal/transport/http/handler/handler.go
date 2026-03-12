@@ -1,6 +1,9 @@
 package handler
 
-import "go.uber.org/zap"
+import (
+	"go.uber.org/zap"
+	"learning-platform/api-gateway/internal/config"
+)
 
 type Handler struct {
 	AuthHandler *AuthHandler
@@ -12,9 +15,9 @@ type Service struct {
 	UserService UserService
 }
 
-func New(service *Service, logger *zap.Logger) *Handler {
+func New(service *Service, logger *zap.Logger, cfg *config.Config) *Handler {
 	return &Handler{
-		AuthHandler: NewAuthHandler(service.AuthService, logger),
+		AuthHandler: NewAuthHandler(service.AuthService, logger, cfg),
 		UserHandler: NewUserHandler(service.UserService, logger),
 	}
 }

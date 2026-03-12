@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
+	"learning-platform/api-gateway/internal/config"
 	"net/http"
 )
 
@@ -15,7 +16,7 @@ type Handler struct {
 	AuthHandler AuthHandler
 }
 
-func New(handler *Handler) http.Handler {
+func New(handler *Handler, cfg *config.Config) http.Handler {
 	r := chi.NewRouter()
 
 	router := &Router{
@@ -24,7 +25,7 @@ func New(handler *Handler) http.Handler {
 	}
 
 	router.UserRouter.UserRoutes(r, handler.UserHandler)
-	router.AuthRouter.AuthRoutes(r, handler.AuthHandler)
+	router.AuthRouter.AuthRoutes(r, handler.AuthHandler, cfg)
 
 	return r
 }

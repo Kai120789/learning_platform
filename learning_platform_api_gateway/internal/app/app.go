@@ -49,12 +49,12 @@ func Start() {
 	handlerLayer := handler.New(&handler.Service{
 		AuthService: serviceLayer.AuthService,
 		UserService: serviceLayer.UserService,
-	}, log)
+	}, log, cfg)
 
 	r := router.New(&router.Handler{
 		AuthHandler: handlerLayer.AuthHandler,
 		UserHandler: handlerLayer.UserHandler,
-	})
+	}, cfg)
 
 	server := &http.Server{
 		Addr:    cfg.ServerAddress,

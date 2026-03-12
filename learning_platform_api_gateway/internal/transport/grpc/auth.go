@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 	"learning-platform/api-gateway/internal/dto"
 	"time"
 )
@@ -93,9 +94,11 @@ func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.Regis
 
 func (a *AuthClient) RefreshTokens(accessToken string) (*string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	md := metadata.Pairs("authorization", "Bearer "+accessToken)
+	ctxWithCooke := metadata.NewOutgoingContext(ctx, md)
 	defer cancel()
 
-	res, err := a.client.RefreshTokens(ctx, &authGRPC.RefreshTokensRequest{AccessToken: accessToken})
+	res, err := a.client.RefreshTokens(ctxWithCooke, &authGRPC.RefreshTokensRequest{})
 	if err != nil {
 		a.logger.Error("failed to send refresh tokens grpc request", zap.Error(err))
 		return nil, err
@@ -141,9 +144,11 @@ func (a *AuthClient) GeneratePasswordHash(password string) (*string, error) {
 
 func (a *AuthClient) Logout(accessToken string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	md := metadata.Pairs("authorization", "Bearer "+accessToken)
+	ctxWithCooke := metadata.NewOutgoingContext(ctx, md)
 	defer cancel()
 
-	_, err := a.client.Logout(ctx, &authGRPC.LogoutRequest{AccessToken: accessToken})
+	_, err := a.client.Logout(ctxWithCooke, &authGRPC.LogoutRequest{})
 	if err != nil {
 		a.logger.Error("failed to send logout grpc request", zap.Error(err))
 		return err
