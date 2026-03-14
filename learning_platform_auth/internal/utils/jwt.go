@@ -16,7 +16,12 @@ type CustomJwtClaims struct {
 }
 
 func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, error) {
-	sessionId := uuid.New().String()
+	var sessionId string
+	if createJwtDto.SessionId != nil {
+		sessionId = *createJwtDto.SessionId
+	} else {
+		sessionId = uuid.New().String()
+	}
 	accessClaims := CustomJwtClaims{
 		createJwtDto.UserId,
 		createJwtDto.UserEmail,

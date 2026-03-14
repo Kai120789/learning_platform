@@ -7,6 +7,6 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AccessToken string
-	UserId      int64
+	SessionId string
+	UserId    int64
 }

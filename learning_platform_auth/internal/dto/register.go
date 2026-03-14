@@ -11,6 +11,6 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	AccessToken string
-	UserId      int64
+	SessionId string
+	UserId    int64
 }

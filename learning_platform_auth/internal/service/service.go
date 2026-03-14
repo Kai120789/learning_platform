@@ -6,6 +6,7 @@ import (
 	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/dto"
 	"learning-platform/auth/internal/utils"
+	"time"
 )
 
 type AuthService struct {
@@ -15,8 +16,10 @@ type AuthService struct {
 }
 
 type RedisStorage interface {
-	SetTokens(userId int64, tokenBundle dto.TokenBundle) error
+	SetSession(userId int64, tokenBundle dto.TokenBundle, ttl time.Duration) error
+	SetTokens(tokenBundle dto.TokenBundle, ttl time.Duration) error
 	DeleteTokens(accessToken string, userId int64) error
+	DeleteAllUserSessions(userId int64) error
 }
 
 func New(
@@ -45,15 +48,15 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		return nil, err
 	}
 
-	err = s.redis.SetTokens(loginData.UserId, *tokenBundle)
+	err = s.redis.SetSession(loginData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24*30)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
 	}
 
 	return &dto.LoginResponse{
-		AccessToken: tokenBundle.AccessToken,
-		UserId:      loginData.UserId,
+		SessionId: tokenBundle.SessionId,
+		UserId:    loginData.UserId,
 	}, nil
 }
 
@@ -71,15 +74,15 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 		return nil, err
 	}
 
-	err = s.redis.SetTokens(registerData.UserId, *tokenBundle)
+	err = s.redis.SetSession(registerData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24*30)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
 	}
 
 	return &dto.RegisterResponse{
-		UserId:      registerData.UserId,
-		AccessToken: tokenBundle.AccessToken,
+		UserId:    registerData.UserId,
+		SessionId: tokenBundle.SessionId,
 	}, nil
 }
 
@@ -90,12 +93,6 @@ func (s *AuthService) RefreshTokens(accessToken string) (*string, error) {
 		return nil, err
 	}
 
-	err = s.redis.DeleteTokens(accessToken, accessClaims.UserId)
-	if err != nil {
-		s.logger.Error("delete token error", zap.Error(err))
-		return nil, err
-	}
-
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
 		UserId:      accessClaims.UserId,
 		UserEmail:   accessClaims.UserEmail,
@@ -103,19 +100,20 @@ func (s *AuthService) RefreshTokens(accessToken string) (*string, error) {
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,
 		RefreshTime: s.config.RefreshTokenLifeTime,
+		SessionId:   &accessClaims.SessionId,
 	}, s.logger)
 	if err != nil {
 		s.logger.Error("create jwt tokens error", zap.Error(err))
 		return nil, err
 	}
 
-	err = s.redis.SetTokens(accessClaims.UserId, *tokenBundle)
+	err = s.redis.SetTokens(*tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24*30)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
 	}
 
-	return &tokenBundle.AccessToken, nil
+	return &tokenBundle.SessionId, nil
 }
 
 func (s *AuthService) CheckPassword(password string, passwordHash string) (bool, error) {
@@ -150,7 +148,7 @@ func (s *AuthService) Logout(accessToken string) error {
 		return err
 	}
 
-	err = s.redis.DeleteTokens(accessToken, accessClaims.UserId)
+	err = s.redis.DeleteTokens(accessClaims.SessionId, accessClaims.UserId)
 	if err != nil {
 		s.logger.Error("delete token error", zap.Error(err))
 		return err
@@ -159,7 +157,9 @@ func (s *AuthService) Logout(accessToken string) error {
 	return nil
 }
 
-func (s *AuthService) LogoutAll() {}
+func (s *AuthService) LogoutAll(userId int64) error {
+	return s.redis.DeleteAllUserSessions(userId)
+}
 
 func (s *AuthService) ChangePassword() {}
 

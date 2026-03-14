@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	authGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -17,7 +18,7 @@ type AuthService interface {
 	CheckPassword(password string, passwordHash string) (bool, error)
 	GeneratePasswordHash(password string) (*string, error)
 	Logout(accessToken string) error
-	LogoutAll()
+	LogoutAll(userId int64) error
 	ChangePassword()
 	ForceChangePassword()
 	ChangeEmail()
@@ -49,8 +50,8 @@ func (g *AuthGRPCServer) Login(
 	}
 
 	return &authGRPC.LoginResponse{
-		AccessToken: res.AccessToken,
-		UserId:      res.UserId,
+		SessionId: res.SessionId,
+		UserId:    res.UserId,
 	}, nil
 }
 
@@ -74,8 +75,8 @@ func (g *AuthGRPCServer) Register(
 	}
 
 	return &authGRPC.RegisterResponse{
-		UserId:      res.UserId,
-		AccessToken: res.AccessToken,
+		UserId:    res.UserId,
+		SessionId: res.SessionId,
 	}, nil
 }
 
@@ -83,18 +84,18 @@ func (g *AuthGRPCServer) RefreshTokens(
 	ctx context.Context,
 	in *authGRPC.RefreshTokensRequest,
 ) (*authGRPC.RefreshTokensResponse, error) {
-	accessTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
+	sessionFromHeaders, err := getAuthTokenFromMetadata(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "incorrect token")
 	}
 
-	newAccessToken, err := g.service.RefreshTokens(*accessTokenFromHeaders)
+	newSessionId, err := g.service.RefreshTokens(*sessionFromHeaders)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to refresh tokens")
 	}
 
 	return &authGRPC.RefreshTokensResponse{
-		AccessToken: *newAccessToken,
+		SessionId: *newSessionId,
 	}, nil
 }
 
@@ -126,12 +127,12 @@ func (g *AuthGRPCServer) Logout(
 	ctx context.Context,
 	in *authGRPC.LogoutRequest,
 ) (*authGRPC.LogoutResponse, error) {
-	accessTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
+	sessionFromHeaders, err := getAuthTokenFromMetadata(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "incorrect token")
 	}
 
-	err = g.service.Logout(*accessTokenFromHeaders)
+	err = g.service.Logout(*sessionFromHeaders)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed logout user")
 	}
@@ -143,7 +144,12 @@ func (g *AuthGRPCServer) LogoutAll(
 	ctx context.Context,
 	in *authGRPC.LogoutAllRequest,
 ) (*authGRPC.LogoutAllResponse, error) {
-	return nil, nil
+	err := g.service.LogoutAll(in.GetUserId())
+	if err != nil {
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed logout all sessions for user: %d", in.GetUserId()))
+	}
+
+	return &authGRPC.LogoutAllResponse{}, nil
 }
 
 func (g *AuthGRPCServer) ChangePassword(
