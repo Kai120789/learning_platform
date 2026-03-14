@@ -30,6 +30,8 @@ func Start() {
 
 	defer redisConn.Close()
 
+	redisLayer := redis.New(redisConn, log)
+
 	client, err := grpc.NewClient(
 		cfg.UserServiceUrl,
 		cfg.AuthServiceUrl,
@@ -42,7 +44,7 @@ func Start() {
 	serviceLayer := service.New(&service.Client{
 		UserClient: client.UserClient,
 		AuthClient: client.AuthClient,
-	}, log)
+	}, log, redisLayer)
 
 	_ = serviceLayer
 
@@ -54,7 +56,7 @@ func Start() {
 	r := router.New(&router.Handler{
 		AuthHandler: handlerLayer.AuthHandler,
 		UserHandler: handlerLayer.UserHandler,
-	}, cfg)
+	}, cfg, redisLayer)
 
 	server := &http.Server{
 		Addr:    cfg.ServerAddress,

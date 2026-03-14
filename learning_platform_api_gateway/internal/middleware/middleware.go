@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"learning-platform/api-gateway/internal/redis"
 	"net/http"
 	"time"
 )
@@ -15,12 +16,12 @@ type CustomJwtClaims struct {
 	jwt.RegisteredClaims
 }
 
-func JWT(secretKey []byte) func(http.Handler) http.Handler {
+func JWT(secretKey []byte, redis *redis.RedisStorage) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			cookie, err := r.Cookie("access_token")
+			cookie, err := r.Cookie("session_id")
 			if err != nil {
-				http.Error(w, "cookie not found", http.StatusNotFound)
+				http.Error(w, "session cookie not found", http.StatusNotFound)
 				return
 			}
 
@@ -29,9 +30,14 @@ func JWT(secretKey []byte) func(http.Handler) http.Handler {
 				return
 			}
 
+			redisTokens, err := redis.GetTokens(cookie.Value)
+			if err != nil {
+				http.Error(w, "tokens not found from redis", http.StatusNotFound)
+			}
+
 			claims := &CustomJwtClaims{}
 
-			token, err := jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (any, error) {
+			token, err := jwt.ParseWithClaims(redisTokens.AccessToken, claims, func(token *jwt.Token) (any, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 				}

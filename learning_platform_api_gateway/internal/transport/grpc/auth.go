@@ -61,8 +61,8 @@ func (a *AuthClient) Login(req dto.LoginRequest, userId int64) (*dto.LoginRespon
 	}
 
 	return &dto.LoginResponse{
-		AccessToken: res.GetAccessToken(),
-		UserId:      res.GetUserId(),
+		SessionId: res.GetSessionId(),
+		UserId:    res.GetUserId(),
 	}, nil
 }
 
@@ -87,8 +87,8 @@ func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.Regis
 	}
 
 	return &dto.RegisterResponse{
-		UserId:      res.GetUserId(),
-		AccessToken: res.GetAccessToken(),
+		UserId:    res.GetUserId(),
+		SessionId: res.GetSessionId(),
 	}, nil
 }
 
@@ -104,9 +104,9 @@ func (a *AuthClient) RefreshTokens(accessToken string) (*string, error) {
 		return nil, err
 	}
 
-	resAccessToken := res.AccessToken
+	resSessionId := res.SessionId
 
-	return &resAccessToken, nil
+	return &resSessionId, nil
 }
 
 func (a *AuthClient) CheckPassword(password string, passwordHash string) (bool, error) {
@@ -149,6 +149,19 @@ func (a *AuthClient) Logout(accessToken string) error {
 	defer cancel()
 
 	_, err := a.client.Logout(ctxWithCooke, &authGRPC.LogoutRequest{})
+	if err != nil {
+		a.logger.Error("failed to send logout grpc request", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+func (a *AuthClient) LogoutAll(userId int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := a.client.LogoutAll(ctx, &authGRPC.LogoutAllRequest{UserId: userId})
 	if err != nil {
 		a.logger.Error("failed to send logout grpc request", zap.Error(err))
 		return err

@@ -9,13 +9,14 @@ import (
 )
 
 type Config struct {
-	LogLevel            string
-	ServerAddress       string
-	AuthServiceUrl      string
-	UserServiceUrl      string
-	RedisUrl            string
-	SignedKey           string
-	AccessTokenLiveTime int64
+	LogLevel             string
+	ServerAddress        string
+	AuthServiceUrl       string
+	UserServiceUrl       string
+	RedisUrl             string
+	SignedKey            string
+	AccessTokenLiveTime  int64
+	RefreshTokenLiveTime int64
 }
 
 func GetConfig() *Config {
@@ -28,6 +29,7 @@ func GetConfig() *Config {
 	cfg.AuthServiceUrl = getEnvStringValue("AUTH_SERVICE_URL")
 	cfg.SignedKey = getEnvStringValue("SIGNED_KEY")
 	cfg.AccessTokenLiveTime = getEnvIntValue("ACCESS_TOKEN_LIVE_TIME", 5)
+	cfg.RefreshTokenLiveTime = getEnvIntValue("REFRESH_TOKEN_LIVE_TIME", 7)
 	cfg.UserServiceUrl = getEnvStringValue("USER_SERVICE_URL")
 	cfg.RedisUrl = getEnvStringValue("REDIS_URL")
 

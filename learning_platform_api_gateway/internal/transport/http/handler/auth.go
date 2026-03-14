@@ -2,11 +2,13 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/config"
 	"learning-platform/api-gateway/internal/dto"
 	"learning-platform/api-gateway/internal/utils"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -20,6 +22,8 @@ type AuthService interface {
 	Login(loginReq dto.LoginRequest) (*dto.LoginResponse, error)
 	Register(registerReq dto.RegisterRequest) (*dto.RegisterResponse, error)
 	Logout(accessToken string) error
+	RefreshTokens(accessToken string) (*string, error)
+	LogoutAll(userId int64) error
 }
 
 func NewAuthHandler(
@@ -48,9 +52,9 @@ func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cookie := utils.CreateCookie(
-		"access_token",
-		res.AccessToken,
-		time.Now().Add(time.Duration(a.cfg.AccessTokenLiveTime)*time.Minute),
+		"session_id",
+		res.SessionId,
+		time.Now().Add(time.Duration(a.cfg.RefreshTokenLiveTime)*time.Hour*24),
 	)
 	http.SetCookie(w, cookie)
 
@@ -73,11 +77,10 @@ func (a *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cookie := utils.CreateCookie(
-		"access_token",
-		res.AccessToken,
-		time.Now().Add(time.Duration(a.cfg.AccessTokenLiveTime)*time.Minute),
+		"session_id",
+		res.SessionId,
+		time.Now().Add(time.Duration(a.cfg.RefreshTokenLiveTime)*time.Hour*24),
 	)
-
 	http.SetCookie(w, cookie)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -85,8 +88,36 @@ func (a *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func (a *AuthHandler) RefreshTokens(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		http.Error(w, "cookie not found", http.StatusNotFound)
+		return
+	}
+
+	if cookie.Value == "" {
+		http.Error(w, "incorrect cookie value", http.StatusBadRequest)
+		return
+	}
+
+	newSessionId, err := a.service.RefreshTokens(cookie.Value)
+	if err != nil {
+		http.Error(w, "failed refresh tokens", http.StatusInternalServerError)
+		return
+	}
+
+	cookie = utils.CreateCookie(
+		"session_id",
+		*newSessionId,
+		time.Now().Add(time.Duration(a.cfg.RefreshTokenLiveTime)*time.Hour*24),
+	)
+	http.SetCookie(w, cookie)
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("access_token")
+	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		http.Error(w, "cookie not found", http.StatusNotFound)
 		return
@@ -103,7 +134,29 @@ func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie = utils.DeleteCookie("access_token")
+	cookie = utils.DeleteCookie("session_id")
 	http.SetCookie(w, cookie)
+	w.WriteHeader(http.StatusOK)
+}
+
+func (a *AuthHandler) LogoutAll(w http.ResponseWriter, r *http.Request) {
+	strUserId := chi.URLParam(r, "userId")
+	if strUserId == "" {
+		http.Error(w, "invalid param user id", http.StatusBadRequest)
+		return
+	}
+
+	userId, err := strconv.Atoi(strUserId)
+	if err != nil {
+		http.Error(w, "error convert string param to int", http.StatusInternalServerError)
+		return
+	}
+
+	err = a.service.LogoutAll(int64(userId))
+	if err != nil {
+		http.Error(w, "failed logout all", http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
