@@ -18,7 +18,7 @@ type AuthService struct {
 type RedisStorage interface {
 	SetSession(userId int64, tokenBundle dto.TokenBundle, ttl time.Duration) error
 	SetTokens(tokenBundle dto.TokenBundle, ttl time.Duration) error
-	DeleteTokens(accessToken string, userId int64) error
+	DeleteTokens(sessionId string, userId int64) error
 	DeleteAllUserSessions(userId int64) error
 }
 
@@ -86,10 +86,10 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 	}, nil
 }
 
-func (s *AuthService) RefreshTokens(accessToken string) (*string, error) {
-	accessClaims, err := utils.GetAccessTokenClaims(accessToken, s.config.SignedKey)
+func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
+	accessClaims, err := utils.GetTokenClaims(refreshToken, s.config.SignedKey)
 	if err != nil {
-		s.logger.Error("get access token claims error", zap.Error(err))
+		s.logger.Error("get refresh token claims error", zap.Error(err))
 		return nil, err
 	}
 
@@ -113,7 +113,7 @@ func (s *AuthService) RefreshTokens(accessToken string) (*string, error) {
 		return nil, err
 	}
 
-	return &tokenBundle.SessionId, nil
+	return &tokenBundle.AccessToken, nil
 }
 
 func (s *AuthService) CheckPassword(password string, passwordHash string) (bool, error) {
@@ -142,7 +142,7 @@ func (s *AuthService) GeneratePasswordHash(password string) (*string, error) {
 }
 
 func (s *AuthService) Logout(accessToken string) error {
-	accessClaims, err := utils.GetAccessTokenClaims(accessToken, s.config.SignedKey)
+	accessClaims, err := utils.GetTokenClaims(accessToken, s.config.SignedKey)
 	if err != nil {
 		s.logger.Error("get access token claims error", zap.Error(err))
 		return err

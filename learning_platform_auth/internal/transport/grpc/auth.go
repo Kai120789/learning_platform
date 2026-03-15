@@ -14,7 +14,7 @@ import (
 type AuthService interface {
 	Login(request dto.LoginRequest) (*dto.LoginResponse, error)
 	Register(request dto.RegisterRequest) (*dto.RegisterResponse, error)
-	RefreshTokens(accessToken string) (*string, error)
+	RefreshTokens(refreshToken string) (*string, error)
 	CheckPassword(password string, passwordHash string) (bool, error)
 	GeneratePasswordHash(password string) (*string, error)
 	Logout(accessToken string) error
@@ -84,18 +84,18 @@ func (g *AuthGRPCServer) RefreshTokens(
 	ctx context.Context,
 	in *authGRPC.RefreshTokensRequest,
 ) (*authGRPC.RefreshTokensResponse, error) {
-	sessionFromHeaders, err := getAuthTokenFromMetadata(ctx)
+	refreshTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "incorrect token")
 	}
 
-	newSessionId, err := g.service.RefreshTokens(*sessionFromHeaders)
+	newAccessToken, err := g.service.RefreshTokens(*refreshTokenFromHeaders)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to refresh tokens")
 	}
 
 	return &authGRPC.RefreshTokensResponse{
-		SessionId: *newSessionId,
+		AccessToken: *newAccessToken,
 	}, nil
 }
 
@@ -127,12 +127,12 @@ func (g *AuthGRPCServer) Logout(
 	ctx context.Context,
 	in *authGRPC.LogoutRequest,
 ) (*authGRPC.LogoutResponse, error) {
-	sessionFromHeaders, err := getAuthTokenFromMetadata(ctx)
+	accessTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "incorrect token")
 	}
 
-	err = g.service.Logout(*sessionFromHeaders)
+	err = g.service.Logout(*accessTokenFromHeaders)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed logout user")
 	}

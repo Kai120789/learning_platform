@@ -16,6 +16,8 @@ github.com/Kai120789/learning_platform_proto v0.1.9 h1:2BumH0/bGsolIHZlgLOHARjZR
 github.com/Kai120789/learning_platform_proto v0.1.9/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/Kai120789/learning_platform_proto v0.2.0 h1:OGb8FUYYefKqBbcTNV4i49cVp0fL+tHZ4AD8OT0ILyg=
 github.com/Kai120789/learning_platform_proto v0.2.0/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.2.1 h1:tga7z2XZcPSpfDgtHhURjCgx9PNPmn0m+VPkKZPCYmk=
+github.com/Kai120789/learning_platform_proto v0.2.1/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=
 github.com/bsm/ginkgo/v2 v2.12.0/go.mod h1:SwYbGRRDovPVboqFv0tPTcG1sN61LM1Z4ARdbAV9g4c=
 github.com/bsm/gomega v1.27.10 h1:yeMWxP2pV2fG3FgAODIY8EiRE3dy0aeFYt4l7wh6yKA=

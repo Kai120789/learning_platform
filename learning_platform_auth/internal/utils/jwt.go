@@ -37,14 +37,17 @@ func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, e
 		log.Error("sign access token error", zap.Error(err))
 		return nil, err
 	}
-
-	refreshToken := jwt.NewWithClaims(
-		jwt.SigningMethodHS256,
+	refreshClaims := CustomJwtClaims{
+		createJwtDto.UserId,
+		createJwtDto.UserEmail,
+		sessionId,
 		jwt.RegisteredClaims{
 			Issuer:    createJwtDto.Issuer,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(createJwtDto.RefreshTime) * time.Hour * 24)),
 		},
-	)
+	}
+
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
 	signedRefreshToken, err := refreshToken.SignedString([]byte(createJwtDto.SignedKey))
 	if err != nil {
 		log.Error("sign refresh token error", zap.Error(err))
@@ -58,8 +61,8 @@ func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, e
 	}, nil
 }
 
-func GetAccessTokenClaims(accessToken string, signedKey string) (*CustomJwtClaims, error) {
-	token, err := jwt.ParseWithClaims(accessToken, &CustomJwtClaims{}, func(token *jwt.Token) (any, error) {
+func GetTokenClaims(JWTToken string, signedKey string) (*CustomJwtClaims, error) {
+	token, err := jwt.ParseWithClaims(JWTToken, &CustomJwtClaims{}, func(token *jwt.Token) (any, error) {
 		return []byte(signedKey), nil
 	})
 	if err != nil {

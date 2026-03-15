@@ -3,7 +3,7 @@ module learning-platform/auth
 go 1.25.6
 
 require (
-	github.com/Kai120789/learning_platform_proto v0.2.0
+	github.com/Kai120789/learning_platform_proto v0.2.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3
