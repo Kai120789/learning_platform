@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/config"
+	"learning-platform/api-gateway/internal/middleware"
 	"learning-platform/api-gateway/internal/redis"
 	"learning-platform/api-gateway/internal/service"
 	"learning-platform/api-gateway/internal/transport/grpc"
@@ -53,10 +54,12 @@ func Start() {
 		UserService: serviceLayer.UserService,
 	}, log, cfg)
 
+	jwtMiddleware := middleware.JWT([]byte(cfg.SignedKey), serviceLayer.AuthService)
+
 	r := router.New(&router.Handler{
 		AuthHandler: handlerLayer.AuthHandler,
 		UserHandler: handlerLayer.UserHandler,
-	}, cfg, redisLayer)
+	}, jwtMiddleware)
 
 	server := &http.Server{
 		Addr:    cfg.ServerAddress,

@@ -2,8 +2,6 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
-	"learning-platform/api-gateway/internal/config"
-	"learning-platform/api-gateway/internal/redis"
 	"net/http"
 )
 
@@ -17,7 +15,10 @@ type Handler struct {
 	AuthHandler AuthHandler
 }
 
-func New(handler *Handler, cfg *config.Config, redis *redis.RedisStorage) http.Handler {
+func New(
+	handler *Handler,
+	jwtMiddleware func(http.Handler) http.Handler,
+) http.Handler {
 	r := chi.NewRouter()
 
 	router := &Router{
@@ -26,7 +27,7 @@ func New(handler *Handler, cfg *config.Config, redis *redis.RedisStorage) http.H
 	}
 
 	router.UserRouter.UserRoutes(r, handler.UserHandler)
-	router.AuthRouter.AuthRoutes(r, handler.AuthHandler, cfg, redis)
+	router.AuthRouter.AuthRoutes(r, handler.AuthHandler, jwtMiddleware)
 
 	return r
 }

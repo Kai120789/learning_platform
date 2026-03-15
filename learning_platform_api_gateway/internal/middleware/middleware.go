@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"learning-platform/api-gateway/internal/redis"
+	"learning-platform/api-gateway/internal/dto"
 	"net/http"
-	"time"
 )
 
 type CustomJwtClaims struct {
@@ -16,7 +16,12 @@ type CustomJwtClaims struct {
 	jwt.RegisteredClaims
 }
 
-func JWT(secretKey []byte, redis *redis.RedisStorage) func(http.Handler) http.Handler {
+type AuthService interface {
+	RefreshTokens(refreshToken string) (*string, error)
+	GetTokens(sessionId string) (*dto.RedisTokens, error)
+}
+
+func JWT(secretKey []byte, authService AuthService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cookie, err := r.Cookie("session_id")
@@ -30,33 +35,72 @@ func JWT(secretKey []byte, redis *redis.RedisStorage) func(http.Handler) http.Ha
 				return
 			}
 
-			redisTokens, err := redis.GetTokens(cookie.Value)
+			redisTokens, err := authService.GetTokens(cookie.Value)
 			if err != nil {
 				http.Error(w, "tokens not found from redis", http.StatusNotFound)
+				clearSessionCookie(w)
+				return
 			}
 
-			claims := &CustomJwtClaims{}
+			accessClaims := &CustomJwtClaims{}
 
-			token, err := jwt.ParseWithClaims(redisTokens.AccessToken, claims, func(token *jwt.Token) (any, error) {
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			_, err = jwt.ParseWithClaims(redisTokens.AccessToken, accessClaims, jwtKey(secretKey))
+
+			if err != nil {
+				if errors.Is(err, jwt.ErrTokenExpired) {
+					refreshClaims := &jwt.RegisteredClaims{}
+
+					refreshToken, err := jwt.ParseWithClaims(redisTokens.RefreshToken, refreshClaims, jwtKey(secretKey))
+
+					if err != nil || !refreshToken.Valid {
+						http.Error(w, "invalid refresh token", http.StatusUnauthorized)
+						clearSessionCookie(w)
+						return
+					}
+
+					newAccessToken, err := authService.RefreshTokens(redisTokens.RefreshToken)
+					if err != nil {
+						http.Error(w, "refresh tokens error", http.StatusInternalServerError)
+						clearSessionCookie(w)
+						return
+					}
+
+					_, err = jwt.ParseWithClaims(*newAccessToken, accessClaims, jwtKey(secretKey))
+					if err != nil {
+						http.Error(w, "invalid new access token", http.StatusUnauthorized)
+						clearSessionCookie(w)
+						return
+					}
+				} else {
+					http.Error(w, "invalid access token", http.StatusUnauthorized)
+					clearSessionCookie(w)
+					return
 				}
-				return secretKey, nil
-			})
-
-			if err != nil || !token.Valid {
-				http.Error(w, "invalid token", http.StatusUnauthorized)
-				return
 			}
 
-			if claims.ExpiresAt != nil && claims.ExpiresAt.Before(time.Now()) {
-				http.Error(w, "token expired", http.StatusUnauthorized)
-				return
-			}
-
-			ctx := context.WithValue(r.Context(), "user_id", claims.UserId)
+			ctx := context.WithValue(r.Context(), "user_id", accessClaims.UserId)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+func jwtKey(secret []byte) jwt.Keyfunc {
+	return func(token *jwt.Token) (any, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return secret, nil
+	}
+}
+
+func clearSessionCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+	})
+	return
 }

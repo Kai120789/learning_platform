@@ -11,7 +11,7 @@ type AuthService struct {
 	client      AuthClient
 	logger      *zap.Logger
 	userService UserAuthService
-	redis       *redis.RedisStorage
+	redis       RedisStorage
 }
 
 type AuthClient interface {
@@ -28,6 +28,10 @@ type UserAuthService interface {
 	GetUserByEmail(email string) (*dto.GetUser, error)
 	CreateUser(newUser dto.RegisterRequest) (*int64, error)
 	GetUserById(id int64) (*dto.GetUser, error)
+}
+
+type RedisStorage interface {
+	GetTokens(sessionId string) (*dto.RedisTokens, error)
 }
 
 func NewAuthService(
@@ -95,13 +99,8 @@ func (a *AuthService) Register(registerReq dto.RegisterRequest) (*dto.RegisterRe
 	return res, nil
 }
 
-func (a *AuthService) RefreshTokens(sessionId string) (*string, error) {
-	tokens, err := a.redis.GetTokens(sessionId)
-	if err != nil {
-		a.logger.Error("failed get tokens by session id", zap.Error(err))
-	}
-
-	res, err := a.client.RefreshTokens(tokens.AccessToken)
+func (a *AuthService) RefreshTokens(refreshToken string) (*string, error) {
+	res, err := a.client.RefreshTokens(refreshToken)
 	if err != nil {
 		a.logger.Error("failed refresh tokens", zap.Error(err))
 		return nil, err
@@ -144,4 +143,8 @@ func (a *AuthService) LogoutAll(userId int64) error {
 	}
 
 	return nil
+}
+
+func (a *AuthService) GetTokens(sessionId string) (*dto.RedisTokens, error) {
+	return a.redis.GetTokens(sessionId)
 }

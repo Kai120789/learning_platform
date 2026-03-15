@@ -2,9 +2,6 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
-	"learning-platform/api-gateway/internal/config"
-	"learning-platform/api-gateway/internal/middleware"
-	"learning-platform/api-gateway/internal/redis"
 	"net/http"
 )
 
@@ -22,12 +19,16 @@ func NewAuthRouter() *AuthRouter {
 	return &AuthRouter{}
 }
 
-func (a *AuthRouter) AuthRoutes(r chi.Router, h AuthHandler, cfg *config.Config, redis *redis.RedisStorage) {
+func (a *AuthRouter) AuthRoutes(
+	r chi.Router,
+	h AuthHandler,
+	jwtMiddleware func(http.Handler) http.Handler,
+) {
 	r.Route("/api/auth", func(r chi.Router) {
 		r.Post("/login", h.Login)
 		r.Post("/register", h.Register)
-		r.With(middleware.JWT([]byte(cfg.SignedKey), redis)).Delete("/logout", h.Logout)
-		r.With(middleware.JWT([]byte(cfg.SignedKey), redis)).Post("/refresh", h.RefreshTokens)           // TODO: пока для тестов тут, потом нельзя будет вызывать рестом
-		r.With(middleware.JWT([]byte(cfg.SignedKey), redis)).Delete("/logout-all/{userId}", h.LogoutAll) // TODO: добавить проверку роли на админа
+		r.With(jwtMiddleware).Delete("/logout", h.Logout)
+		r.With(jwtMiddleware).Post("/refresh", h.RefreshTokens)           // TODO: пока для тестов тут, потом нельзя будет вызывать рестом
+		r.With(jwtMiddleware).Delete("/logout-all/{userId}", h.LogoutAll) // TODO: добавить проверку роли на админа
 	})
 }
