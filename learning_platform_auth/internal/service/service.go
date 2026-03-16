@@ -48,7 +48,7 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		return nil, err
 	}
 
-	err = s.redis.SetSession(loginData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24*30)
+	err = s.redis.SetSession(loginData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
@@ -74,7 +74,7 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 		return nil, err
 	}
 
-	err = s.redis.SetSession(registerData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24*30)
+	err = s.redis.SetSession(registerData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
@@ -107,7 +107,7 @@ func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 		return nil, err
 	}
 
-	err = s.redis.SetTokens(*tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24*30)
+	err = s.redis.SetTokens(*tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
 		s.logger.Error("set tokens error")
 		return nil, err
