@@ -110,8 +110,7 @@ func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie = utils.DeleteCookie("session_id")
-	http.SetCookie(w, cookie)
+	http.SetCookie(w, utils.DeleteCookie("session_id"))
 	w.WriteHeader(http.StatusOK)
 }
 

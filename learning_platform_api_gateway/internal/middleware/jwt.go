@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/utils"
 	"net/http"
+	"time"
 )
 
 type CustomJwtClaims struct {
@@ -21,7 +23,7 @@ type AuthService interface {
 	GetTokens(sessionId string) (*dto.RedisTokens, error)
 }
 
-func JWT(secretKey []byte, authService AuthService) func(http.Handler) http.Handler {
+func JWT(secretKey []byte, refreshTokenTTL int64, authService AuthService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cookie, err := r.Cookie("session_id")
@@ -38,7 +40,7 @@ func JWT(secretKey []byte, authService AuthService) func(http.Handler) http.Hand
 			redisTokens, err := authService.GetTokens(cookie.Value)
 			if err != nil {
 				http.Error(w, "tokens not found from redis", http.StatusNotFound)
-				clearSessionCookie(w)
+				http.SetCookie(w, utils.DeleteCookie("session_id"))
 				return
 			}
 
@@ -54,26 +56,33 @@ func JWT(secretKey []byte, authService AuthService) func(http.Handler) http.Hand
 
 					if err != nil || !refreshToken.Valid {
 						http.Error(w, "invalid refresh token", http.StatusUnauthorized)
-						clearSessionCookie(w)
+						http.SetCookie(w, utils.DeleteCookie("session_id"))
 						return
 					}
 
 					newAccessToken, err := authService.RefreshTokens(redisTokens.RefreshToken)
 					if err != nil {
 						http.Error(w, "refresh tokens error", http.StatusInternalServerError)
-						clearSessionCookie(w)
+						http.SetCookie(w, utils.DeleteCookie("session_id"))
 						return
 					}
 
 					_, err = jwt.ParseWithClaims(*newAccessToken, accessClaims, jwtKey(secretKey))
 					if err != nil {
 						http.Error(w, "invalid new access token", http.StatusUnauthorized)
-						clearSessionCookie(w)
+						http.SetCookie(w, utils.DeleteCookie("session_id"))
 						return
 					}
+
+					cookie := utils.CreateCookie(
+						"session_id",
+						accessClaims.SessionId,
+						time.Now().Add(time.Duration(refreshTokenTTL)*time.Hour*24),
+					)
+					http.SetCookie(w, cookie)
 				} else {
 					http.Error(w, "invalid access token", http.StatusUnauthorized)
-					clearSessionCookie(w)
+					http.SetCookie(w, utils.DeleteCookie("session_id"))
 					return
 				}
 			}
@@ -92,15 +101,4 @@ func jwtKey(secret []byte) jwt.Keyfunc {
 		}
 		return secret, nil
 	}
-}
-
-func clearSessionCookie(w http.ResponseWriter) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
-		Value:    "",
-		Path:     "/",
-		MaxAge:   -1,
-		HttpOnly: true,
-	})
-	return
 }

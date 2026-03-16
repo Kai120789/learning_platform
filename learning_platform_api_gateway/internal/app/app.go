@@ -54,7 +54,7 @@ func Start() {
 		UserService: serviceLayer.UserService,
 	}, log, cfg)
 
-	jwtMiddleware := middleware.JWT([]byte(cfg.SignedKey), serviceLayer.AuthService)
+	jwtMiddleware := middleware.JWT([]byte(cfg.SignedKey), cfg.RefreshTokenLiveTime, serviceLayer.AuthService)
 
 	r := router.New(&router.Handler{
 		AuthHandler: handlerLayer.AuthHandler,
