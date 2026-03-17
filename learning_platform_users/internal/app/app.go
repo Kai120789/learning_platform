@@ -47,7 +47,7 @@ func StartApp() {
 		UserSettingsService: serviceLayer.UserService.UserSettingsService,
 	}, &group.GroupGRPCServer{
 		GroupBaseService: serviceLayer.GroupService.GroupBaseService,
-		GroupUserService: serviceLayer.GroupService.GroupUserService,
+		GroupUserService: nil,
 	})
 
 	log.Info("grpc server started", zap.String("address", cfg.GRPCServerAddress))
