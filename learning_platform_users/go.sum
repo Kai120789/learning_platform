@@ -8,6 +8,12 @@ github.com/Kai120789/learning_platform_proto v0.1.1 h1:DHz1RZZtozIESBlTUUxjBYQX1
 github.com/Kai120789/learning_platform_proto v0.1.1/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/Kai120789/learning_platform_proto v0.1.2 h1:imeedZKcKleeOkr/D6fVymoODCTJ0sGteP/owwsWiK0=
 github.com/Kai120789/learning_platform_proto v0.1.2/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.2.2 h1:ZYgqqYm4uRoQdkz1QgkD9cjOi4l42W/jBxAB3bGIbXk=
+github.com/Kai120789/learning_platform_proto v0.2.2/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.2.3 h1:Q1FdxCws0NwcBa6mI0hOqs436i0nzxEXghv+Cii3sqo=
+github.com/Kai120789/learning_platform_proto v0.2.3/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.2.4 h1:cFdEczJ2xsvXpmz1Wpsbi9/81nxpvV/DCL7qUGVAFgg=
+github.com/Kai120789/learning_platform_proto v0.2.4/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

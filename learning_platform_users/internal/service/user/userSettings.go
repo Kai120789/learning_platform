@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"github.com/Kai120789/learning_platform_models/models"

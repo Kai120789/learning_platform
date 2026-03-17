@@ -1,4 +1,4 @@
-package grpc
+package user
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"learning-platform/users/internal/dto"
 )
 
-type UserService interface {
+type UserBaseService interface {
 	CreateUser(userDto dto.CreateUser) (*int64, error)
 	GetUserById(userId int64) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
@@ -31,7 +31,7 @@ func (g *UserGRPCServer) CreateUser(
 		PasswordHash: in.GetPasswordHash(),
 	}
 
-	userId, err := g.UserService.CreateUser(userDto)
+	userId, err := g.UserBaseService.CreateUser(userDto)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
@@ -45,7 +45,7 @@ func (g *UserGRPCServer) GetUserById(
 	ctx context.Context,
 	in *userGRPC.GetUserByIdRequest,
 ) (*userGRPC.GetUserByIdResponse, error) {
-	res, err := g.UserService.GetUserById(in.GetUserId())
+	res, err := g.UserBaseService.GetUserById(in.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
@@ -61,7 +61,7 @@ func (g *UserGRPCServer) GetUserByEmail(
 	ctx context.Context,
 	in *userGRPC.GetUserByEmailRequest,
 ) (*userGRPC.GetUserByEmailResponse, error) {
-	res, err := g.UserService.GetUserByEmail(in.GetEmail())
+	res, err := g.UserBaseService.GetUserByEmail(in.GetEmail())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
@@ -77,7 +77,7 @@ func (g *UserGRPCServer) GetUserData(
 	ctx context.Context,
 	in *userGRPC.GetUserDataRequest,
 ) (*userGRPC.GetUserDataResponse, error) {
-	res, err := g.UserService.GetUserData(in.GetUserId())
+	res, err := g.UserBaseService.GetUserData(in.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user data")
 	}
@@ -106,7 +106,7 @@ func (g *UserGRPCServer) ChangePassword(
 	ctx context.Context,
 	in *userGRPC.ChangePasswordRequest,
 ) (*userGRPC.ChangePasswordResponse, error) {
-	err := g.UserService.ChangePassword(in.GetUserId(), in.GetNewPassword())
+	err := g.UserBaseService.ChangePassword(in.GetUserId(), in.GetNewPassword())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to change user password")
 	}
@@ -117,7 +117,7 @@ func (g *UserGRPCServer) ChangeEmail(
 	ctx context.Context,
 	in *userGRPC.ChangeEmailRequest,
 ) (*userGRPC.ChangeEmailResponse, error) {
-	err := g.UserService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
+	err := g.UserBaseService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to change user email")
 	}

@@ -1,4 +1,4 @@
-package storage
+package user
 
 import (
 	"context"
@@ -8,22 +8,22 @@ import (
 	"learning-platform/users/internal/dto"
 )
 
-type UserStorage struct {
+type UserBaseStorage struct {
 	logger *zap.Logger
 	conn   *pgxpool.Pool
 }
 
-func NewUserStorage(
+func NewUserBaseStorage(
 	logger *zap.Logger,
 	conn *pgxpool.Pool,
-) *UserStorage {
-	return &UserStorage{
+) *UserBaseStorage {
+	return &UserBaseStorage{
 		logger: logger,
 		conn:   conn,
 	}
 }
 
-func (s *UserStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
+func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	var id int64
 	query := `
 		INSERT INTO users (email, password) 
@@ -45,7 +45,7 @@ func (s *UserStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	return &id, nil
 }
 
-func (s *UserStorage) GetUserById(userId int64) (*models.User, error) {
+func (s *UserBaseStorage) GetUserById(userId int64) (*models.User, error) {
 	var user models.User
 	query := `
 		SELECT *
@@ -69,7 +69,7 @@ func (s *UserStorage) GetUserById(userId int64) (*models.User, error) {
 	return &user, nil
 }
 
-func (s *UserStorage) GetUserByEmail(email string) (*models.User, error) {
+func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	query := `
 		SELECT *
@@ -93,7 +93,7 @@ func (s *UserStorage) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (s *UserStorage) ChangePassword(userId int64, newPasswordHash string) error {
+func (s *UserBaseStorage) ChangePassword(userId int64, newPasswordHash string) error {
 	query := `
 		UPDATE users
 		SET password = $2
@@ -109,7 +109,7 @@ func (s *UserStorage) ChangePassword(userId int64, newPasswordHash string) error
 	return nil
 }
 
-func (s *UserStorage) ChangeEmail(userId int64, newEmail string) error {
+func (s *UserBaseStorage) ChangeEmail(userId int64, newEmail string) error {
 	query := `
 		UPDATE users
 		SET email = $2

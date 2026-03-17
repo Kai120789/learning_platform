@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"github.com/Kai120789/learning_platform_models/models"
@@ -6,14 +6,14 @@ import (
 	"learning-platform/users/internal/dto"
 )
 
-type UserService struct {
+type UserBaseService struct {
 	logger              *zap.Logger
-	storage             UserStorage
+	storage             UserBaseStorage
 	userInfoService     UserInfo
 	userSettingsService UserSettings
 }
 
-type UserStorage interface {
+type UserBaseStorage interface {
 	CreateUser(userDto dto.CreateUser) (*int64, error)
 	GetUserById(userId int64) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
@@ -31,13 +31,13 @@ type UserSettings interface {
 	GetUserSettings(userId int64) (*models.UserSettings, error)
 }
 
-func NewUserService(
+func NewUserBaseService(
 	logger *zap.Logger,
-	storage UserStorage,
+	storage UserBaseStorage,
 	userInfoService UserInfo,
 	userSettingsService UserSettings,
-) *UserService {
-	return &UserService{
+) *UserBaseService {
+	return &UserBaseService{
 		logger:              logger,
 		storage:             storage,
 		userInfoService:     userInfoService,
@@ -45,7 +45,7 @@ func NewUserService(
 	}
 }
 
-func (s *UserService) CreateUser(userDto dto.CreateUser) (*int64, error) {
+func (s *UserBaseService) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	userId, err := s.storage.CreateUser(userDto)
 	if err != nil {
 		s.logger.Error("error create user", zap.Error(err))
@@ -67,7 +67,7 @@ func (s *UserService) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	return userId, nil
 }
 
-func (s *UserService) GetUserData(userId int64) (*dto.UserData, error) {
+func (s *UserBaseService) GetUserData(userId int64) (*dto.UserData, error) {
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
 		s.logger.Error("get user error", zap.Error(err))
@@ -89,18 +89,18 @@ func (s *UserService) GetUserData(userId int64) (*dto.UserData, error) {
 	return formUserDto(user, userInfo, userSettings), nil
 }
 
-func (s *UserService) GetUserById(userId int64) (*models.User, error) {
+func (s *UserBaseService) GetUserById(userId int64) (*models.User, error) {
 	return s.storage.GetUserById(userId)
 }
 
-func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
+func (s *UserBaseService) GetUserByEmail(email string) (*models.User, error) {
 	return s.storage.GetUserByEmail(email)
 }
 
-func (s *UserService) ChangePassword(userId int64, newPasswordHash string) error {
+func (s *UserBaseService) ChangePassword(userId int64, newPasswordHash string) error {
 	return s.storage.ChangePassword(userId, newPasswordHash)
 }
-func (s *UserService) ChangeEmail(userId int64, newEmail string) error {
+func (s *UserBaseService) ChangeEmail(userId int64, newEmail string) error {
 	return s.storage.ChangeEmail(userId, newEmail)
 }
 

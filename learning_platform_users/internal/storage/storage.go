@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
+	"learning-platform/users/internal/storage/group"
+	"learning-platform/users/internal/storage/user"
 )
 
 type Storage struct {
-	UserStorage         *UserStorage
-	UserInfoStorage     *UserInfoStorage
-	UserSettingsStorage *UserSettingsStorage
+	UserStorage  *user.UserStorage
+	GroupStorage *group.GroupStorage
 }
 
 func New(
@@ -18,9 +19,8 @@ func New(
 	conn *pgxpool.Pool,
 ) *Storage {
 	return &Storage{
-		UserStorage:         NewUserStorage(logger, conn),
-		UserInfoStorage:     NewUserInfoStorage(logger, conn),
-		UserSettingsStorage: NewUserSettingsStorage(logger, conn),
+		UserStorage:  user.NewUserStorage(logger, conn),
+		GroupStorage: group.NewGroupStorage(logger, conn),
 	}
 }
 

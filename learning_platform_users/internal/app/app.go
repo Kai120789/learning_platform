@@ -5,8 +5,12 @@ import (
 	"go.uber.org/zap"
 	"learning-platform/users/internal/config"
 	"learning-platform/users/internal/service"
+	groupService "learning-platform/users/internal/service/group"
+	userService "learning-platform/users/internal/service/user"
 	"learning-platform/users/internal/storage"
 	"learning-platform/users/internal/transport/grpc"
+	"learning-platform/users/internal/transport/grpc/group"
+	"learning-platform/users/internal/transport/grpc/user"
 	"learning-platform/users/pkg/logger"
 )
 
@@ -28,16 +32,22 @@ func StartApp() {
 
 	storageLayer := storage.New(log, dbConn)
 
-	serviceLayer := service.New(log, &service.Storage{
-		UserStorage:         storageLayer.UserStorage,
-		UserInfoStorage:     storageLayer.UserInfoStorage,
-		UserSettingsStorage: storageLayer.UserSettingsStorage,
+	serviceLayer := service.New(log, &userService.UserStorage{
+		UserBaseStorage:     storageLayer.UserStorage.UserBaseStorage,
+		UserInfoStorage:     storageLayer.UserStorage.UserInfoStorage,
+		UserSettingsStorage: storageLayer.UserStorage.UserSettingsStorage,
+	}, &groupService.GroupStorage{
+		GroupBaseStorage: storageLayer.GroupStorage.GroupBaseStorage,
+		GroupUserStorage: storageLayer.GroupStorage.GroupUserStorage,
 	})
 
-	grpcServer := grpc.New(log, cfg, &grpc.UserGRPCServer{
-		UserService:         serviceLayer.UserService,
-		UserInfoService:     serviceLayer.UserInfoService,
-		UserSettingsService: serviceLayer.UserSettingsService,
+	grpcServer := grpc.New(log, cfg, &user.UserGRPCServer{
+		UserBaseService:     serviceLayer.UserService.UserBaseService,
+		UserInfoService:     serviceLayer.UserService.UserInfoService,
+		UserSettingsService: serviceLayer.UserService.UserSettingsService,
+	}, &group.GroupGRPCServer{
+		GroupBaseService: serviceLayer.GroupService.GroupBaseService,
+		GroupUserService: serviceLayer.GroupService.GroupUserService,
 	})
 
 	log.Info("grpc server started", zap.String("address", cfg.GRPCServerAddress))
