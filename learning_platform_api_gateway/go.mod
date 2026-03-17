@@ -3,7 +3,7 @@ module learning-platform/api-gateway
 go 1.25.6
 
 require (
-	github.com/Kai120789/learning_platform_proto v0.2.4
+	github.com/Kai120789/learning_platform_proto v0.2.7
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
