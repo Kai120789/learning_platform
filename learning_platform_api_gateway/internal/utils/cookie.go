@@ -13,6 +13,7 @@ func CreateCookie(name string, value string, expiresIn time.Time) *http.Cookie {
 		HttpOnly: true,
 		Secure:   false,
 		Expires:  expiresIn,
+		SameSite: http.SameSiteStrictMode,
 	}
 }
 
