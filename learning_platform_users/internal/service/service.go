@@ -7,8 +7,8 @@ import (
 )
 
 type Service struct {
-	GroupService group.GroupService
-	UserService  user.UserService
+	UserService  *user.UserService
+	GroupService *group.GroupService
 }
 
 func New(
@@ -16,8 +16,9 @@ func New(
 	userStorage *user.UserStorage,
 	groupStorage *group.GroupStorage,
 ) *Service {
+	userService := user.NewUserService(logger, userStorage)
 	return &Service{
-		GroupService: *group.NewGroupService(logger, groupStorage),
-		UserService:  *user.NewUserService(logger, userStorage),
+		UserService:  userService,
+		GroupService: group.NewGroupService(logger, groupStorage, userService.UserBaseService),
 	}
 }

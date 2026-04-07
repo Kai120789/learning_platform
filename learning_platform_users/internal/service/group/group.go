@@ -15,9 +15,12 @@ type GroupStorage struct {
 func NewGroupService(
 	logger *zap.Logger,
 	storage *GroupStorage,
+	userService GetUserService,
 ) *GroupService {
+	groupBaseService := NewGroupBaseService(logger, storage.GroupBaseStorage)
+
 	return &GroupService{
-		GroupBaseService: NewGroupBaseService(logger, storage.GroupBaseStorage),
-		GroupUserService: NewGroupUserService(logger, storage.GroupUserStorage),
+		GroupBaseService: groupBaseService,
+		GroupUserService: NewGroupUserService(logger, storage.GroupUserStorage, userService, groupBaseService),
 	}
 }
