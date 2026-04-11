@@ -2,14 +2,12 @@ package service
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/dto"
 	"learning-platform/api-gateway/internal/redis"
 )
 
 type AuthService struct {
 	client      AuthClient
-	logger      *zap.Logger
 	userService UserAuthService
 	redis       RedisStorage
 }
@@ -36,13 +34,11 @@ type RedisStorage interface {
 
 func NewAuthService(
 	client AuthClient,
-	logger *zap.Logger,
 	userService UserAuthService,
 	redis *redis.RedisStorage,
 ) *AuthService {
 	return &AuthService{
 		client:      client,
-		logger:      logger,
 		userService: userService,
 		redis:       redis,
 	}
@@ -51,24 +47,20 @@ func NewAuthService(
 func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, error) {
 	user, err := a.userService.GetUserByEmail(loginReq.Email)
 	if err != nil {
-		a.logger.Error("failed get user by email", zap.Error(err))
 		return nil, err
 	}
 
 	if user == nil {
-		a.logger.Error("user does not exists", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("user does not exists, %w", err)
 	}
 
 	isValid, err := a.client.CheckPassword(loginReq.Password, user.PasswordHash)
 	if err != nil || !isValid {
-		a.logger.Error("attempt login with incorrect password")
 		return nil, err
 	}
 
 	res, err := a.client.Login(loginReq, user.UserId)
 	if err != nil {
-		a.logger.Error("failed login", zap.Error(err))
 		return nil, err
 	}
 
@@ -78,7 +70,6 @@ func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, erro
 func (a *AuthService) Register(registerReq dto.RegisterRequest) (*dto.RegisterResponse, error) {
 	passwordHash, err := a.client.GeneratePasswordHash(registerReq.Password)
 	if err != nil {
-		a.logger.Error("failed generate hash from password", zap.Error(err))
 		return nil, err
 	}
 
@@ -86,13 +77,11 @@ func (a *AuthService) Register(registerReq dto.RegisterRequest) (*dto.RegisterRe
 
 	userId, err := a.userService.CreateUser(registerReq)
 	if err != nil {
-		a.logger.Error("failed create user", zap.Error(err))
 		return nil, err
 	}
 
 	res, err := a.client.Register(registerReq, *userId)
 	if err != nil {
-		a.logger.Error("failed register", zap.Error(err))
 		return nil, err
 	}
 
@@ -102,7 +91,6 @@ func (a *AuthService) Register(registerReq dto.RegisterRequest) (*dto.RegisterRe
 func (a *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 	res, err := a.client.RefreshTokens(refreshToken)
 	if err != nil {
-		a.logger.Error("failed refresh tokens", zap.Error(err))
 		return nil, err
 	}
 
@@ -112,12 +100,11 @@ func (a *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 func (a *AuthService) Logout(sessionId string) error {
 	tokens, err := a.redis.GetTokens(sessionId)
 	if err != nil {
-		a.logger.Error("failed get tokens by session id", zap.Error(err))
+		return err
 	}
 
 	err = a.client.Logout(tokens.AccessToken)
 	if err != nil {
-		a.logger.Error("failed logout", zap.Error(err))
 		return err
 	}
 
@@ -127,18 +114,15 @@ func (a *AuthService) Logout(sessionId string) error {
 func (a *AuthService) LogoutAll(userId int64) error {
 	user, err := a.userService.GetUserById(userId)
 	if err != nil {
-		a.logger.Error("failed get user by email", zap.Error(err))
 		return err
 	}
 
 	if user == nil {
-		a.logger.Error("user does not exists", zap.Error(err))
-		return err
+		return fmt.Errorf("user does not exists, %w", err)
 	}
 
 	err = a.client.LogoutAll(userId)
 	if err != nil {
-		a.logger.Error(fmt.Sprintf("failed logout all sessions for user: %d", userId), zap.Error(err))
 		return err
 	}
 

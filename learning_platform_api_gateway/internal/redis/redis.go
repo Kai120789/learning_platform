@@ -5,19 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/dto"
 )
 
 type RedisStorage struct {
 	client *redis.Client
-	logger *zap.Logger
 }
 
-func New(client *redis.Client, logger *zap.Logger) *RedisStorage {
+func New(client *redis.Client) *RedisStorage {
 	return &RedisStorage{
 		client: client,
-		logger: logger,
 	}
 }
 
@@ -43,13 +40,11 @@ func (r *RedisStorage) GetTokens(sessionId string) (*dto.RedisTokens, error) {
 		fmt.Sprintf("tokenBundle:%s", sessionId),
 	).Result()
 	if err != nil {
-		r.logger.Error("error get tokens to redis", zap.Error(err))
 		return nil, err
 	}
 
 	data, err := json.Marshal(tokenBundle)
 	if err != nil {
-		r.logger.Error("marshal map to json error", zap.Error(err))
 		return nil, err
 	}
 

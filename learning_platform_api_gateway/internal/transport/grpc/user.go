@@ -23,23 +23,21 @@ UpdateUserInfo
 UpdateUserSettings
 */
 
-func NewUserGrpcConnection(userGrpcUrl string, logger *zap.Logger) (*grpc.ClientConn, error) {
+func NewUserGrpcConnection(userGrpcUrl string) (*grpc.ClientConn, error) {
 	conn, err := grpc.NewClient(
 		userGrpcUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
-		logger.Error("failed to create user grpc client", zap.Error(err))
 		return nil, err
 	}
 
 	return conn, nil
 }
 
-func NewUserClient(connection *grpc.ClientConn, logger *zap.Logger) *UserClient {
+func NewUserClient(connection *grpc.ClientConn) *UserClient {
 	return &UserClient{
 		client: userGRPC.NewUserClient(connection),
-		logger: logger,
 	}
 }
 

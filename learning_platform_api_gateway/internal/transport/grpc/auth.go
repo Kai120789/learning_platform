@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	authGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/auth"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -13,7 +12,6 @@ import (
 
 type AuthClient struct {
 	client authGRPC.AuthClient
-	logger *zap.Logger
 }
 
 /*
@@ -24,23 +22,21 @@ ChangeEmail
 ForceChangeEmail
 */
 
-func NewAuthGrpcConnection(authGrpcUrl string, logger *zap.Logger) (*grpc.ClientConn, error) {
+func NewAuthGrpcConnection(authGrpcUrl string) (*grpc.ClientConn, error) {
 	conn, err := grpc.NewClient(
 		authGrpcUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
-		logger.Error("failed to create auth grpc client", zap.Error(err))
 		return nil, err
 	}
 
 	return conn, nil
 }
 
-func NewAuthClient(connection *grpc.ClientConn, logger *zap.Logger) *AuthClient {
+func NewAuthClient(connection *grpc.ClientConn) *AuthClient {
 	return &AuthClient{
 		client: authGRPC.NewAuthClient(connection),
-		logger: logger,
 	}
 }
 
@@ -56,7 +52,6 @@ func (a *AuthClient) Login(req dto.LoginRequest, userId int64) (*dto.LoginRespon
 
 	res, err := a.client.Login(ctx, grpcBody)
 	if err != nil {
-		a.logger.Error("failed to send login grpc request", zap.Error(err))
 		return nil, err
 	}
 
@@ -82,7 +77,6 @@ func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.Regis
 
 	res, err := a.client.Register(ctx, grpcBody)
 	if err != nil {
-		a.logger.Error("failed to send register grpc request", zap.Error(err))
 		return nil, err
 	}
 
@@ -100,7 +94,6 @@ func (a *AuthClient) RefreshTokens(refreshToken string) (*string, error) {
 
 	res, err := a.client.RefreshTokens(ctxWithCooke, &authGRPC.RefreshTokensRequest{})
 	if err != nil {
-		a.logger.Error("failed to send refresh tokens grpc request", zap.Error(err))
 		return nil, err
 	}
 
@@ -118,7 +111,6 @@ func (a *AuthClient) CheckPassword(password string, passwordHash string) (bool, 
 		PasswordHash: passwordHash,
 	})
 	if err != nil {
-		a.logger.Error("failed to send check password grpc request", zap.Error(err))
 		return false, err
 	}
 
@@ -133,7 +125,6 @@ func (a *AuthClient) GeneratePasswordHash(password string) (*string, error) {
 		Password: password,
 	})
 	if err != nil {
-		a.logger.Error("failed to send check password grpc request", zap.Error(err))
 		return nil, err
 	}
 
@@ -150,7 +141,6 @@ func (a *AuthClient) Logout(accessToken string) error {
 
 	_, err := a.client.Logout(ctxWithCooke, &authGRPC.LogoutRequest{})
 	if err != nil {
-		a.logger.Error("failed to send logout grpc request", zap.Error(err))
 		return err
 	}
 
@@ -163,7 +153,6 @@ func (a *AuthClient) LogoutAll(userId int64) error {
 
 	_, err := a.client.LogoutAll(ctx, &authGRPC.LogoutAllRequest{UserId: userId})
 	if err != nil {
-		a.logger.Error("failed to send logout grpc request", zap.Error(err))
 		return err
 	}
 

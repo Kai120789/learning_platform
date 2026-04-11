@@ -31,12 +31,11 @@ func Start() {
 
 	defer redisConn.Close()
 
-	redisLayer := redis.New(redisConn, log)
+	redisLayer := redis.New(redisConn)
 
 	client, err := grpc.NewClient(
 		cfg.UserServiceUrl,
 		cfg.AuthServiceUrl,
-		log,
 	)
 	if err != nil {
 		log.Fatal("init grpc client error", zap.Error(err))
@@ -45,7 +44,7 @@ func Start() {
 	serviceLayer := service.New(&service.Client{
 		UserClient: client.UserClient,
 		AuthClient: client.AuthClient,
-	}, log, redisLayer)
+	}, redisLayer)
 
 	_ = serviceLayer
 

@@ -40,13 +40,15 @@ func NewAuthHandler(
 func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq dto.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
+		a.logger.Error("failed decode login request", zap.Error(err))
 		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
 
 	res, err := a.service.Login(loginReq)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		a.logger.Error("failed login user", zap.Error(err))
+		http.Error(w, "failed login user", http.StatusInternalServerError)
 		return
 	}
 
@@ -65,13 +67,15 @@ func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (a *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var registerReq dto.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&registerReq); err != nil {
+		a.logger.Error("failed decode register body", zap.Error(err))
 		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
 
 	res, err := a.service.Register(registerReq)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		a.logger.Error("failed registration user", zap.Error(err))
+		http.Error(w, "failed registration user", http.StatusInternalServerError)
 		return
 	}
 
@@ -95,17 +99,20 @@ func (a *AuthHandler) RefreshTokens(w http.ResponseWriter, r *http.Request) {
 func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
+		a.logger.Error("failed get request cookie", zap.Error(err))
 		http.Error(w, "cookie not found", http.StatusNotFound)
 		return
 	}
 
 	if cookie.Value == "" {
+		a.logger.Error("incorrect cookie value", zap.Error(err))
 		http.Error(w, "incorrect cookie value", http.StatusBadRequest)
 		return
 	}
 
 	err = a.service.Logout(cookie.Value)
 	if err != nil {
+		a.logger.Error("failed logout user", zap.Error(err))
 		http.Error(w, "failed logout user", http.StatusInternalServerError)
 		return
 	}
@@ -117,18 +124,21 @@ func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 func (a *AuthHandler) LogoutAll(w http.ResponseWriter, r *http.Request) {
 	strUserId := chi.URLParam(r, "userId")
 	if strUserId == "" {
+		a.logger.Error("invalid param user id")
 		http.Error(w, "invalid param user id", http.StatusBadRequest)
 		return
 	}
 
 	userId, err := strconv.Atoi(strUserId)
 	if err != nil {
+		a.logger.Error("error convert string param to int", zap.Error(err))
 		http.Error(w, "error convert string param to int", http.StatusInternalServerError)
 		return
 	}
 
 	err = a.service.LogoutAll(int64(userId))
 	if err != nil {
+		a.logger.Error("failed logout all", zap.Error(err))
 		http.Error(w, "failed logout all", http.StatusInternalServerError)
 		return
 	}

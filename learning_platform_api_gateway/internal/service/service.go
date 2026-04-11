@@ -1,7 +1,6 @@
 package service
 
 import (
-	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/redis"
 )
 
@@ -15,10 +14,10 @@ type Client struct {
 	UserClient UserClient
 }
 
-func New(client *Client, logger *zap.Logger, redis *redis.RedisStorage) *Service {
-	userService := NewUserService(client.UserClient, logger)
+func New(client *Client, redis *redis.RedisStorage) *Service {
+	userService := NewUserService(client.UserClient)
 	return &Service{
-		AuthService: NewAuthService(client.AuthClient, logger, userService, redis),
+		AuthService: NewAuthService(client.AuthClient, userService, redis),
 		UserService: userService,
 	}
 }
