@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Kai120789/learning_platform_models/models"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
@@ -33,6 +34,11 @@ func (g *UserGRPCServer) CreateUser(
 
 	userId, err := g.UserBaseService.CreateUser(userDto)
 	if err != nil {
+		g.logger.Error(
+			"failed to create user",
+			zap.String("email", in.GetEmail()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 
@@ -47,6 +53,11 @@ func (g *UserGRPCServer) GetUserById(
 ) (*userGRPC.GetUserByIdResponse, error) {
 	res, err := g.UserBaseService.GetUserById(in.GetUserId())
 	if err != nil {
+		g.logger.Error(
+			"failed to get user",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
@@ -63,6 +74,11 @@ func (g *UserGRPCServer) GetUserByEmail(
 ) (*userGRPC.GetUserByEmailResponse, error) {
 	res, err := g.UserBaseService.GetUserByEmail(in.GetEmail())
 	if err != nil {
+		g.logger.Error(
+			"failed to get user by email",
+			zap.String("userEmail", in.GetEmail()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
@@ -79,6 +95,11 @@ func (g *UserGRPCServer) GetUserData(
 ) (*userGRPC.GetUserDataResponse, error) {
 	res, err := g.UserBaseService.GetUserData(in.GetUserId())
 	if err != nil {
+		g.logger.Error(
+			"failed to get user data",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to get user data")
 	}
 
@@ -108,6 +129,11 @@ func (g *UserGRPCServer) ChangePassword(
 ) (*userGRPC.ChangePasswordResponse, error) {
 	err := g.UserBaseService.ChangePassword(in.GetUserId(), in.GetNewPassword())
 	if err != nil {
+		g.logger.Error(
+			"failed to change password",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to change user password")
 	}
 	return &userGRPC.ChangePasswordResponse{}, nil
@@ -119,6 +145,11 @@ func (g *UserGRPCServer) ChangeEmail(
 ) (*userGRPC.ChangeEmailResponse, error) {
 	err := g.UserBaseService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
 	if err != nil {
+		g.logger.Error(
+			"failed to change email",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to change user email")
 	}
 	return &userGRPC.ChangeEmailResponse{}, nil

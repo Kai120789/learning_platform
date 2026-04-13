@@ -2,24 +2,21 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type UserSettingsStorage struct {
-	logger *zap.Logger
-	conn   *pgxpool.Pool
+	conn *pgxpool.Pool
 }
 
 func NewUserSettingsStorage(
-	logger *zap.Logger,
 	conn *pgxpool.Pool,
 ) *UserSettingsStorage {
 	return &UserSettingsStorage{
-		logger: logger,
-		conn:   conn,
+		conn: conn,
 	}
 }
 
@@ -35,8 +32,7 @@ func (s *UserSettingsStorage) CreateUserSettings(userId int64) error {
 	)
 
 	if err != nil {
-		s.logger.Error("insert data to user_settings table error", zap.Error(err))
-		return err
+		return fmt.Errorf("insert settings for user %d: %w", userId, err)
 	}
 
 	return nil
@@ -59,8 +55,7 @@ func (s *UserSettingsStorage) GetUserSettings(userId int64) (*models.UserSetting
 	)
 
 	if err != nil {
-		s.logger.Error("get user settings from db error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get settings for user %d: %w", userId, err)
 	}
 	return &userSettings, nil
 }
@@ -83,8 +78,7 @@ func (s *UserSettingsStorage) UpdateUserSettings(userSettings dto.UserSettings) 
 	)
 
 	if err != nil {
-		s.logger.Error("update user settings in db error", zap.Error(err))
-		return err
+		return fmt.Errorf("update info for user %d: %w", userSettings.UserId, err)
 	}
 	return nil
 }

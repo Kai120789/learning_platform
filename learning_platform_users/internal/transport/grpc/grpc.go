@@ -35,6 +35,7 @@ func New(
 			user.UserBaseService,
 			user.UserSettingsService,
 			user.UserInfoService,
+			logger,
 		),
 	)
 
@@ -43,6 +44,7 @@ func New(
 		groupGrpcServer.NewGroupGRPCServer(
 			group.GroupBaseService,
 			group.GroupUserService,
+			logger,
 		),
 	)
 

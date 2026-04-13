@@ -3,19 +3,17 @@ package group
 import (
 	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type GroupUserService struct {
-	logger  *zap.Logger
 	storage GroupUserStorage
 	user    GetUserService
 	group   GetGroupService
 }
 
 type GroupUserStorage interface {
-	AddUsersToGroup(userId int64, groupId int64) error
+	AddUsersToGroup(userIds []int64, groupId int64) error
 	RemoveUserFromGroup(userId int64, groupId int64) error
 	GetUserGroups(userId int64) ([]models.Group, error)
 	GetGroupsByTutorId(tutorId int64) ([]models.Group, error)
@@ -31,41 +29,37 @@ type GetUserService interface {
 }
 
 func NewGroupUserService(
-	logger *zap.Logger,
 	storage GroupUserStorage,
 	user GetUserService,
 	group GetGroupService,
 ) *GroupUserService {
 	return &GroupUserService{
-		logger:  logger,
 		storage: storage,
 		user:    user,
 		group:   group,
 	}
 }
 
-func (g *GroupUserService) AddUsersToGroup(userId int64, groupId int64) ([]dto.ShortUserInfo, error) {
-	user, err := g.user.GetUserById(userId)
-	if user == nil {
-		g.logger.Error(fmt.Sprintf("user with id %d not found", userId), zap.Error(err))
-		return nil, err
-	} else if err != nil {
-		g.logger.Error("failed get user by id", zap.Error(err))
-		return nil, err
+func (g *GroupUserService) AddUsersToGroup(userIds []int64, groupId int64) ([]dto.ShortUserInfo, error) {
+	for _, userId := range userIds {
+		user, err := g.user.GetUserById(userId)
+		if user == nil {
+			return nil, fmt.Errorf("add user to group (user not found): %w", err)
+		} else if err != nil {
+			return nil, fmt.Errorf("add user to group (get user): %w", err)
+		}
 	}
 
 	group, err := g.group.GetGroupById(groupId)
 	if group == nil {
-		g.logger.Error(fmt.Sprintf("group with id %d not found", groupId), zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("add user to group (group not found): %w", err)
 	} else if err != nil {
-		g.logger.Error("failed get group by id", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("add user to group (get group): %w", err)
 	}
 
-	err = g.storage.AddUsersToGroup(userId, groupId)
+	err = g.storage.AddUsersToGroup(userIds, groupId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("add user to group: %w", err)
 	}
 
 	return g.storage.GetGroupUsers(groupId)
@@ -74,25 +68,21 @@ func (g *GroupUserService) AddUsersToGroup(userId int64, groupId int64) ([]dto.S
 func (g *GroupUserService) RemoveUserFromGroup(userId int64, groupId int64) error {
 	user, err := g.user.GetUserById(userId)
 	if user == nil {
-		g.logger.Error(fmt.Sprintf("user with id %d not found", userId), zap.Error(err))
-		return err
+		return fmt.Errorf("remove user from group (user not found): %w", err)
 	} else if err != nil {
-		g.logger.Error("failed get user by id", zap.Error(err))
-		return err
+		return fmt.Errorf("remove user from group (get user): %w", err)
 	}
 
 	group, err := g.group.GetGroupById(groupId)
 	if group == nil {
-		g.logger.Error(fmt.Sprintf("group with id %d not found", groupId), zap.Error(err))
-		return err
+		return fmt.Errorf("remove user from group (group not found): %w", err)
 	} else if err != nil {
-		g.logger.Error("failed get group by id", zap.Error(err))
-		return err
+		return fmt.Errorf("remove user from group (get group): %w", err)
 	}
 
 	err = g.storage.RemoveUserFromGroup(userId, groupId)
 	if err != nil {
-		return err
+		return fmt.Errorf("remove userfrom group: %w", err)
 	}
 
 	return nil
@@ -101,16 +91,14 @@ func (g *GroupUserService) RemoveUserFromGroup(userId int64, groupId int64) erro
 func (g *GroupUserService) GetUserGroups(userId int64) ([]models.Group, error) {
 	user, err := g.user.GetUserById(userId)
 	if user == nil {
-		g.logger.Error(fmt.Sprintf("user with id %d not found", userId), zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user groups (user not found): %w", err)
 	} else if err != nil {
-		g.logger.Error("failed get user by id", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user groups (get user): %w", err)
 	}
 
 	res, err := g.storage.GetUserGroups(userId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get user groups: %w", err)
 	}
 
 	return res, nil
@@ -119,16 +107,14 @@ func (g *GroupUserService) GetUserGroups(userId int64) ([]models.Group, error) {
 func (g *GroupUserService) GetGroupsByTutorId(tutorId int64) ([]models.Group, error) {
 	user, err := g.user.GetUserById(tutorId)
 	if user == nil {
-		g.logger.Error(fmt.Sprintf("tutor with id %d not found", tutorId), zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get tutor groups (user not found): %w", err)
 	} else if err != nil {
-		g.logger.Error("failed get user by id", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get tutor groups (get user): %w", err)
 	}
 
 	res, err := g.storage.GetGroupsByTutorId(tutorId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get tutor groups: %w", err)
 	}
 
 	return res, nil
@@ -137,16 +123,14 @@ func (g *GroupUserService) GetGroupsByTutorId(tutorId int64) ([]models.Group, er
 func (g *GroupUserService) GetGroupUsers(groupId int64) ([]dto.ShortUserInfo, error) {
 	group, err := g.group.GetGroupById(groupId)
 	if group == nil {
-		g.logger.Error(fmt.Sprintf("group with id %d not found", groupId), zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get group users (group not found): %w", err)
 	} else if err != nil {
-		g.logger.Error("failed get group by id", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get group users (get group): %w", err)
 	}
 
 	res, err := g.storage.GetGroupUsers(groupId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get group users: %w", err)
 	}
 
 	return res, nil

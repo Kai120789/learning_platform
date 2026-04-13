@@ -7,22 +7,18 @@ import (
 	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type GroupBaseStorage struct {
-	logger *zap.Logger
-	conn   *pgxpool.Pool
+	conn *pgxpool.Pool
 }
 
 func NewGroupBaseStorage(
-	logger *zap.Logger,
 	conn *pgxpool.Pool,
 ) *GroupBaseStorage {
 	return &GroupBaseStorage{
-		logger: logger,
-		conn:   conn,
+		conn: conn,
 	}
 }
 
@@ -47,8 +43,7 @@ func (g *GroupBaseStorage) CreateGroup(
 		groupDto.TgChatId,
 	).Scan(&id)
 	if err != nil {
-		g.logger.Error("failed create group in db", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create group %s in db: %w", groupDto.Title, err)
 	}
 
 	return &id, nil
@@ -78,8 +73,7 @@ func (g *GroupBaseStorage) UpdateGroup(
 		groupDto.TgChatId,
 	)
 	if err != nil {
-		g.logger.Error("failed update group in db", zap.Error(err))
-		return err
+		return fmt.Errorf("update group %d in db: %w", id, err)
 	}
 
 	return nil
@@ -90,8 +84,7 @@ func (g *GroupBaseStorage) RemoveGroup(id int64) error {
 
 	_, err := g.conn.Exec(context.Background(), query, id)
 	if err != nil {
-		g.logger.Error("failed remove group from db", zap.Error(err))
-		return err
+		return fmt.Errorf("remove group %d in db: %w", id, err)
 	}
 
 	return nil
@@ -117,13 +110,11 @@ func (g *GroupBaseStorage) GetGroupById(id int64) (*models.Group, error) {
 		&group.TgChatId,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
-		g.logger.Error(fmt.Sprintf("no group in db with id %d", id), zap.Error(err))
-		return nil, nil
+		return nil, fmt.Errorf("group %d not found in db: %w", id, err)
 	}
 
 	if err != nil {
-		g.logger.Error("failed get group from db", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get group %d from db: %w", id, err)
 	}
 
 	return &group, nil
@@ -141,8 +132,7 @@ func (g *GroupBaseStorage) GetGroups() ([]models.Group, error) {
 		query,
 	)
 	if err != nil {
-		g.logger.Error("failed create get all boards query", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get all groups from db: %w", err)
 	}
 
 	for rows.Next() {
@@ -157,8 +147,7 @@ func (g *GroupBaseStorage) GetGroups() ([]models.Group, error) {
 			&group.TgChatId,
 		)
 		if err != nil {
-			g.logger.Error("failed get one group of all", zap.Error(err))
-			return nil, err
+			return nil, fmt.Errorf("scan one group from db: %w", err)
 		}
 
 		allGroups = append(allGroups, group)

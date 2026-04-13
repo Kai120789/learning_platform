@@ -15,12 +15,11 @@ type Storage struct {
 }
 
 func New(
-	logger *zap.Logger,
 	conn *pgxpool.Pool,
 ) *Storage {
 	return &Storage{
-		UserStorage:  user.NewUserStorage(logger, conn),
-		GroupStorage: group.NewGroupStorage(logger, conn),
+		UserStorage:  user.NewUserStorage(conn),
+		GroupStorage: group.NewGroupStorage(conn),
 	}
 }
 

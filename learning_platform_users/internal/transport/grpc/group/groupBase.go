@@ -2,9 +2,9 @@ package group
 
 import (
 	"context"
-	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
 	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
@@ -36,6 +36,11 @@ func (g *GroupGRPCServer) CreateGroup(
 
 	group, err := g.GroupBaseService.CreateGroup(createGroupDto)
 	if err != nil {
+		g.logger.Error(
+			"failed create group",
+			zap.String("title", in.GetTitle()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed create group")
 	}
 
@@ -66,6 +71,11 @@ func (g *GroupGRPCServer) UpdateGroup(
 
 	group, err := g.GroupBaseService.UpdateGroup(in.GetId(), updateGroupDto)
 	if err != nil {
+		g.logger.Error(
+			"failed update group",
+			zap.Int64("id", in.GetId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed update group")
 	}
 
@@ -87,6 +97,11 @@ func (g *GroupGRPCServer) RemoveGroup(
 ) (*groupGRPC.RemoveGroupResponse, error) {
 	err := g.GroupBaseService.RemoveGroup(in.GetId())
 	if err != nil {
+		g.logger.Error(
+			"failed remove group",
+			zap.Int64("id", in.GetId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed delete group")
 	}
 
@@ -99,11 +114,21 @@ func (g *GroupGRPCServer) GetGroupById(
 ) (*groupGRPC.GetGroupByIdResponse, error) {
 	group, err := g.GroupBaseService.GetGroupById(in.GetId())
 	if err != nil {
+		g.logger.Error(
+			"failed get group",
+			zap.Int64("id", in.GetId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed get group by id")
 	}
 
 	if group == nil {
-		return nil, status.Error(codes.NotFound, fmt.Sprintf("group with id %d not found", in.GetId()))
+		g.logger.Error(
+			"group not found",
+			zap.Int64("id", in.GetId()),
+			zap.Error(err),
+		)
+		return nil, status.Error(codes.NotFound, "group not found")
 	}
 
 	return &groupGRPC.GetGroupByIdResponse{
@@ -123,6 +148,10 @@ func (g *GroupGRPCServer) GetGroups(
 ) (*groupGRPC.GetGroupsResponse, error) {
 	groups, err := g.GroupBaseService.GetGroups()
 	if err != nil {
+		g.logger.Error(
+			"failed get groups",
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed get groups")
 	}
 

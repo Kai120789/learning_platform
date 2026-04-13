@@ -1,7 +1,6 @@
 package service
 
 import (
-	"go.uber.org/zap"
 	"learning-platform/users/internal/service/group"
 	"learning-platform/users/internal/service/user"
 )
@@ -12,13 +11,12 @@ type Service struct {
 }
 
 func New(
-	logger *zap.Logger,
 	userStorage *user.UserStorage,
 	groupStorage *group.GroupStorage,
 ) *Service {
-	userService := user.NewUserService(logger, userStorage)
+	userService := user.NewUserService(userStorage)
 	return &Service{
 		UserService:  userService,
-		GroupService: group.NewGroupService(logger, groupStorage, userService.UserBaseService),
+		GroupService: group.NewGroupService(groupStorage, userService.UserBaseService),
 	}
 }

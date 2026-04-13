@@ -17,12 +17,11 @@ type UserStorage struct {
 }
 
 func NewUserService(
-	logger *zap.Logger,
 	storage *UserStorage,
 ) *UserService {
-	userInfoService := NewUserInfoService(logger, storage.UserInfoStorage)
-	userSettingsService := NewUserSettingsService(logger, storage.UserSettingsStorage)
-	userBaseService := NewUserBaseService(logger, storage.UserBaseStorage, userInfoService, userSettingsService)
+	userInfoService := NewUserInfoService(storage.UserInfoStorage)
+	userSettingsService := NewUserSettingsService(storage.UserSettingsStorage)
+	userBaseService := NewUserBaseService(storage.UserBaseStorage, userInfoService, userSettingsService)
 
 	return &UserService{
 		UserBaseService:     userBaseService,

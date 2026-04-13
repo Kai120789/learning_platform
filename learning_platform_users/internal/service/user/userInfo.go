@@ -1,13 +1,12 @@
 package user
 
 import (
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type UserInfoService struct {
-	logger  *zap.Logger
 	storage UserInfoStorage
 }
 
@@ -18,28 +17,35 @@ type UserInfoStorage interface {
 }
 
 func NewUserInfoService(
-	logger *zap.Logger,
 	storage UserInfoStorage,
 ) *UserInfoService {
 	return &UserInfoService{
-		logger:  logger,
 		storage: storage,
 	}
 }
 
 func (s *UserInfoService) CreateUserInfo(userId int64, userDto dto.CreateUser) error {
-	return s.storage.CreateUserInfo(userId, userDto)
+	err := s.storage.CreateUserInfo(userId, userDto)
+	if err != nil {
+		return fmt.Errorf("create user info: %w", err)
+	}
+
+	return nil
 }
 
 func (s *UserInfoService) GetUserInfo(userId int64) (*models.UserInfo, error) {
-	return s.storage.GetUserInfo(userId)
+	userInfo, err := s.storage.GetUserInfo(userId)
+	if err != nil {
+		return nil, fmt.Errorf("get user info: %w", err)
+	}
+
+	return userInfo, nil
 }
 
 func (s *UserInfoService) UpdateUserInfo(userInfo dto.UserInfo) (*models.UserInfo, error) {
 	err := s.storage.UpdateUserInfo(userInfo)
 	if err != nil {
-		s.logger.Error("update user info error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("update user info: %w", err)
 	}
 
 	return s.storage.GetUserInfo(userInfo.UserId)

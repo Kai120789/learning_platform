@@ -1,13 +1,12 @@
 package user
 
 import (
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type UserSettingsService struct {
-	logger  *zap.Logger
 	storage UserSettingsStorage
 }
 
@@ -18,28 +17,41 @@ type UserSettingsStorage interface {
 }
 
 func NewUserSettingsService(
-	logger *zap.Logger,
 	storage UserSettingsStorage,
 ) *UserSettingsService {
 	return &UserSettingsService{
-		logger:  logger,
 		storage: storage,
 	}
 }
 
 func (s *UserSettingsService) CreateUserSettings(userId int64) error {
-	return s.storage.CreateUserSettings(userId)
+	err := s.storage.CreateUserSettings(userId)
+	if err != nil {
+		return fmt.Errorf("create user settings: %w", err)
+	}
+
+	return nil
 }
 
 func (s *UserSettingsService) GetUserSettings(userId int64) (*models.UserSettings, error) {
-	return s.storage.GetUserSettings(userId)
+	userSettings, err := s.storage.GetUserSettings(userId)
+	if err != nil {
+		return nil, fmt.Errorf("get user settings: %w", err)
+	}
+
+	return userSettings, nil
 }
 
 func (s *UserSettingsService) UpdateUserSettings(userSettings dto.UserSettings) (*models.UserSettings, error) {
 	err := s.storage.UpdateUserSettings(userSettings)
 	if err != nil {
-		s.logger.Error("update user settings error", zap.Error(err))
+		return nil, fmt.Errorf("update user settings: %w", err)
 	}
 
-	return s.storage.GetUserSettings(userSettings.UserId)
+	resSettings, err := s.storage.GetUserSettings(userSettings.UserId)
+	if err != nil {
+		return nil, fmt.Errorf("update user settings (get): %w", err)
+	}
+
+	return resSettings, nil
 }

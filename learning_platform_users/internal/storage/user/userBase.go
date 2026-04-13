@@ -2,24 +2,21 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type UserBaseStorage struct {
-	logger *zap.Logger
-	conn   *pgxpool.Pool
+	conn *pgxpool.Pool
 }
 
 func NewUserBaseStorage(
-	logger *zap.Logger,
 	conn *pgxpool.Pool,
 ) *UserBaseStorage {
 	return &UserBaseStorage{
-		logger: logger,
-		conn:   conn,
+		conn: conn,
 	}
 }
 
@@ -38,8 +35,7 @@ func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 		userDto.PasswordHash,
 	).Scan(&id)
 	if err != nil {
-		s.logger.Error("insert data to users table error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("insert user %s to db: %w", userDto.Email, err)
 	}
 
 	return &id, nil
@@ -62,8 +58,7 @@ func (s *UserBaseStorage) GetUserById(userId int64) (*models.User, error) {
 	)
 
 	if err != nil {
-		s.logger.Error("get user by id from db error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user by id %d from db: %w", userId, err)
 	}
 
 	return &user, nil
@@ -86,8 +81,7 @@ func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	)
 
 	if err != nil {
-		s.logger.Error("get user by email from db error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user by email %s from db: %w", email, err)
 	}
 
 	return &user, nil
@@ -102,8 +96,7 @@ func (s *UserBaseStorage) ChangePassword(userId int64, newPasswordHash string) e
 
 	_, err := s.conn.Exec(context.Background(), query, userId, newPasswordHash)
 	if err != nil {
-		s.logger.Error("update password in users table error", zap.Error(err))
-		return err
+		return fmt.Errorf("change password for user %d: %w", userId, err)
 	}
 
 	return nil
@@ -118,8 +111,7 @@ func (s *UserBaseStorage) ChangeEmail(userId int64, newEmail string) error {
 
 	_, err := s.conn.Exec(context.Background(), query, userId, newEmail)
 	if err != nil {
-		s.logger.Error("update email in users table error", zap.Error(err))
-		return err
+		return fmt.Errorf("change email for user %d: %w", userId, err)
 	}
 
 	return nil

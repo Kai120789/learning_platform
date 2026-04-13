@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Kai120789/learning_platform_models/models"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
@@ -29,6 +30,11 @@ func (g *UserGRPCServer) UpdateUserInfo(
 
 	res, err := g.UserInfoService.UpdateUserInfo(userInfo)
 	if err != nil {
+		g.logger.Error(
+			"failed to update user info",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to update user info")
 	}
 	return &userGRPC.UpdateUserInfoResponse{

@@ -30,9 +30,9 @@ func StartApp() {
 	}
 	defer dbConn.Close()
 
-	storageLayer := storage.New(log, dbConn)
+	storageLayer := storage.New(dbConn)
 
-	serviceLayer := service.New(log, &userService.UserStorage{
+	serviceLayer := service.New(&userService.UserStorage{
 		UserBaseStorage:     storageLayer.UserStorage.UserBaseStorage,
 		UserInfoStorage:     storageLayer.UserStorage.UserInfoStorage,
 		UserSettingsStorage: storageLayer.UserStorage.UserSettingsStorage,

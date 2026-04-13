@@ -12,12 +12,11 @@ type UserStorage struct {
 }
 
 func NewUserStorage(
-	logger *zap.Logger,
 	conn *pgxpool.Pool,
 ) *UserStorage {
 	return &UserStorage{
-		UserBaseStorage:     NewUserBaseStorage(logger, conn),
-		UserInfoStorage:     NewUserInfoStorage(logger, conn),
-		UserSettingsStorage: NewUserSettingsStorage(logger, conn),
+		UserBaseStorage:     NewUserBaseStorage(conn),
+		UserInfoStorage:     NewUserInfoStorage(conn),
+		UserSettingsStorage: NewUserSettingsStorage(conn),
 	}
 }

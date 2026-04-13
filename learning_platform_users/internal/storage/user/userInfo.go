@@ -2,24 +2,21 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type UserInfoStorage struct {
-	logger *zap.Logger
-	conn   *pgxpool.Pool
+	conn *pgxpool.Pool
 }
 
 func NewUserInfoStorage(
-	logger *zap.Logger,
 	conn *pgxpool.Pool,
 ) *UserInfoStorage {
 	return &UserInfoStorage{
-		logger: logger,
-		conn:   conn,
+		conn: conn,
 	}
 }
 
@@ -46,8 +43,7 @@ func (s *UserInfoStorage) CreateUserInfo(userId int64, userDto dto.CreateUser) e
 	)
 
 	if err != nil {
-		s.logger.Error("insert data to user_info table error", zap.Error(err))
-		return err
+		return fmt.Errorf("insert info for user %d: %w", userId, err)
 	}
 
 	return nil
@@ -76,8 +72,7 @@ func (s *UserInfoStorage) GetUserInfo(userId int64) (*models.UserInfo, error) {
 	)
 
 	if err != nil {
-		s.logger.Error("get user info from db error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get info for user %d: %w", userId, err)
 	}
 	return &userInfo, nil
 }
@@ -108,8 +103,7 @@ func (s *UserInfoStorage) UpdateUserInfo(userInfo dto.UserInfo) error {
 	)
 
 	if err != nil {
-		s.logger.Error("update user info in db error", zap.Error(err))
-		return err
+		return fmt.Errorf("update info for user %d: %w", userInfo.UserId, err)
 	}
 	return nil
 }

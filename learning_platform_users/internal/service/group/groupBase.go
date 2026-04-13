@@ -1,13 +1,12 @@
 package group
 
 import (
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type GroupBaseService struct {
-	logger  *zap.Logger
 	storage GroupBaseStorage
 }
 
@@ -20,11 +19,9 @@ type GroupBaseStorage interface {
 }
 
 func NewGroupBaseService(
-	logger *zap.Logger,
 	storage GroupBaseStorage,
 ) *GroupBaseService {
 	return &GroupBaseService{
-		logger:  logger,
 		storage: storage,
 	}
 }
@@ -32,8 +29,7 @@ func NewGroupBaseService(
 func (g *GroupBaseService) CreateGroup(groupDto dto.CreateGroup) (*models.Group, error) {
 	groupId, err := g.storage.CreateGroup(groupDto)
 	if err != nil {
-		g.logger.Error("create group error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create group: %w", err)
 	}
 
 	return g.GetGroupById(*groupId)
@@ -42,8 +38,7 @@ func (g *GroupBaseService) CreateGroup(groupDto dto.CreateGroup) (*models.Group,
 func (g *GroupBaseService) UpdateGroup(id int64, groupDto dto.UpdateGroup) (*models.Group, error) {
 	err := g.storage.UpdateGroup(id, groupDto)
 	if err != nil {
-		g.logger.Error("update group error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("update group: %w", err)
 	}
 
 	return g.GetGroupById(id)
@@ -52,17 +47,25 @@ func (g *GroupBaseService) UpdateGroup(id int64, groupDto dto.UpdateGroup) (*mod
 func (g *GroupBaseService) RemoveGroup(id int64) error {
 	err := g.storage.RemoveGroup(id)
 	if err != nil {
-		g.logger.Error("remove group error", zap.Error(err))
-		return err
+		return fmt.Errorf("remove group: %w", err)
 	}
 
 	return nil
 }
 
 func (g *GroupBaseService) GetGroupById(id int64) (*models.Group, error) {
-	return g.storage.GetGroupById(id)
+	group, err := g.storage.GetGroupById(id)
+	if err != nil {
+		return nil, fmt.Errorf("get group: %w", err)
+	}
+
+	return group, nil
 }
 
 func (g *GroupBaseService) GetGroups() ([]models.Group, error) {
-	return g.storage.GetGroups()
+	groups, err := g.storage.GetGroups()
+	if err != nil {
+		return nil, fmt.Errorf("get groups: %w", err)
+	}
+	return groups, nil
 }

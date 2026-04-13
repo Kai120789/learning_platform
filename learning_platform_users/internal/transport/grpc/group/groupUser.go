@@ -4,13 +4,14 @@ import (
 	"context"
 	"github.com/Kai120789/learning_platform_models/models"
 	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
 )
 
 type GroupUserService interface {
-	AddUsersToGroup(userId []int64, groupId int64) ([]dto.ShortUserInfo, error)
+	AddUsersToGroup(userIds []int64, groupId int64) ([]dto.ShortUserInfo, error)
 	RemoveUserFromGroup(userId int64, groupId int64) error
 	GetUserGroups(userId int64) ([]models.Group, error)
 	GetGroupsByTutorId(tutorId int64) ([]models.Group, error)
@@ -26,6 +27,12 @@ func (g *GroupGRPCServer) AddUsersToGroup(
 		in.GetGroupId(),
 	)
 	if err != nil {
+		g.logger.Error(
+			"failed add user to group",
+			zap.Int64s("userIds", in.GetUserIds()),
+			zap.Int64("groupId", in.GetGroupId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed add user to group")
 	}
 
@@ -53,6 +60,12 @@ func (g *GroupGRPCServer) RemoveUserFromGroup(
 		in.GetGroupId(),
 	)
 	if err != nil {
+		g.logger.Error(
+			"failed remove user from group",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("groupId", in.GetGroupId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed remove user from group")
 	}
 
@@ -65,6 +78,11 @@ func (g *GroupGRPCServer) GetUserGroups(
 ) (*groupGRPC.GetUserGroupsResponse, error) {
 	groups, err := g.GroupUserService.GetUserGroups(in.GetUserId())
 	if err != nil {
+		g.logger.Error(
+			"failed get user groups",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed get user groups")
 	}
 
@@ -92,6 +110,11 @@ func (g *GroupGRPCServer) GetGroupsByTutorId(
 ) (*groupGRPC.GetGroupsByTutorIdResponse, error) {
 	groups, err := g.GroupUserService.GetUserGroups(in.GetTutorId())
 	if err != nil {
+		g.logger.Error(
+			"failed get tutor groups",
+			zap.Int64("tutorId", in.GetTutorId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed get tutor groups")
 	}
 
@@ -119,6 +142,11 @@ func (g *GroupGRPCServer) GetGroupUsers(
 ) (*groupGRPC.GetGroupUsersResponse, error) {
 	groupUsers, err := g.GroupUserService.GetGroupUsers(in.GetGroupId())
 	if err != nil {
+		g.logger.Error(
+			"failed get group users",
+			zap.Int64("groupId", in.GetGroupId()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed get group users")
 	}
 

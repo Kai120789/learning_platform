@@ -1,13 +1,12 @@
 package user
 
 import (
+	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
-	"go.uber.org/zap"
 	"learning-platform/users/internal/dto"
 )
 
 type UserBaseService struct {
-	logger              *zap.Logger
 	storage             UserBaseStorage
 	userInfoService     UserInfo
 	userSettingsService UserSettings
@@ -32,13 +31,11 @@ type UserSettings interface {
 }
 
 func NewUserBaseService(
-	logger *zap.Logger,
 	storage UserBaseStorage,
 	userInfoService UserInfo,
 	userSettingsService UserSettings,
 ) *UserBaseService {
 	return &UserBaseService{
-		logger:              logger,
 		storage:             storage,
 		userInfoService:     userInfoService,
 		userSettingsService: userSettingsService,
@@ -48,20 +45,17 @@ func NewUserBaseService(
 func (s *UserBaseService) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	userId, err := s.storage.CreateUser(userDto)
 	if err != nil {
-		s.logger.Error("error create user", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create user: %w", err)
 	}
 
 	err = s.userInfoService.CreateUserInfo(*userId, userDto)
 	if err != nil {
-		s.logger.Error("error create user info", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create user (info): %w", err)
 	}
 
 	err = s.userSettingsService.CreateUserSettings(*userId)
 	if err != nil {
-		s.logger.Error("error create user settings", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create user (settings): %w", err)
 	}
 
 	return userId, nil
@@ -70,38 +64,52 @@ func (s *UserBaseService) CreateUser(userDto dto.CreateUser) (*int64, error) {
 func (s *UserBaseService) GetUserData(userId int64) (*dto.UserData, error) {
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		s.logger.Error("get user error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user data: %w", err)
 	}
 
 	userInfo, err := s.userInfoService.GetUserInfo(userId)
 	if err != nil {
-		s.logger.Error("get user info error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user data (info): %w", err)
 	}
 
 	userSettings, err := s.userSettingsService.GetUserSettings(userId)
 	if err != nil {
-		s.logger.Error("get user settings error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get user data (settings): %w", err)
 	}
 
 	return formUserDto(user, userInfo, userSettings), nil
 }
 
 func (s *UserBaseService) GetUserById(userId int64) (*models.User, error) {
-	return s.storage.GetUserById(userId)
+	user, err := s.storage.GetUserById(userId)
+	if err != nil {
+		return nil, fmt.Errorf("get user by id: %w", err)
+	}
+
+	return user, nil
 }
 
 func (s *UserBaseService) GetUserByEmail(email string) (*models.User, error) {
-	return s.storage.GetUserByEmail(email)
+	user, err := s.storage.GetUserByEmail(email)
+	if err != nil {
+		return nil, fmt.Errorf("get user by email: %w", err)
+	}
+	return user, nil
 }
 
 func (s *UserBaseService) ChangePassword(userId int64, newPasswordHash string) error {
-	return s.storage.ChangePassword(userId, newPasswordHash)
+	err := s.storage.ChangePassword(userId, newPasswordHash)
+	if err != nil {
+		return fmt.Errorf("change password: %w", err)
+	}
+	return nil
 }
 func (s *UserBaseService) ChangeEmail(userId int64, newEmail string) error {
-	return s.storage.ChangeEmail(userId, newEmail)
+	err := s.storage.ChangeEmail(userId, newEmail)
+	if err != nil {
+		return fmt.Errorf("change email: %w", err)
+	}
+	return nil
 }
 
 func formUserDto(
