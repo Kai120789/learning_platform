@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go.uber.org/zap"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/dto"
@@ -11,7 +11,6 @@ import (
 
 type AuthService struct {
 	config *config.Config
-	logger *zap.Logger
 	redis  RedisStorage
 }
 
@@ -24,12 +23,10 @@ type RedisStorage interface {
 
 func New(
 	config *config.Config,
-	logger *zap.Logger,
 	redis RedisStorage,
 ) *AuthService {
 	return &AuthService{
 		config: config,
-		logger: logger,
 		redis:  redis,
 	}
 }
@@ -42,16 +39,14 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,
 		RefreshTime: s.config.RefreshTokenLifeTime,
-	}, s.logger)
+	})
 	if err != nil {
-		s.logger.Error("create jwt tokens error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create jwt tokens error: %w", err)
 	}
 
 	err = s.redis.SetSession(loginData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
-		s.logger.Error("set tokens error")
-		return nil, err
+		return nil, fmt.Errorf("set tokens error: %w", err)
 	}
 
 	return &dto.LoginResponse{
@@ -68,16 +63,14 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,
 		RefreshTime: s.config.RefreshTokenLifeTime,
-	}, s.logger)
+	})
 	if err != nil {
-		s.logger.Error("create jwt tokens error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create jwt tokens error: %w", err)
 	}
 
 	err = s.redis.SetSession(registerData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
-		s.logger.Error("set tokens error")
-		return nil, err
+		return nil, fmt.Errorf("set tokens error: %w", err)
 	}
 
 	return &dto.RegisterResponse{
@@ -89,8 +82,7 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 	accessClaims, err := utils.GetTokenClaims(refreshToken, s.config.SignedKey)
 	if err != nil {
-		s.logger.Error("get refresh token claims error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("get refresh token claims error: %w", err)
 	}
 
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
@@ -101,16 +93,14 @@ func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 		AccessTime:  s.config.AccessTokenLifeTime,
 		RefreshTime: s.config.RefreshTokenLifeTime,
 		SessionId:   &accessClaims.SessionId,
-	}, s.logger)
+	})
 	if err != nil {
-		s.logger.Error("create jwt tokens error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("create jwt tokens error: %w", err)
 	}
 
 	err = s.redis.SetTokens(*tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
-		s.logger.Error("set tokens error")
-		return nil, err
+		return nil, fmt.Errorf("set tokens error: %w", err)
 	}
 
 	return &tokenBundle.AccessToken, nil
@@ -122,8 +112,7 @@ func (s *AuthService) CheckPassword(password string, passwordHash string) (bool,
 		[]byte(password),
 	)
 	if err != nil {
-		s.logger.Error("attempt login with incorrect password", zap.Error(err))
-		return false, err
+		return false, fmt.Errorf("attempt login with incorrect password: %w", err)
 	}
 
 	return true, nil
@@ -132,8 +121,7 @@ func (s *AuthService) CheckPassword(password string, passwordHash string) (bool,
 func (s *AuthService) GeneratePasswordHash(password string) (*string, error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), int(s.config.Salt))
 	if err != nil {
-		s.logger.Error("generate hash for password error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("generate hash for password error: %w", err)
 	}
 
 	resPasswordHash := string(passwordHash)
@@ -144,14 +132,12 @@ func (s *AuthService) GeneratePasswordHash(password string) (*string, error) {
 func (s *AuthService) Logout(accessToken string) error {
 	accessClaims, err := utils.GetTokenClaims(accessToken, s.config.SignedKey)
 	if err != nil {
-		s.logger.Error("get access token claims error", zap.Error(err))
-		return err
+		return fmt.Errorf("get access token claims error: %w", err)
 	}
 
 	err = s.redis.DeleteTokens(accessClaims.SessionId, accessClaims.UserId)
 	if err != nil {
-		s.logger.Error("delete token error", zap.Error(err))
-		return err
+		return fmt.Errorf("delete token error: %w", err)
 	}
 
 	return nil

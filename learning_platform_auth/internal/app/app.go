@@ -26,9 +26,9 @@ func Start() {
 	}
 	defer redisConn.Close()
 
-	redisStorage := redis.New(redisConn, log, cfg)
+	redisStorage := redis.New(redisConn, cfg)
 
-	serviceLayer := service.New(cfg, log, redisStorage)
+	serviceLayer := service.New(cfg, redisStorage)
 
 	gRPCServer := grpc.New(cfg, log, serviceLayer)
 

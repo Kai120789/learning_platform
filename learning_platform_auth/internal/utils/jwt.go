@@ -3,7 +3,6 @@ package utils
 import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"go.uber.org/zap"
 	"learning-platform/auth/internal/dto"
 	"time"
 )
@@ -15,7 +14,7 @@ type CustomJwtClaims struct {
 	jwt.RegisteredClaims
 }
 
-func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, error) {
+func CreateJWT(createJwtDto dto.CreateJWT) (*dto.TokenBundle, error) {
 	var sessionId string
 	if createJwtDto.SessionId != nil {
 		sessionId = *createJwtDto.SessionId
@@ -34,7 +33,6 @@ func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, e
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
 	signedAccessToken, err := accessToken.SignedString([]byte(createJwtDto.SignedKey))
 	if err != nil {
-		log.Error("sign access token error", zap.Error(err))
 		return nil, err
 	}
 	refreshClaims := CustomJwtClaims{
@@ -50,7 +48,6 @@ func CreateJWT(createJwtDto dto.CreateJWT, log *zap.Logger) (*dto.TokenBundle, e
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
 	signedRefreshToken, err := refreshToken.SignedString([]byte(createJwtDto.SignedKey))
 	if err != nil {
-		log.Error("sign refresh token error", zap.Error(err))
 		return nil, err
 	}
 

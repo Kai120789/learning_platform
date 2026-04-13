@@ -22,7 +22,7 @@ func New(config *config.Config, logger *zap.Logger, service AuthService) *GRPCSe
 		recovery.UnaryServerInterceptor(),
 	))
 
-	authGRPC.RegisterAuthServer(gRPCServer, NewAuthGRPCServer(service))
+	authGRPC.RegisterAuthServer(gRPCServer, NewAuthGRPCServer(service, logger))
 
 	reflection.Register(gRPCServer)
 

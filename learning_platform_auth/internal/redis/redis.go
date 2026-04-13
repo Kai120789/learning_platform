@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 	"learning-platform/auth/internal/config"
 	"learning-platform/auth/internal/dto"
 	"time"
@@ -14,18 +13,15 @@ import (
 
 type RedisStorage struct {
 	client *redis.Client
-	logger *zap.Logger
 	config *config.Config
 }
 
 func New(
 	client *redis.Client,
-	logger *zap.Logger,
 	config *config.Config,
 ) *RedisStorage {
 	return &RedisStorage{
 		client: client,
-		logger: logger,
 		config: config,
 	}
 }
@@ -49,8 +45,7 @@ func Connection(redisUrl string) (*redis.Client, error) {
 func (r *RedisStorage) SetSession(userId int64, tokenBundle dto.TokenBundle, ttl time.Duration) error {
 	err := r.SetTokens(tokenBundle, ttl)
 	if err != nil {
-		r.logger.Error("error set tokens to redis")
-		return err
+		return fmt.Errorf("error set tokens to redis: %w", err)
 	}
 
 	redisSessions, err := r.client.HGet(
@@ -61,25 +56,21 @@ func (r *RedisStorage) SetSession(userId int64, tokenBundle dto.TokenBundle, ttl
 	if errors.Is(err, redis.Nil) {
 		err := r.setUserSessions(userId, []string{tokenBundle.SessionId})
 		if err != nil {
-			r.logger.Error("error set first session to user-session to redis", zap.Error(err))
-			return err
+			return fmt.Errorf("error set first session to user-session to redis: %w", err)
 		}
 	} else if err != nil {
-		r.logger.Error("error get user sessions from redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error get user sessions from redis: %w", err)
 	} else {
 		var sessions []string
 		err = json.Unmarshal([]byte(redisSessions), &sessions)
 		if err != nil {
-			r.logger.Error("error unmarshal sessions from redis", zap.Error(err))
-			return err
+			return fmt.Errorf("error unmarshal sessions from redis: %w", err)
 		}
 
 		sessions = append(sessions, tokenBundle.SessionId)
 		err := r.setUserSessions(userId, sessions)
 		if err != nil {
-			r.logger.Error("error set new session in user-sessions to redis", zap.Error(err))
-			return err
+			return fmt.Errorf("error set new session in user-sessions to redis: %w", err)
 		}
 	}
 	return nil
@@ -93,8 +84,7 @@ func (r *RedisStorage) SetTokens(tokenBundle dto.TokenBundle, ttl time.Duration)
 		"refresh_token", tokenBundle.RefreshToken,
 	).Result()
 	if err != nil {
-		r.logger.Error("error set tokens to redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error set tokens to redis: %w", err)
 	}
 
 	r.client.Expire(context.Background(), fmt.Sprintf("tokenBundle:%s", tokenBundle.SessionId), ttl)
@@ -108,8 +98,7 @@ func (r *RedisStorage) DeleteTokens(sessionId string, userId int64) error {
 		fmt.Sprintf("tokenBundle:%s", sessionId),
 	).Result()
 	if err != nil {
-		r.logger.Error(fmt.Sprintf("error delete tokens from redis by session: %s", sessionId), zap.Error(err))
-		return err
+		return fmt.Errorf("error delete tokens from redis by session %s: %w", sessionId, err)
 	}
 
 	redisSessions, err := r.client.HGet(
@@ -118,15 +107,13 @@ func (r *RedisStorage) DeleteTokens(sessionId string, userId int64) error {
 		"session_id",
 	).Result()
 	if err != nil {
-		r.logger.Error("error get user sessions from redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error get user sessions from redis: %w", err)
 	}
 
 	var sessions []string
 	err = json.Unmarshal([]byte(redisSessions), &sessions)
 	if err != nil {
-		r.logger.Error("error unmarshal tokens from redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error unmarshal tokens from redis: %w", err)
 	}
 
 	for i := 0; i < len(sessions); i++ {
@@ -137,8 +124,7 @@ func (r *RedisStorage) DeleteTokens(sessionId string, userId int64) error {
 
 	err = r.setUserSessions(userId, sessions)
 	if err != nil {
-		r.logger.Error("error set new sessions in user-sessions to redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error set new sessions in user-sessions to redis: %w", err)
 	}
 
 	return nil
@@ -151,8 +137,7 @@ func (r *RedisStorage) DeleteAllUserSessions(userId int64) error {
 		"session_id",
 	).Result()
 	if err != nil {
-		r.logger.Error("error get user sessions from redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error get user sessions from redis: %w", err)
 	}
 
 	var sessions []string
@@ -161,8 +146,7 @@ func (r *RedisStorage) DeleteAllUserSessions(userId int64) error {
 	for _, session := range sessions {
 		err := r.DeleteTokens(session, userId)
 		if err != nil {
-			r.logger.Error(fmt.Sprintf("error delete tokens"))
-			return err
+			return fmt.Errorf("error delete tokens: %w", err)
 		}
 	}
 
@@ -171,7 +155,7 @@ func (r *RedisStorage) DeleteAllUserSessions(userId int64) error {
 		fmt.Sprintf("userSessions:%d", userId),
 	).Result()
 	if err != nil {
-		r.logger.Error(fmt.Sprintf("failed delete sessions for user: %d", userId), zap.Error(err))
+		return fmt.Errorf("failed delete sessions for user %d: %w", userId, err)
 	}
 
 	return nil
@@ -180,8 +164,7 @@ func (r *RedisStorage) DeleteAllUserSessions(userId int64) error {
 func (r *RedisStorage) setUserSessions(userId int64, sessions []string) error {
 	jsonSessions, err := json.Marshal(sessions)
 	if err != nil {
-		r.logger.Error("marshal body with tokens error", zap.Error(err))
-		return err
+		return fmt.Errorf("marshal body with tokens error: %w", err)
 	}
 
 	_, err = r.client.HSet(
@@ -191,8 +174,7 @@ func (r *RedisStorage) setUserSessions(userId int64, sessions []string) error {
 		jsonSessions,
 	).Result()
 	if err != nil {
-		r.logger.Error("error set tokens in user-sessions to redis", zap.Error(err))
-		return err
+		return fmt.Errorf("error set tokens in user-sessions to redis: %w", err)
 	}
 	return nil
 }
