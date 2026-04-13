@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"learning-platform/auth/internal/config"
@@ -41,12 +42,12 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 		RefreshTime: s.config.RefreshTokenLifeTime,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("create jwt tokens error: %w", err)
+		return nil, fmt.Errorf("login (create jwt): %w", err)
 	}
 
 	err = s.redis.SetSession(loginData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
-		return nil, fmt.Errorf("set tokens error: %w", err)
+		return nil, fmt.Errorf("login (set session): %w", err)
 	}
 
 	return &dto.LoginResponse{
@@ -65,12 +66,12 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 		RefreshTime: s.config.RefreshTokenLifeTime,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("create jwt tokens error: %w", err)
+		return nil, fmt.Errorf("register (create jwt): %w", err)
 	}
 
 	err = s.redis.SetSession(registerData.UserId, *tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
-		return nil, fmt.Errorf("set tokens error: %w", err)
+		return nil, fmt.Errorf("register (set session): %w", err)
 	}
 
 	return &dto.RegisterResponse{
@@ -82,7 +83,7 @@ func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterR
 func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 	accessClaims, err := utils.GetTokenClaims(refreshToken, s.config.SignedKey)
 	if err != nil {
-		return nil, fmt.Errorf("get refresh token claims error: %w", err)
+		return nil, fmt.Errorf("refresh (get claims): %w", err)
 	}
 
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
@@ -95,12 +96,12 @@ func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 		SessionId:   &accessClaims.SessionId,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("create jwt tokens error: %w", err)
+		return nil, fmt.Errorf("refresh (create jwt): %w", err)
 	}
 
 	err = s.redis.SetTokens(*tokenBundle, time.Duration(s.config.RefreshTokenLifeTime)*time.Hour*24)
 	if err != nil {
-		return nil, fmt.Errorf("set tokens error: %w", err)
+		return nil, fmt.Errorf("refresh (set tokens): %w", err)
 	}
 
 	return &tokenBundle.AccessToken, nil
@@ -111,8 +112,12 @@ func (s *AuthService) CheckPassword(password string, passwordHash string) (bool,
 		[]byte(passwordHash),
 		[]byte(password),
 	)
+	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		return false, nil
+	}
+
 	if err != nil {
-		return false, fmt.Errorf("attempt login with incorrect password: %w", err)
+		return false, fmt.Errorf("check password: %w", err)
 	}
 
 	return true, nil
@@ -121,7 +126,7 @@ func (s *AuthService) CheckPassword(password string, passwordHash string) (bool,
 func (s *AuthService) GeneratePasswordHash(password string) (*string, error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), int(s.config.Salt))
 	if err != nil {
-		return nil, fmt.Errorf("generate hash for password error: %w", err)
+		return nil, fmt.Errorf("generate hash for password: %w", err)
 	}
 
 	resPasswordHash := string(passwordHash)
@@ -132,12 +137,12 @@ func (s *AuthService) GeneratePasswordHash(password string) (*string, error) {
 func (s *AuthService) Logout(accessToken string) error {
 	accessClaims, err := utils.GetTokenClaims(accessToken, s.config.SignedKey)
 	if err != nil {
-		return fmt.Errorf("get access token claims error: %w", err)
+		return fmt.Errorf("logout (get claims): %w", err)
 	}
 
 	err = s.redis.DeleteTokens(accessClaims.SessionId, accessClaims.UserId)
 	if err != nil {
-		return fmt.Errorf("delete token error: %w", err)
+		return fmt.Errorf("logout (delete tokens): %w", err)
 	}
 
 	return nil

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"learning-platform/auth/internal/dto"
@@ -33,7 +34,7 @@ func CreateJWT(createJwtDto dto.CreateJWT) (*dto.TokenBundle, error) {
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
 	signedAccessToken, err := accessToken.SignedString([]byte(createJwtDto.SignedKey))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("signed access token for user %d: %w", createJwtDto.UserId, err)
 	}
 	refreshClaims := CustomJwtClaims{
 		createJwtDto.UserId,
@@ -48,7 +49,7 @@ func CreateJWT(createJwtDto dto.CreateJWT) (*dto.TokenBundle, error) {
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
 	signedRefreshToken, err := refreshToken.SignedString([]byte(createJwtDto.SignedKey))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("signed refresh token for user %d: %w", createJwtDto.UserId, err)
 	}
 
 	return &dto.TokenBundle{
@@ -68,7 +69,7 @@ func GetTokenClaims(JWTToken string, signedKey string) (*CustomJwtClaims, error)
 
 	claims, ok := token.Claims.(*CustomJwtClaims)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("get token claims for user %d: %w", claims.UserId, err)
 	}
 
 	return claims, nil

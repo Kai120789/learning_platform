@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	authGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/auth"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -49,7 +48,11 @@ func (g *AuthGRPCServer) Login(
 		Password: in.GetPassword(),
 	})
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed to login user %s", in.GetEmail()), zap.Error(err))
+		g.logger.Error(
+			"failed to login user",
+			zap.String("email", in.GetEmail()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to login user")
 	}
 
@@ -75,7 +78,11 @@ func (g *AuthGRPCServer) Register(
 
 	res, err := g.service.Register(request)
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed to register user %s", in.GetEmail()), zap.Error(err))
+		g.logger.Error(
+			"failed to register user",
+			zap.String("email", in.GetEmail()),
+			zap.Error(err),
+		)
 		return nil, status.Error(codes.Internal, "failed to register user")
 	}
 
@@ -91,13 +98,13 @@ func (g *AuthGRPCServer) RefreshTokens(
 ) (*authGRPC.RefreshTokensResponse, error) {
 	refreshTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("incorrect token"), zap.Error(err))
+		g.logger.Error("incorrect token", zap.Error(err))
 		return nil, status.Error(codes.Unauthenticated, "incorrect token")
 	}
 
 	newAccessToken, err := g.service.RefreshTokens(*refreshTokenFromHeaders)
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed to refresh tokens"), zap.Error(err))
+		g.logger.Error("failed to refresh tokens", zap.Error(err))
 		return nil, status.Error(codes.Internal, "failed to refresh tokens")
 	}
 
@@ -112,7 +119,7 @@ func (g *AuthGRPCServer) CheckPassword(
 ) (*authGRPC.CheckPasswordResponse, error) {
 	isValid, err := g.service.CheckPassword(in.GetPassword(), in.GetPasswordHash())
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed valid password"), zap.Error(err))
+		g.logger.Error("failed valid password", zap.Error(err))
 		return nil, status.Error(codes.Internal, "failed valid password")
 	}
 
@@ -125,7 +132,7 @@ func (g *AuthGRPCServer) GeneratePasswordHash(
 ) (*authGRPC.GeneratePasswordHashResponse, error) {
 	passwordHash, err := g.service.GeneratePasswordHash(in.GetPassword())
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed generate hash for password"), zap.Error(err))
+		g.logger.Error("failed generate hash for password", zap.Error(err))
 		return nil, status.Error(codes.Internal, "failed generate hash for password")
 	}
 
@@ -138,13 +145,13 @@ func (g *AuthGRPCServer) Logout(
 ) (*authGRPC.LogoutResponse, error) {
 	accessTokenFromHeaders, err := getAuthTokenFromMetadata(ctx)
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("incorrect token"), zap.Error(err))
+		g.logger.Error("incorrect token", zap.Error(err))
 		return nil, status.Error(codes.Unauthenticated, "incorrect token")
 	}
 
 	err = g.service.Logout(*accessTokenFromHeaders)
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed logout user"), zap.Error(err))
+		g.logger.Error("failed logout user", zap.Error(err))
 		return nil, status.Error(codes.Internal, "failed logout user")
 	}
 
@@ -157,8 +164,12 @@ func (g *AuthGRPCServer) LogoutAll(
 ) (*authGRPC.LogoutAllResponse, error) {
 	err := g.service.LogoutAll(in.GetUserId())
 	if err != nil {
-		g.logger.Error(fmt.Sprintf("failed logout all sessions for user: %d", in.GetUserId()), zap.Error(err))
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed logout all sessions for user: %d", in.GetUserId()))
+		g.logger.Error(
+			"failed logout all sessions for user",
+			zap.Int64("userId", in.GetUserId()),
+			zap.Error(err),
+		)
+		return nil, status.Error(codes.Internal, "failed logout all sessions for user")
 	}
 
 	return &authGRPC.LogoutAllResponse{}, nil
