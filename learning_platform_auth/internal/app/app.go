@@ -10,7 +10,7 @@ import (
 	"learning-platform/auth/pkg/logger"
 )
 
-func Start() {
+func StartApp() {
 	cfg := config.GetConfig()
 
 	zapLog, err := logger.New(cfg.LogLevel)
