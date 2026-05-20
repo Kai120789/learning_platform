@@ -42,22 +42,25 @@ func Start() {
 	}
 
 	serviceLayer := service.New(&service.Client{
-		UserClient: client.UserClient,
-		AuthClient: client.AuthClient,
+		UserClient:  client.UserClient,
+		AuthClient:  client.AuthClient,
+		GroupClient: client.GroupClient,
 	}, redisLayer)
 
 	_ = serviceLayer
 
 	handlerLayer := handler.New(&handler.Service{
-		AuthService: serviceLayer.AuthService,
-		UserService: serviceLayer.UserService,
+		AuthService:  serviceLayer.AuthService,
+		UserService:  serviceLayer.UserService,
+		GroupService: serviceLayer.GroupService,
 	}, log, cfg)
 
 	jwtMiddleware := middleware.JWT([]byte(cfg.SignedKey), cfg.RefreshTokenLiveTime, serviceLayer.AuthService)
 
 	r := router.New(&router.Handler{
-		AuthHandler: handlerLayer.AuthHandler,
-		UserHandler: handlerLayer.UserHandler,
+		AuthHandler:  handlerLayer.AuthHandler,
+		UserHandler:  handlerLayer.UserHandler,
+		GroupHandler: handlerLayer.GroupHandler,
 	}, jwtMiddleware)
 
 	server := &http.Server{

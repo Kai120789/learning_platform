@@ -6,18 +6,21 @@ import (
 )
 
 type Handler struct {
-	AuthHandler *AuthHandler
-	UserHandler *UserHandler
+	AuthHandler  *AuthHandler
+	UserHandler  *UserHandler
+	GroupHandler *GroupHandler
 }
 
 type Service struct {
-	AuthService AuthService
-	UserService UserService
+	AuthService  AuthService
+	UserService  UserService
+	GroupService GroupService
 }
 
 func New(service *Service, logger *zap.Logger, cfg *config.Config) *Handler {
 	return &Handler{
-		AuthHandler: NewAuthHandler(service.AuthService, logger, cfg),
-		UserHandler: NewUserHandler(service.UserService, logger),
+		AuthHandler:  NewAuthHandler(service.AuthService, logger, cfg),
+		UserHandler:  NewUserHandler(service.UserService, logger),
+		GroupHandler: NewGroupHandler(service.GroupService, logger),
 	}
 }

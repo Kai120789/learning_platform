@@ -3,16 +3,15 @@ package grpc
 import (
 	"context"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/userDto"
 	"time"
 )
 
 type UserClient struct {
 	client userGRPC.UserClient
-	logger *zap.Logger
 }
 
 /*
@@ -41,54 +40,51 @@ func NewUserClient(connection *grpc.ClientConn) *UserClient {
 	}
 }
 
-func (u *UserClient) GetUserByEmail(email string) (*dto.GetUser, error) {
+func (u *UserClient) GetUserByEmail(email string) (*userDto.GetUser, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	res, err := u.client.GetUserByEmail(ctx, &userGRPC.GetUserByEmailRequest{Email: email})
 	if err != nil {
-		u.logger.Error("failed to send get user by email grpc query", zap.Error(err))
 		return nil, err
 	}
 
-	return &dto.GetUser{
+	return &userDto.GetUser{
 		UserId:       res.GetUserId(),
 		Email:        res.GetEmail(),
 		PasswordHash: res.GetPasswordHash(),
 	}, nil
 }
 
-func (u *UserClient) GetUserById(id int64) (*dto.GetUser, error) {
+func (u *UserClient) GetUserById(id int64) (*userDto.GetUser, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	res, err := u.client.GetUserById(ctx, &userGRPC.GetUserByIdRequest{UserId: id})
 	if err != nil {
-		u.logger.Error("failed to send get user by id grpc query", zap.Error(err))
 		return nil, err
 	}
 
-	return &dto.GetUser{
+	return &userDto.GetUser{
 		UserId:       res.GetUserId(),
 		Email:        res.GetEmail(),
 		PasswordHash: res.GetPasswordHash(),
 	}, nil
 }
 
-func (u *UserClient) GetUserData(id int64) (*dto.UserData, error) {
+func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	res, err := u.client.GetUserData(ctx, &userGRPC.GetUserDataRequest{UserId: id})
 	if err != nil {
-		u.logger.Error("failed to send get user data request", zap.Error(err))
 		return nil, err
 	}
 
-	return &dto.UserData{
+	return &userDto.UserData{
 		UserId: res.GetUserId(),
 		Email:  res.GetEmail(),
-		UserInfo: dto.UserInfo{
+		UserInfo: userDto.UserInfo{
 			UserId:   res.GetUserId(),
 			Name:     res.GetUserInfo().GetName(),
 			Surname:  res.GetUserInfo().GetSurname(),
@@ -99,7 +95,7 @@ func (u *UserClient) GetUserData(id int64) (*dto.UserData, error) {
 			Status:   protoStatusToString(res.GetUserInfo().GetStatus()),
 			Class:    getOptionalFieldInt(res.GetUserInfo().GetClass()),
 		},
-		UserSettings: dto.UserSettings{},
+		UserSettings: userDto.UserSettings{},
 	}, nil
 }
 
@@ -116,7 +112,6 @@ func (u *UserClient) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
 		PasswordHash: newUser.Password,
 	})
 	if err != nil {
-		u.logger.Error("failed to send create user grpc query", zap.Error(err))
 		return nil, err
 	}
 

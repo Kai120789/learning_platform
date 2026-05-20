@@ -2,6 +2,7 @@ package service
 
 import (
 	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/userDto"
 )
 
 type UserService struct {
@@ -9,9 +10,9 @@ type UserService struct {
 }
 
 type UserClient interface {
-	GetUserByEmail(email string) (*dto.GetUser, error)
-	GetUserById(id int64) (*dto.GetUser, error)
-	GetUserData(id int64) (*dto.UserData, error)
+	GetUserByEmail(email string) (*userDto.GetUser, error)
+	GetUserById(id int64) (*userDto.GetUser, error)
+	GetUserData(id int64) (*userDto.UserData, error)
 	CreateUser(newUser dto.RegisterRequest) (*int64, error)
 }
 
@@ -21,7 +22,7 @@ func NewUserService(client UserClient) *UserService {
 	}
 }
 
-func (u *UserService) GetUserByEmail(email string) (*dto.GetUser, error) {
+func (u *UserService) GetUserByEmail(email string) (*userDto.GetUser, error) {
 	res, err := u.client.GetUserByEmail(email)
 	if err != nil {
 		return nil, err
@@ -30,7 +31,7 @@ func (u *UserService) GetUserByEmail(email string) (*dto.GetUser, error) {
 	return res, nil
 }
 
-func (u *UserService) GetUserById(id int64) (*dto.GetUser, error) {
+func (u *UserService) GetUserById(id int64) (*userDto.GetUser, error) {
 	res, err := u.client.GetUserById(id)
 	if err != nil {
 		return nil, err
@@ -39,7 +40,7 @@ func (u *UserService) GetUserById(id int64) (*dto.GetUser, error) {
 	return res, nil
 }
 
-func (u *UserService) GetUserData(id int64) (*dto.UserData, error) {
+func (u *UserService) GetUserData(id int64) (*userDto.UserData, error) {
 	res, err := u.client.GetUserData(id)
 	if err != nil {
 		return nil, err

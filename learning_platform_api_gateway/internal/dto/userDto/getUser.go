@@ -1,4 +1,4 @@
-package dto
+package userDto
 
 type GetUser struct {
 	UserId       int64

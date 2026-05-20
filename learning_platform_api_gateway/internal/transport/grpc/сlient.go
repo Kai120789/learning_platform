@@ -1,8 +1,9 @@
 package grpc
 
 type Client struct {
-	UserClient *UserClient
-	AuthClient *AuthClient
+	UserClient  *UserClient
+	AuthClient  *AuthClient
+	GroupClient *GroupClient
 }
 
 func NewClient(
@@ -19,8 +20,14 @@ func NewClient(
 		return nil, err
 	}
 
+	groupGrpcConnection, err := NewGroupGrpcConnection(userGrpcUrl)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
-		UserClient: NewUserClient(userGrpcConnection),
-		AuthClient: NewAuthClient(authGrpcConnection),
+		UserClient:  NewUserClient(userGrpcConnection),
+		AuthClient:  NewAuthClient(authGrpcConnection),
+		GroupClient: NewGroupClient(groupGrpcConnection),
 	}, nil
 }

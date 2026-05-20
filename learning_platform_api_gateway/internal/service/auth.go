@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/userDto"
 	"learning-platform/api-gateway/internal/redis"
 )
 
@@ -23,9 +24,9 @@ type AuthClient interface {
 }
 
 type UserAuthService interface {
-	GetUserByEmail(email string) (*dto.GetUser, error)
+	GetUserByEmail(email string) (*userDto.GetUser, error)
 	CreateUser(newUser dto.RegisterRequest) (*int64, error)
-	GetUserById(id int64) (*dto.GetUser, error)
+	GetUserById(id int64) (*userDto.GetUser, error)
 }
 
 type RedisStorage interface {
@@ -51,7 +52,7 @@ func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, erro
 	}
 
 	if user == nil {
-		return nil, fmt.Errorf("user does not exists, %w", err)
+		return nil, fmt.Errorf("userDto does not exists, %w", err)
 	}
 
 	isValid, err := a.client.CheckPassword(loginReq.Password, user.PasswordHash)
@@ -118,7 +119,7 @@ func (a *AuthService) LogoutAll(userId int64) error {
 	}
 
 	if user == nil {
-		return fmt.Errorf("user does not exists, %w", err)
+		return fmt.Errorf("userDto does not exists, %w", err)
 	}
 
 	err = a.client.LogoutAll(userId)
