@@ -1,9 +1,5 @@
 package user
 
-import (
-	"go.uber.org/zap"
-)
-
 type UserService struct {
 	UserBaseService     *UserBaseService
 	UserInfoService     *UserInfoService
