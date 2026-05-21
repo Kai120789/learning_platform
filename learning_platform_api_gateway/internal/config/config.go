@@ -13,6 +13,8 @@ type Config struct {
 	ServerAddress        string
 	AuthServiceUrl       string
 	UserServiceUrl       string
+	LessonServiceUrl     string
+	GroupServiceUrl      string
 	RedisUrl             string
 	SignedKey            string
 	AccessTokenLiveTime  int64
@@ -27,10 +29,12 @@ func GetConfig() *Config {
 	cfg.LogLevel = getEnvStringValue("LOG_LEVEL")
 	cfg.ServerAddress = getEnvStringValue("SERVER_ADDRESS")
 	cfg.AuthServiceUrl = getEnvStringValue("AUTH_SERVICE_URL")
+	cfg.UserServiceUrl = getEnvStringValue("USER_SERVICE_URL")
+	cfg.LessonServiceUrl = getEnvStringValue("LESSON_SERVICE_URL")
+	cfg.GroupServiceUrl = getEnvStringValue("GROUP_SERVICE_URL")
 	cfg.SignedKey = getEnvStringValue("SIGNED_KEY")
 	cfg.AccessTokenLiveTime = getEnvIntValue("ACCESS_TOKEN_LIVE_TIME", 5)
 	cfg.RefreshTokenLiveTime = getEnvIntValue("REFRESH_TOKEN_LIVE_TIME", 7)
-	cfg.UserServiceUrl = getEnvStringValue("USER_SERVICE_URL")
 	cfg.RedisUrl = getEnvStringValue("REDIS_URL")
 
 	return cfg

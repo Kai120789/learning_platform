@@ -95,7 +95,11 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 			Status:   protoStatusToString(res.GetUserInfo().GetStatus()),
 			Class:    getOptionalFieldInt(res.GetUserInfo().GetClass()),
 		},
-		UserSettings: userDto.UserSettings{},
+		UserSettings: userDto.UserSettings{
+			UserId:                 res.GetUserId(),
+			Is2FaEnabled:           res.GetUserSettings().GetIs_2FaEnabled(),
+			IsNotificationsEnabled: res.GetUserSettings().GetIsNotificationsEnabled(),
+		},
 	}, nil
 }
 

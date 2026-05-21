@@ -9,6 +9,7 @@ type Client struct {
 func NewClient(
 	userGrpcUrl string,
 	authGrpcUrl string,
+	groupGrpcUrl string,
 ) (*Client, error) {
 	userGrpcConnection, err := NewUserGrpcConnection(userGrpcUrl)
 	if err != nil {
@@ -20,7 +21,7 @@ func NewClient(
 		return nil, err
 	}
 
-	groupGrpcConnection, err := NewGroupGrpcConnection(userGrpcUrl)
+	groupGrpcConnection, err := NewGroupGrpcConnection(groupGrpcUrl)
 	if err != nil {
 		return nil, err
 	}

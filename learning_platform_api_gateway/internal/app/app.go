@@ -36,6 +36,7 @@ func Start() {
 	client, err := grpc.NewClient(
 		cfg.UserServiceUrl,
 		cfg.AuthServiceUrl,
+		cfg.GroupServiceUrl,
 	)
 	if err != nil {
 		log.Fatal("init grpc client error", zap.Error(err))
