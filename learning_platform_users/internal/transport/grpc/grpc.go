@@ -8,8 +8,6 @@ import (
 	goGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"learning-platform/users/internal/config"
-	groupGrpcServer "learning-platform/users/internal/transport/grpc/group"
-	userGrpcServer "learning-platform/users/internal/transport/grpc/user"
 	"net"
 )
 
@@ -22,8 +20,7 @@ type GRPCServer struct {
 func New(
 	logger *zap.Logger,
 	config *config.Config,
-	user *userGrpcServer.UserGRPCServer,
-	group *groupGrpcServer.GroupGRPCServer,
+	user *UserGRPCServer,
 ) *GRPCServer {
 	gRPCServer := goGRPC.NewServer(goGRPC.ChainUnaryInterceptor(
 		recovery.UnaryServerInterceptor(),
@@ -31,19 +28,10 @@ func New(
 
 	userGRPC.RegisterUserServer(
 		gRPCServer,
-		userGrpcServer.NewUserGRPCServer(
+		NewUserGRPCServer(
 			user.UserBaseService,
 			user.UserSettingsService,
 			user.UserInfoService,
-			logger,
-		),
-	)
-
-	userGRPC.RegisterGroupServer(
-		gRPCServer,
-		groupGrpcServer.NewGroupGRPCServer(
-			group.GroupBaseService,
-			group.GroupUserService,
 			logger,
 		),
 	)

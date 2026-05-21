@@ -1,4 +1,4 @@
-package user
+package grpc
 
 import (
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"

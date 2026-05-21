@@ -1,22 +1,25 @@
 package service
 
-import (
-	"learning-platform/users/internal/service/group"
-	"learning-platform/users/internal/service/user"
-)
-
 type Service struct {
-	UserService  *user.UserService
-	GroupService *group.GroupService
+	UserBaseService     *UserBaseService
+	UserInfoService     *UserInfoService
+	UserSettingsService *UserSettingsService
+}
+
+type Storage struct {
+	UserBaseStorage     UserBaseStorage
+	UserInfoStorage     UserInfoStorage
+	UserSettingsStorage UserSettingsStorage
 }
 
 func New(
-	userStorage *user.UserStorage,
-	groupStorage *group.GroupStorage,
+	storage *Storage,
 ) *Service {
-	userService := user.NewUserService(userStorage)
+	userInfoService := NewUserInfoService(storage.UserInfoStorage)
+	userSettingsService := NewUserSettingsService(storage.UserSettingsStorage)
 	return &Service{
-		UserService:  userService,
-		GroupService: group.NewGroupService(groupStorage, userService.UserBaseService),
+		UserBaseService:     NewUserBaseService(storage.UserBaseStorage, userInfoService, userSettingsService),
+		UserInfoService:     userInfoService,
+		UserSettingsService: userSettingsService,
 	}
 }
