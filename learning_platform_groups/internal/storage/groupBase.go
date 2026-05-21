@@ -1,4 +1,4 @@
-package group
+package storage
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"learning-platform/users/internal/dto"
+	"learning-platform/groups/internal/dto"
 )
 
 type GroupBaseStorage struct {

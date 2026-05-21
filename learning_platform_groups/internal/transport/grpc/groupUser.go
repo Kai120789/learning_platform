@@ -1,4 +1,4 @@
-package group
+package grpc
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"learning-platform/users/internal/dto"
+	"learning-platform/groups/internal/dto"
 )
 
 type GroupUserService interface {
@@ -22,7 +22,7 @@ func (g *GroupGRPCServer) AddUsersToGroup(
 	ctx context.Context,
 	in *groupGRPC.AddUsersToGroupRequest,
 ) (*groupGRPC.AddUsersToGroupResponse, error) {
-	users, err := g.GroupUserService.AddUsersToGroup(
+	users, err := g.service.GroupUserService.AddUsersToGroup(
 		in.GetUserIds(),
 		in.GetGroupId(),
 	)
@@ -55,7 +55,7 @@ func (g *GroupGRPCServer) RemoveUserFromGroup(
 	ctx context.Context,
 	in *groupGRPC.RemoveUserFromGroupRequest,
 ) (*groupGRPC.RemoveUserFromGroupResponse, error) {
-	err := g.GroupUserService.RemoveUserFromGroup(
+	err := g.service.GroupUserService.RemoveUserFromGroup(
 		in.GetUserId(),
 		in.GetGroupId(),
 	)
@@ -76,7 +76,7 @@ func (g *GroupGRPCServer) GetUserGroups(
 	ctx context.Context,
 	in *groupGRPC.GetUserGroupsRequest,
 ) (*groupGRPC.GetUserGroupsResponse, error) {
-	groups, err := g.GroupUserService.GetUserGroups(in.GetUserId())
+	groups, err := g.service.GroupUserService.GetUserGroups(in.GetUserId())
 	if err != nil {
 		g.logger.Error(
 			"failed get user groups",
@@ -108,7 +108,7 @@ func (g *GroupGRPCServer) GetGroupsByTutorId(
 	ctx context.Context,
 	in *groupGRPC.GetGroupsByTutorIdRequest,
 ) (*groupGRPC.GetGroupsByTutorIdResponse, error) {
-	groups, err := g.GroupUserService.GetUserGroups(in.GetTutorId())
+	groups, err := g.service.GroupUserService.GetUserGroups(in.GetTutorId())
 	if err != nil {
 		g.logger.Error(
 			"failed get tutor groups",
@@ -140,7 +140,7 @@ func (g *GroupGRPCServer) GetGroupUsers(
 	ctx context.Context,
 	in *groupGRPC.GetGroupUsersRequest,
 ) (*groupGRPC.GetGroupUsersResponse, error) {
-	groupUsers, err := g.GroupUserService.GetGroupUsers(in.GetGroupId())
+	groupUsers, err := g.service.GroupUserService.GetGroupUsers(in.GetGroupId())
 	if err != nil {
 		g.logger.Error(
 			"failed get group users",

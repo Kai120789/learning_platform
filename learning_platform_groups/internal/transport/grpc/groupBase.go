@@ -1,4 +1,4 @@
-package group
+package grpc
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"learning-platform/users/internal/dto"
+	"learning-platform/groups/internal/dto"
 )
 
 type GroupBaseService interface {
@@ -34,7 +34,7 @@ func (g *GroupGRPCServer) CreateGroup(
 		TgChatId:    &tgChatId,
 	}
 
-	group, err := g.GroupBaseService.CreateGroup(createGroupDto)
+	group, err := g.service.GroupBaseService.CreateGroup(createGroupDto)
 	if err != nil {
 		g.logger.Error(
 			"failed create group",
@@ -69,7 +69,7 @@ func (g *GroupGRPCServer) UpdateGroup(
 		TgChatId:    &tgChatId,
 	}
 
-	group, err := g.GroupBaseService.UpdateGroup(in.GetId(), updateGroupDto)
+	group, err := g.service.GroupBaseService.UpdateGroup(in.GetId(), updateGroupDto)
 	if err != nil {
 		g.logger.Error(
 			"failed update group",
@@ -95,7 +95,7 @@ func (g *GroupGRPCServer) RemoveGroup(
 	ctx context.Context,
 	in *groupGRPC.RemoveGroupRequest,
 ) (*groupGRPC.RemoveGroupResponse, error) {
-	err := g.GroupBaseService.RemoveGroup(in.GetId())
+	err := g.service.GroupBaseService.RemoveGroup(in.GetId())
 	if err != nil {
 		g.logger.Error(
 			"failed remove group",
@@ -112,7 +112,7 @@ func (g *GroupGRPCServer) GetGroupById(
 	ctx context.Context,
 	in *groupGRPC.GetGroupByIdRequest,
 ) (*groupGRPC.GetGroupByIdResponse, error) {
-	group, err := g.GroupBaseService.GetGroupById(in.GetId())
+	group, err := g.service.GroupBaseService.GetGroupById(in.GetId())
 	if err != nil {
 		g.logger.Error(
 			"failed get group",
@@ -146,7 +146,7 @@ func (g *GroupGRPCServer) GetGroups(
 	ctx context.Context,
 	in *groupGRPC.GetGroupsRequest,
 ) (*groupGRPC.GetGroupsResponse, error) {
-	groups, err := g.GroupBaseService.GetGroups()
+	groups, err := g.service.GroupBaseService.GetGroups()
 	if err != nil {
 		g.logger.Error(
 			"failed get groups",

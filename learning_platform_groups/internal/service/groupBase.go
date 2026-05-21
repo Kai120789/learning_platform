@@ -1,9 +1,9 @@
-package group
+package service
 
 import (
 	"fmt"
 	"github.com/Kai120789/learning_platform_models/models"
-	"learning-platform/users/internal/dto"
+	"learning-platform/groups/internal/dto"
 )
 
 type GroupBaseService struct {
