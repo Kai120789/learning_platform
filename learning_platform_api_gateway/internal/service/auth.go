@@ -52,7 +52,7 @@ func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, erro
 	}
 
 	if user == nil {
-		return nil, fmt.Errorf("userDto does not exists, %w", err)
+		return nil, fmt.Errorf("user does not exists, %w", err)
 	}
 
 	isValid, err := a.client.CheckPassword(loginReq.Password, user.PasswordHash)
@@ -119,7 +119,7 @@ func (a *AuthService) LogoutAll(userId int64) error {
 	}
 
 	if user == nil {
-		return fmt.Errorf("userDto does not exists, %w", err)
+		return fmt.Errorf("user does not exists, %w", err)
 	}
 
 	err = a.client.LogoutAll(userId)

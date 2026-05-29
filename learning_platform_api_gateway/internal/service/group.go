@@ -1,9 +1,14 @@
 package service
 
-import "learning-platform/api-gateway/internal/dto/groupDto"
+import (
+	"fmt"
+	"learning-platform/api-gateway/internal/dto/groupDto"
+	"learning-platform/api-gateway/internal/dto/userDto"
+)
 
 type GroupService struct {
-	client GroupClient
+	client      GroupClient
+	userService UserGroupService
 }
 
 type GroupClient interface {
@@ -19,9 +24,14 @@ type GroupClient interface {
 	GetGroupUsers(groupId int64) ([]groupDto.ShortUserInfo, error)
 }
 
-func NewGroupService(client GroupClient) *GroupService {
+type UserGroupService interface {
+	GetUserById(id int64) (*userDto.GetUser, error)
+}
+
+func NewGroupService(client GroupClient, userService UserGroupService) *GroupService {
 	return &GroupService{
-		client: client,
+		client:      client,
+		userService: userService,
 	}
 }
 
@@ -80,7 +90,16 @@ func (g *GroupService) AddUsersToGroup(groupId int64, userIds []int64) ([]groupD
 }
 
 func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
-	err := g.client.RemoveUserFromGroup(userId, groupId)
+	user, err := g.userService.GetUserById(userId)
+	if err != nil {
+		return err
+	}
+
+	if user == nil {
+		return fmt.Errorf("user does not exists, %w", err)
+	}
+
+	err = g.client.RemoveUserFromGroup(userId, groupId)
 	if err != nil {
 		return err
 	}
@@ -89,6 +108,15 @@ func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
 }
 
 func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupResponse, error) {
+	user, err := g.userService.GetUserById(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, fmt.Errorf("user does not exists, %w", err)
+	}
+
 	res, err := g.client.GetUserGroups(userId)
 	if err != nil {
 		return nil, err
@@ -98,6 +126,15 @@ func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupResponse, er
 }
 
 func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error) {
+	user, err := g.userService.GetUserById(tutorId)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, fmt.Errorf("user does not exists, %w", err)
+	}
+
 	res, err := g.client.GetGroupsByTutorId(tutorId)
 	if err != nil {
 		return nil, err
