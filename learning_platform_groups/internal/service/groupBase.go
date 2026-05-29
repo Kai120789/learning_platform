@@ -36,7 +36,12 @@ func (g *GroupBaseService) CreateGroup(groupDto dto.CreateGroup) (*models.Group,
 }
 
 func (g *GroupBaseService) UpdateGroup(id int64, groupDto dto.UpdateGroup) (*models.Group, error) {
-	err := g.storage.UpdateGroup(id, groupDto)
+	_, err := g.storage.GetGroupById(id)
+	if err != nil {
+		return nil, fmt.Errorf("update group (get group): %w", err)
+	}
+
+	err = g.storage.UpdateGroup(id, groupDto)
 	if err != nil {
 		return nil, fmt.Errorf("update group: %w", err)
 	}
@@ -45,7 +50,12 @@ func (g *GroupBaseService) UpdateGroup(id int64, groupDto dto.UpdateGroup) (*mod
 }
 
 func (g *GroupBaseService) RemoveGroup(id int64) error {
-	err := g.storage.RemoveGroup(id)
+	_, err := g.storage.GetGroupById(id)
+	if err != nil {
+		return fmt.Errorf("remove group (get group): %w", err)
+	}
+
+	err = g.storage.RemoveGroup(id)
 	if err != nil {
 		return fmt.Errorf("remove group: %w", err)
 	}

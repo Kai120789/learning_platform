@@ -34,10 +34,8 @@ func NewGroupUserService(
 }
 
 func (g *GroupUserService) AddUsersToGroup(userIds []int64, groupId int64) ([]dto.ShortUserInfo, error) {
-	group, err := g.group.GetGroupById(groupId)
-	if group == nil {
-		return nil, fmt.Errorf("add user to group (group not found): %w", err)
-	} else if err != nil {
+	_, err := g.group.GetGroupById(groupId)
+	if err != nil {
 		return nil, fmt.Errorf("add user to group (get group): %w", err)
 	}
 
@@ -50,10 +48,8 @@ func (g *GroupUserService) AddUsersToGroup(userIds []int64, groupId int64) ([]dt
 }
 
 func (g *GroupUserService) RemoveUserFromGroup(userId int64, groupId int64) error {
-	group, err := g.group.GetGroupById(groupId)
-	if group == nil {
-		return fmt.Errorf("remove user from group (group not found): %w", err)
-	} else if err != nil {
+	_, err := g.group.GetGroupById(groupId)
+	if err != nil {
 		return fmt.Errorf("remove user from group (get group): %w", err)
 	}
 
@@ -84,10 +80,8 @@ func (g *GroupUserService) GetGroupsByTutorId(tutorId int64) ([]models.Group, er
 }
 
 func (g *GroupUserService) GetGroupUsers(groupId int64) ([]dto.ShortUserInfo, error) {
-	group, err := g.group.GetGroupById(groupId)
-	if group == nil {
-		return nil, fmt.Errorf("get group users (group not found): %w", err)
-	} else if err != nil {
+	_, err := g.group.GetGroupById(groupId)
+	if err != nil {
 		return nil, fmt.Errorf("get group users (get group): %w", err)
 	}
 
