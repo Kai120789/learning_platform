@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"fmt"
-	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/group"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/zap"
 	goGRPC "google.golang.org/grpc"

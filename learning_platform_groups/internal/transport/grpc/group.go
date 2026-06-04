@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/group"
 	"go.uber.org/zap"
 )
 

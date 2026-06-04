@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"github.com/Kai120789/learning_platform_models/models"
-	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/group"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
