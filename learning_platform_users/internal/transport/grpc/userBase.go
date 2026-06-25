@@ -2,21 +2,22 @@ package grpc
 
 import (
 	"context"
-	"github.com/Kai120789/learning_platform_models/models"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
+	"learning-platform/users/internal/models/enum"
 )
 
 type UserBaseService interface {
 	CreateUser(userDto dto.CreateUser) (*int64, error)
-	GetUserById(userId int64) (*models.User, error)
+	GetUserById(userID int64) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
-	ChangePassword(userId int64, newPasswordHash string) error
-	ChangeEmail(userId int64, newEmail string) error
-	GetUserData(userId int64) (*dto.UserData, error)
+	ChangePassword(userID int64, newPasswordHash string) error
+	ChangeEmail(userID int64, newEmail string) error
+	GetUserData(userID int64) (*dto.UserData, error)
 }
 
 func (g *UserGRPCServer) CreateUser(
@@ -28,11 +29,11 @@ func (g *UserGRPCServer) CreateUser(
 		Name:         in.GetName(),
 		Surname:      in.GetSurname(),
 		LastName:     in.GetLastName(),
-		Role:         protoRoleToString(in.GetRole()),
+		Role:         protoRoleToEnum(in.GetRole()),
 		PasswordHash: in.GetPasswordHash(),
 	}
 
-	userId, err := g.UserBaseService.CreateUser(userDto)
+	userID, err := g.UserBaseService.CreateUser(userDto)
 	if err != nil {
 		g.logger.Error(
 			"failed to create user",
@@ -43,7 +44,7 @@ func (g *UserGRPCServer) CreateUser(
 	}
 
 	return &userGRPC.CreateUserResponse{
-		UserId: *userId,
+		UserId: *userID,
 	}, nil
 }
 
@@ -55,16 +56,18 @@ func (g *UserGRPCServer) GetUserById(
 	if err != nil {
 		g.logger.Error(
 			"failed to get user",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
 	return &userGRPC.GetUserByIdResponse{
-		UserId:       res.Id,
+		UserId:       res.ID,
 		Email:        res.Email,
-		PasswordHash: res.Password,
+		PasswordHash: res.PasswordHash,
+		Role:         enumToProtoRole(res.Role),
+		Status:       enumToProtoStatus(res.Status),
 	}, nil
 }
 
@@ -83,9 +86,11 @@ func (g *UserGRPCServer) GetUserByEmail(
 	}
 
 	return &userGRPC.GetUserByEmailResponse{
-		UserId:       res.Id,
+		UserId:       res.ID,
 		Email:        res.Email,
-		PasswordHash: res.Password,
+		PasswordHash: res.PasswordHash,
+		Role:         enumToProtoRole(res.Role),
+		Status:       enumToProtoStatus(res.Status),
 	}, nil
 }
 
@@ -97,24 +102,23 @@ func (g *UserGRPCServer) GetUserData(
 	if err != nil {
 		g.logger.Error(
 			"failed to get user data",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed to get user data")
 	}
 
 	return &userGRPC.GetUserDataResponse{
-		UserId: res.UserId,
+		UserId: res.UserID,
 		Email:  res.Email,
+		Role:   enumToProtoRole(res.Role),
+		Status: enumToProtoStatus(res.Status),
 		UserInfo: &userGRPC.UpdateUserInfoResponse{
 			Name:     res.UserInfo.Name,
 			Surname:  res.UserInfo.Surname,
 			Lastname: res.UserInfo.Lastname,
 			City:     res.UserInfo.City,
 			About:    res.UserInfo.About,
-			Role:     stringToProtoRole(res.UserInfo.Role),
-			Status:   stringToProtoStatus(res.UserInfo.Status),
-			Class:    res.UserInfo.Class,
 		},
 		UserSettings: &userGRPC.UpdateUserSettingsResponse{
 			Is_2FaEnabled:          res.UserSettings.Is2FaEnabled,
@@ -131,7 +135,7 @@ func (g *UserGRPCServer) ChangePassword(
 	if err != nil {
 		g.logger.Error(
 			"failed to change password",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed to change user password")
@@ -147,7 +151,7 @@ func (g *UserGRPCServer) ChangeEmail(
 	if err != nil {
 		g.logger.Error(
 			"failed to change email",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed to change user email")
@@ -155,7 +159,7 @@ func (g *UserGRPCServer) ChangeEmail(
 	return &userGRPC.ChangeEmailResponse{}, nil
 }
 
-func protoRoleToString(role userGRPC.UserRole) string {
+func protoRoleToEnum(role userGRPC.UserRole) enum.UserRole {
 	switch role {
 	case userGRPC.UserRole_TUTOR:
 		return "TUTOR"
@@ -168,7 +172,7 @@ func protoRoleToString(role userGRPC.UserRole) string {
 	}
 }
 
-func stringToProtoRole(role string) userGRPC.UserRole {
+func enumToProtoRole(role enum.UserRole) userGRPC.UserRole {
 	switch role {
 	case "TUTOR":
 		return userGRPC.UserRole_TUTOR
@@ -181,7 +185,7 @@ func stringToProtoRole(role string) userGRPC.UserRole {
 	}
 }
 
-func stringToProtoStatus(status string) userGRPC.Status {
+func enumToProtoStatus(status enum.UserStatus) userGRPC.Status {
 	switch status {
 	case "ACTIVE":
 		return userGRPC.Status_ACTIVE

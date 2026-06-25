@@ -2,12 +2,12 @@ package grpc
 
 import (
 	"context"
-	"github.com/Kai120789/learning_platform_models/models"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
 )
 
 type UserInfoService interface {
@@ -19,20 +19,19 @@ func (g *UserGRPCServer) UpdateUserInfo(
 	in *userGRPC.UpdateUserInfoRequest,
 ) (*userGRPC.UpdateUserInfoResponse, error) {
 	userInfo := dto.UserInfo{
-		UserId:   in.GetUserId(),
+		UserID:   in.GetUserId(),
 		Name:     in.GetName(),
 		Surname:  in.GetSurname(),
 		Lastname: stringToOptionalString(in.GetLastname()),
 		City:     stringToOptionalString(in.GetCity()),
 		About:    stringToOptionalString(in.GetAbout()),
-		Class:    intToOptionalInt(in.GetClass()),
 	}
 
 	res, err := g.UserInfoService.UpdateUserInfo(userInfo)
 	if err != nil {
 		g.logger.Error(
 			"failed to update user info",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed to update user info")
@@ -43,16 +42,9 @@ func (g *UserGRPCServer) UpdateUserInfo(
 		Lastname: &res.Lastname.String,
 		City:     &res.City.String,
 		About:    &res.About.String,
-		Role:     stringToProtoRole(res.Role),
-		Status:   stringToProtoStatus(res.Status),
-		Class:    &res.Class.Int64,
 	}, nil
 }
 
 func stringToOptionalString(value string) *string {
-	return &value
-}
-
-func intToOptionalInt(value int64) *int64 {
 	return &value
 }

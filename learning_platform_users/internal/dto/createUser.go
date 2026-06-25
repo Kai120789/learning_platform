@@ -1,10 +1,12 @@
 package dto
 
+import "learning-platform/users/internal/models/enum"
+
 type CreateUser struct {
-	Email        string
-	Name         string
-	Surname      string
-	LastName     string
-	Role         string
-	PasswordHash string
+	Email        string        `json:"email"`
+	Name         string        `json:"name"`
+	Surname      string        `json:"surname"`
+	LastName     string        `json:"lastName"`
+	Role         enum.UserRole `json:"role"`
+	PasswordHash string        `json:"password_hash"`
 }

@@ -1,7 +1,7 @@
 package dto
 
 type UserSettings struct {
-	UserId                 int64
-	Is2FaEnabled           bool
-	IsNotificationsEnabled bool
+	UserID                 int64 `json:"user_id"`
+	Is2FaEnabled           bool  `json:"is_2_fa_enabled"`
+	IsNotificationsEnabled bool  `json:"is_notifications_enabled"`
 }

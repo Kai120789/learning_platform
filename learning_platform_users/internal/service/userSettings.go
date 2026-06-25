@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
 )
 
 type UserSettingsService struct {
@@ -11,8 +11,8 @@ type UserSettingsService struct {
 }
 
 type UserSettingsStorage interface {
-	CreateUserSettings(userId int64) error
-	GetUserSettings(userId int64) (*models.UserSettings, error)
+	CreateUserSettings(userID int64) error
+	GetUserSettings(userID int64) (*models.UserSettings, error)
 	UpdateUserSettings(userSettings dto.UserSettings) error
 }
 
@@ -24,8 +24,8 @@ func NewUserSettingsService(
 	}
 }
 
-func (s *UserSettingsService) CreateUserSettings(userId int64) error {
-	err := s.storage.CreateUserSettings(userId)
+func (s *UserSettingsService) CreateUserSettings(userID int64) error {
+	err := s.storage.CreateUserSettings(userID)
 	if err != nil {
 		return fmt.Errorf("create user settings: %w", err)
 	}
@@ -33,8 +33,8 @@ func (s *UserSettingsService) CreateUserSettings(userId int64) error {
 	return nil
 }
 
-func (s *UserSettingsService) GetUserSettings(userId int64) (*models.UserSettings, error) {
-	userSettings, err := s.storage.GetUserSettings(userId)
+func (s *UserSettingsService) GetUserSettings(userID int64) (*models.UserSettings, error) {
+	userSettings, err := s.storage.GetUserSettings(userID)
 	if err != nil {
 		return nil, fmt.Errorf("get user settings: %w", err)
 	}
@@ -48,7 +48,7 @@ func (s *UserSettingsService) UpdateUserSettings(userSettings dto.UserSettings) 
 		return nil, fmt.Errorf("update user settings: %w", err)
 	}
 
-	resSettings, err := s.storage.GetUserSettings(userSettings.UserId)
+	resSettings, err := s.storage.GetUserSettings(userSettings.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("update user settings (get): %w", err)
 	}

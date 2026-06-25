@@ -2,12 +2,12 @@ package grpc
 
 import (
 	"context"
-	"github.com/Kai120789/learning_platform_models/models"
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
 )
 
 type UserSettingsService interface {
@@ -19,7 +19,7 @@ func (g *UserGRPCServer) UpdateUserSettings(
 	in *userGRPC.UpdateUserSettingsRequest,
 ) (*userGRPC.UpdateUserSettingsResponse, error) {
 	userSettings := dto.UserSettings{
-		UserId:                 in.GetUserId(),
+		UserID:                 in.GetUserId(),
 		Is2FaEnabled:           in.GetIs_2FaEnabled(),
 		IsNotificationsEnabled: in.GetIsNotificationsEnabled(),
 	}
@@ -28,7 +28,7 @@ func (g *UserGRPCServer) UpdateUserSettings(
 	if err != nil {
 		g.logger.Error(
 			"failed to update user settings",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed to update user settings")

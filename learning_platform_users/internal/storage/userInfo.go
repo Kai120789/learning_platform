@@ -3,9 +3,9 @@ package storage
 import (
 	"context"
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
 )
 
 type UserInfoStorage struct {
@@ -20,59 +20,48 @@ func NewUserInfoStorage(
 	}
 }
 
-func (s *UserInfoStorage) CreateUserInfo(userId int64, userDto dto.CreateUser) error {
+func (s *UserInfoStorage) CreateUserInfo(userID int64, userDto dto.CreateUser) error {
 	query := `
-		INSERT INTO user_info (user_id, name, surname, lastname, role, status) 
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO user_info (user_id, name, surname, lastname) 
+		VALUES ($1, $2, $3, $4)
 	`
-
-	status := "ACTIVE"
-	if userDto.Role == "TUTOR" {
-		status = "INACTIVE"
-	}
 
 	_, err := s.conn.Exec(
 		context.Background(),
 		query,
-		userId,
+		userID,
 		userDto.Name,
 		userDto.Surname,
 		userDto.LastName,
-		userDto.Role,
-		status,
 	)
 
 	if err != nil {
-		return fmt.Errorf("insert info for user %d: %w", userId, err)
+		return fmt.Errorf("insert info for user %d: %w", userID, err)
 	}
 
 	return nil
 }
 
-func (s *UserInfoStorage) GetUserInfo(userId int64) (*models.UserInfo, error) {
+func (s *UserInfoStorage) GetUserInfo(userID int64) (*models.UserInfo, error) {
 	var userInfo models.UserInfo
 	query := `
-		SElECT *
+		SElECT user_id, name, surname, lastname, city, about
 		FROM user_info
 		WHERE user_id = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, userId)
+	row := s.conn.QueryRow(context.Background(), query, userID)
 	err := row.Scan(
-		&userInfo.Id,
-		&userInfo.UserId,
+		&userInfo.UserID,
 		&userInfo.Name,
 		&userInfo.Surname,
 		&userInfo.Lastname,
 		&userInfo.City,
 		&userInfo.About,
-		&userInfo.Role,
-		&userInfo.Status,
-		&userInfo.Class,
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("get info for user %d: %w", userId, err)
+		return nil, fmt.Errorf("get info for user %d: %w", userID, err)
 	}
 	return &userInfo, nil
 }
@@ -86,24 +75,22 @@ func (s *UserInfoStorage) UpdateUserInfo(userInfo dto.UserInfo) error {
 			lastname = $4,
 			city = $5,
 			about = $6,
-			class = $7
 		WHERE user_id = $1
 	`
 
 	_, err := s.conn.Exec(
 		context.Background(),
 		query,
-		userInfo.UserId,
+		userInfo.UserID,
 		userInfo.Name,
 		userInfo.Surname,
 		userInfo.Lastname,
 		userInfo.City,
 		userInfo.About,
-		userInfo.Class,
 	)
 
 	if err != nil {
-		return fmt.Errorf("update info for user %d: %w", userInfo.UserId, err)
+		return fmt.Errorf("update info for user %d: %w", userInfo.UserID, err)
 	}
 	return nil
 }

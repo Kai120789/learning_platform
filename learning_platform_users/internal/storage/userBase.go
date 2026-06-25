@@ -3,9 +3,9 @@ package storage
 import (
 	"context"
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
 )
 
 type UserBaseStorage struct {
@@ -23,16 +23,23 @@ func NewUserBaseStorage(
 func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	var id int64
 	query := `
-		INSERT INTO users (email, password) 
-		VALUES ($1, $2) 
+		INSERT INTO users (email, password_hash, role, status) 
+		VALUES ($1, $2, $3, $4) 
 		RETURNING id
 	`
+
+	status := "ACTIVE"
+	if userDto.Role == "TUTOR" {
+		status = "INACTIVE"
+	}
 
 	err := s.conn.QueryRow(
 		context.Background(),
 		query,
 		userDto.Email,
 		userDto.PasswordHash,
+		userDto.Role,
+		status,
 	).Scan(&id)
 	if err != nil {
 		return nil, fmt.Errorf("insert user %s to db: %w", userDto.Email, err)
@@ -41,24 +48,26 @@ func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	return &id, nil
 }
 
-func (s *UserBaseStorage) GetUserById(userId int64) (*models.User, error) {
+func (s *UserBaseStorage) GetUserById(userID int64) (*models.User, error) {
 	var user models.User
 	query := `
-		SELECT *
+		SELECT id, email, password_hash, role, status
 		FROM users
 		WHERE id = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, userId)
+	row := s.conn.QueryRow(context.Background(), query, userID)
 
 	err := row.Scan(
-		&user.Id,
+		&user.ID,
 		&user.Email,
-		&user.Password,
+		&user.PasswordHash,
+		&user.Role,
+		&user.Status,
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("get user by id %d from db: %w", userId, err)
+		return nil, fmt.Errorf("get user by id %d from db: %w", userID, err)
 	}
 
 	return &user, nil
@@ -67,7 +76,7 @@ func (s *UserBaseStorage) GetUserById(userId int64) (*models.User, error) {
 func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	query := `
-		SELECT *
+		SELECT id, email, password_hash, role, status
 		FROM users
 		WHERE email = $1
 	`
@@ -75,9 +84,11 @@ func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	row := s.conn.QueryRow(context.Background(), query, email)
 
 	err := row.Scan(
-		&user.Id,
+		&user.ID,
 		&user.Email,
-		&user.Password,
+		&user.PasswordHash,
+		&user.Role,
+		&user.Status,
 	)
 
 	if err != nil {
@@ -87,31 +98,31 @@ func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (s *UserBaseStorage) ChangePassword(userId int64, newPasswordHash string) error {
+func (s *UserBaseStorage) ChangePassword(userID int64, newPasswordHash string) error {
 	query := `
 		UPDATE users
 		SET password = $2
 		WHERE id = $1
 	`
 
-	_, err := s.conn.Exec(context.Background(), query, userId, newPasswordHash)
+	_, err := s.conn.Exec(context.Background(), query, userID, newPasswordHash)
 	if err != nil {
-		return fmt.Errorf("change password for user %d: %w", userId, err)
+		return fmt.Errorf("change password for user %d: %w", userID, err)
 	}
 
 	return nil
 }
 
-func (s *UserBaseStorage) ChangeEmail(userId int64, newEmail string) error {
+func (s *UserBaseStorage) ChangeEmail(userID int64, newEmail string) error {
 	query := `
 		UPDATE users
 		SET email = $2
 		WHERE id = $1
 	`
 
-	_, err := s.conn.Exec(context.Background(), query, userId, newEmail)
+	_, err := s.conn.Exec(context.Background(), query, userID, newEmail)
 	if err != nil {
-		return fmt.Errorf("change email for user %d: %w", userId, err)
+		return fmt.Errorf("change email for user %d: %w", userID, err)
 	}
 
 	return nil

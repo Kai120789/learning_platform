@@ -3,9 +3,9 @@ package storage
 import (
 	"context"
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"learning-platform/users/internal/dto"
+	"learning-platform/users/internal/models"
 )
 
 type UserSettingsStorage struct {
@@ -20,7 +20,7 @@ func NewUserSettingsStorage(
 	}
 }
 
-func (s *UserSettingsStorage) CreateUserSettings(userId int64) error {
+func (s *UserSettingsStorage) CreateUserSettings(userID int64) error {
 	query := `
 		INSERT INTO user_settings (user_id)
 		VALUES ($1)
@@ -28,34 +28,33 @@ func (s *UserSettingsStorage) CreateUserSettings(userId int64) error {
 
 	_, err := s.conn.Exec(
 		context.Background(),
-		query, userId,
+		query, userID,
 	)
 
 	if err != nil {
-		return fmt.Errorf("insert settings for user %d: %w", userId, err)
+		return fmt.Errorf("insert settings for user %d: %w", userID, err)
 	}
 
 	return nil
 }
 
-func (s *UserSettingsStorage) GetUserSettings(userId int64) (*models.UserSettings, error) {
+func (s *UserSettingsStorage) GetUserSettings(userID int64) (*models.UserSettings, error) {
 	var userSettings models.UserSettings
 	query := `
-		SELECT *
+		SELECT user_id, is_2fa_enabled, is_notifications_enabled
 		FROM user_settings
 		WHERE user_id = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, userId)
+	row := s.conn.QueryRow(context.Background(), query, userID)
 	err := row.Scan(
-		&userSettings.Id,
-		&userSettings.UserId,
+		&userSettings.UserID,
 		&userSettings.Is2FaEnabled,
 		&userSettings.IsNotificationsEnabled,
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("get settings for user %d: %w", userId, err)
+		return nil, fmt.Errorf("get settings for user %d: %w", userID, err)
 	}
 	return &userSettings, nil
 }
@@ -72,13 +71,13 @@ func (s *UserSettingsStorage) UpdateUserSettings(userSettings dto.UserSettings) 
 	_, err := s.conn.Exec(
 		context.Background(),
 		query,
-		userSettings.UserId,
+		userSettings.UserID,
 		userSettings.Is2FaEnabled,
 		userSettings.IsNotificationsEnabled,
 	)
 
 	if err != nil {
-		return fmt.Errorf("update info for user %d: %w", userSettings.UserId, err)
+		return fmt.Errorf("update info for user %d: %w", userSettings.UserID, err)
 	}
 	return nil
 }
