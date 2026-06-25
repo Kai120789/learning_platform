@@ -1,0 +1,22 @@
+version: "3"
+
+dotenv:
+  - .env
+
+tasks:
+  default:
+    cmds:
+      - task: migrate_up_user
+      - task: migrate_down_user
+  migrate_up_user:
+    aliases:
+      - gen
+    desc: "up migrations to postgres db"
+    cmds:
+      -  migrate -path ./learning_platform_users/migrations -database "${USER_DBDSN}?sslmode=disable" up
+  migrate_down_user:
+    aliases:
+      - gen
+    desc: "down migrations to postgres db"
+    cmds:
+      - migrate -path ./migrations -database "${USER_DBDSN}?sslmode=disable" down
