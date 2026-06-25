@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"learning-platform/groups/internal/dto"
+	"learning-platform/groups/internal/models"
 )
 
 type GroupBaseStorage struct {
@@ -37,10 +37,10 @@ func (g *GroupBaseStorage) CreateGroup(
 		query,
 		groupDto.Title,
 		groupDto.Description,
-		groupDto.SubjectId,
-		groupDto.TutorId,
+		groupDto.SubjectID,
+		groupDto.TutorID,
 		groupDto.TgGroupLink,
-		groupDto.TgChatId,
+		groupDto.TgChatID,
 	).Scan(&id)
 	if err != nil {
 		return nil, fmt.Errorf("create group %s in db: %w", groupDto.Title, err)
@@ -101,13 +101,13 @@ func (g *GroupBaseStorage) GetGroupById(id int64) (*models.Group, error) {
 
 	var group models.Group
 	err := row.Scan(
-		&group.Id,
+		&group.ID,
 		&group.Title,
 		&group.Description,
-		&group.SubjectId,
-		&group.TutorId,
+		&group.SubjectID,
+		&group.TutorID,
 		&group.TgGroupLink,
-		&group.TgChatId,
+		&group.TgChatID,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, fmt.Errorf("group %d not found in db: %w", id, err)
@@ -138,13 +138,13 @@ func (g *GroupBaseStorage) GetGroups() ([]models.Group, error) {
 	for rows.Next() {
 		var group models.Group
 		err := rows.Scan(
-			&group.Id,
+			&group.ID,
 			&group.Title,
 			&group.Description,
-			&group.SubjectId,
-			&group.TutorId,
+			&group.SubjectID,
+			&group.TutorID,
 			&group.TgGroupLink,
-			&group.TgChatId,
+			&group.TgChatID,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("scan one group from db: %w", err)

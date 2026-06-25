@@ -1,9 +1,9 @@
 package dto
 
 type UpdateGroup struct {
-	Id          int64
-	Title       string
-	Description string
-	TgGroupLink *string
-	TgChatId    *int64
+	ID          int64   `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	TgGroupLink *string `json:"tg_group_link"`
+	TgChatId    *string `json:"tg_chat_id"`
 }

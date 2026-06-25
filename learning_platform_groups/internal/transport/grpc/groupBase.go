@@ -2,12 +2,12 @@ package grpc
 
 import (
 	"context"
-	"github.com/Kai120789/learning_platform_models/models"
 	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/group"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/groups/internal/dto"
+	"learning-platform/groups/internal/models"
 )
 
 type GroupBaseService interface {
@@ -28,10 +28,10 @@ func (g *GroupGRPCServer) CreateGroup(
 	createGroupDto := dto.CreateGroup{
 		Title:       in.GetTitle(),
 		Description: in.GetDescription(),
-		SubjectId:   in.GetSubjectId(),
-		TutorId:     in.GetTutorId(),
+		SubjectID:   in.GetSubjectId(),
+		TutorID:     in.GetTutorId(),
 		TgGroupLink: &tgGroupLink,
-		TgChatId:    &tgChatId,
+		TgChatID:    &tgChatId,
 	}
 
 	group, err := g.service.GroupBaseService.CreateGroup(createGroupDto)
@@ -45,13 +45,13 @@ func (g *GroupGRPCServer) CreateGroup(
 	}
 
 	return &groupGRPC.CreateGroupResponse{
-		Id:          group.Id,
+		Id:          group.ID,
 		Title:       group.Title,
 		Description: group.Description,
-		SubjectId:   group.SubjectId,
-		TutorId:     group.TutorId,
-		TgGroupLink: &group.TgGroupLink,
-		TgChatId:    &group.TgChatId,
+		SubjectId:   group.SubjectID,
+		TutorId:     group.TutorID,
+		TgGroupLink: &group.TgGroupLink.String,
+		TgChatId:    &group.TgChatID.String,
 	}, nil
 }
 
@@ -80,13 +80,13 @@ func (g *GroupGRPCServer) UpdateGroup(
 	}
 
 	return &groupGRPC.UpdateGroupResponse{
-		Id:          group.Id,
+		Id:          group.ID,
 		Title:       group.Title,
 		Description: group.Description,
-		SubjectId:   group.SubjectId,
-		TutorId:     group.TutorId,
-		TgGroupLink: &group.TgGroupLink,
-		TgChatId:    &group.TgChatId,
+		SubjectId:   group.SubjectID,
+		TutorId:     group.TutorID,
+		TgGroupLink: &group.TgGroupLink.String,
+		TgChatId:    &group.TgChatID.String,
 	}, nil
 
 }
@@ -132,13 +132,13 @@ func (g *GroupGRPCServer) GetGroupById(
 	}
 
 	return &groupGRPC.GetGroupByIdResponse{
-		Id:          group.Id,
+		Id:          group.ID,
 		Title:       group.Title,
 		Description: group.Description,
-		SubjectId:   group.SubjectId,
-		TutorId:     group.TutorId,
-		TgGroupLink: &group.TgGroupLink,
-		TgChatId:    &group.TgChatId,
+		SubjectId:   group.SubjectID,
+		TutorId:     group.TutorID,
+		TgGroupLink: &group.TgGroupLink.String,
+		TgChatId:    &group.TgChatID.String,
 	}, nil
 }
 
@@ -158,13 +158,13 @@ func (g *GroupGRPCServer) GetGroups(
 	var resGroups []*groupGRPC.GetGroupByIdResponse
 	for _, group := range groups {
 		resGroups = append(resGroups, &groupGRPC.GetGroupByIdResponse{
-			Id:          group.Id,
+			Id:          group.ID,
 			Title:       group.Title,
 			Description: group.Description,
-			SubjectId:   group.SubjectId,
-			TutorId:     group.TutorId,
-			TgGroupLink: &group.TgGroupLink,
-			TgChatId:    &group.TgChatId,
+			SubjectId:   group.SubjectID,
+			TutorId:     group.TutorID,
+			TgGroupLink: &group.TgGroupLink.String,
+			TgChatId:    &group.TgChatID.String,
 		})
 	}
 	return &groupGRPC.GetGroupsResponse{Groups: resGroups}, nil

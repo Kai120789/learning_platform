@@ -2,8 +2,7 @@ package service
 
 import (
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
-	"learning-platform/groups/internal/dto"
+	"learning-platform/groups/internal/models"
 )
 
 type GroupUserService struct {
@@ -12,11 +11,11 @@ type GroupUserService struct {
 }
 
 type GroupUserStorage interface {
-	AddUsersToGroup(userIds []int64, groupId int64) error
-	RemoveUserFromGroup(userId int64, groupId int64) error
-	GetUserGroups(userId int64) ([]models.Group, error)
+	AddUsersToGroup(userIDs []int64, groupID int64) error
+	RemoveUserFromGroup(userID int64, groupID int64) error
+	GetUserGroups(userID int64) ([]models.Group, error)
 	GetGroupsByTutorId(tutorId int64) ([]models.Group, error)
-	GetGroupUsers(groupId int64) ([]dto.ShortUserInfo, error)
+	GetGroupUsers(groupID int64) ([]int64, error)
 }
 
 type GetGroupService interface {
@@ -33,27 +32,27 @@ func NewGroupUserService(
 	}
 }
 
-func (g *GroupUserService) AddUsersToGroup(userIds []int64, groupId int64) ([]dto.ShortUserInfo, error) {
-	_, err := g.group.GetGroupById(groupId)
+func (g *GroupUserService) AddUsersToGroup(userIDs []int64, groupID int64) ([]int64, error) {
+	_, err := g.group.GetGroupById(groupID)
 	if err != nil {
 		return nil, fmt.Errorf("add user to group (get group): %w", err)
 	}
 
-	err = g.storage.AddUsersToGroup(userIds, groupId)
+	err = g.storage.AddUsersToGroup(userIDs, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("add user to group: %w", err)
 	}
 
-	return g.storage.GetGroupUsers(groupId)
+	return g.GetGroupUsers(groupID)
 }
 
-func (g *GroupUserService) RemoveUserFromGroup(userId int64, groupId int64) error {
-	_, err := g.group.GetGroupById(groupId)
+func (g *GroupUserService) RemoveUserFromGroup(userID int64, groupID int64) error {
+	_, err := g.group.GetGroupById(groupID)
 	if err != nil {
 		return fmt.Errorf("remove user from group (get group): %w", err)
 	}
 
-	err = g.storage.RemoveUserFromGroup(userId, groupId)
+	err = g.storage.RemoveUserFromGroup(userID, groupID)
 	if err != nil {
 		return fmt.Errorf("remove userfrom group: %w", err)
 	}
@@ -61,8 +60,8 @@ func (g *GroupUserService) RemoveUserFromGroup(userId int64, groupId int64) erro
 	return nil
 }
 
-func (g *GroupUserService) GetUserGroups(userId int64) ([]models.Group, error) {
-	res, err := g.storage.GetUserGroups(userId)
+func (g *GroupUserService) GetUserGroups(userID int64) ([]models.Group, error) {
+	res, err := g.storage.GetUserGroups(userID)
 	if err != nil {
 		return nil, fmt.Errorf("get user groups: %w", err)
 	}
@@ -79,13 +78,13 @@ func (g *GroupUserService) GetGroupsByTutorId(tutorId int64) ([]models.Group, er
 	return res, nil
 }
 
-func (g *GroupUserService) GetGroupUsers(groupId int64) ([]dto.ShortUserInfo, error) {
-	_, err := g.group.GetGroupById(groupId)
+func (g *GroupUserService) GetGroupUsers(groupID int64) ([]int64, error) {
+	_, err := g.group.GetGroupById(groupID)
 	if err != nil {
 		return nil, fmt.Errorf("get group users (get group): %w", err)
 	}
 
-	res, err := g.storage.GetGroupUsers(groupId)
+	res, err := g.storage.GetGroupUsers(groupID)
 	if err != nil {
 		return nil, fmt.Errorf("get group users: %w", err)
 	}

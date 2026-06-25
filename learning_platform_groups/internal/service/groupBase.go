@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/Kai120789/learning_platform_models/models"
 	"learning-platform/groups/internal/dto"
+	"learning-platform/groups/internal/models"
 )
 
 type GroupBaseService struct {
@@ -27,12 +27,12 @@ func NewGroupBaseService(
 }
 
 func (g *GroupBaseService) CreateGroup(groupDto dto.CreateGroup) (*models.Group, error) {
-	groupId, err := g.storage.CreateGroup(groupDto)
+	groupID, err := g.storage.CreateGroup(groupDto)
 	if err != nil {
 		return nil, fmt.Errorf("create group: %w", err)
 	}
 
-	return g.GetGroupById(*groupId)
+	return g.GetGroupById(*groupID)
 }
 
 func (g *GroupBaseService) UpdateGroup(id int64, groupDto dto.UpdateGroup) (*models.Group, error) {
