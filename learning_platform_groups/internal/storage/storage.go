@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 )
 
 type Storage struct {
@@ -24,7 +23,7 @@ func New(
 func Connection(connectStr string) (*pgxpool.Pool, error) {
 	dbConn, err := pgxpool.New(context.Background(), connectStr)
 	if err != nil {
-		fmt.Errorf("unable connect to postgres: ", zap.Error(err))
+		return nil, fmt.Errorf("unable connect to postgres: %w", err)
 	}
 	return dbConn, nil
 }
