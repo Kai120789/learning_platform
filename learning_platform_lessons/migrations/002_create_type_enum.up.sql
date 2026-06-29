@@ -1,0 +1,1 @@
+CREATE TYPE type_enum AS ENUM ('IMAGE', 'VIDEO');
