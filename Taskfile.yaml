@@ -12,6 +12,8 @@ tasks:
       - task: migrate_down_group
       - task: migrate_up_lesson
       - task: migrate_down_lesson
+      - task: migrate_up_subject
+      - task: migrate_down_subject
   migrate_up_user:
     aliases:
       - gen
@@ -48,3 +50,15 @@ tasks:
     desc: "down migrations to lesson db"
     cmds:
       - migrate -path ./learning_platform_lessons/migrations -database "${LESSON_DBDSN}?sslmode=disable" down
+  migrate_up_subject:
+    aliases:
+      - gen
+    desc: "up migrations to subject db"
+    cmds:
+      - migrate -path ./learning_platform_subjects/migrations -database "${SUBJECT_DBDSN}?sslmode=disable" up
+  migrate_down_subject:
+    aliases:
+      - gen
+    desc: "down migrations to subject db"
+    cmds:
+      - migrate -path ./learning_platform_subjects/migrations -database "${SUBJECT_DBDSN}?sslmode=disable" down

@@ -20,3 +20,11 @@ GRANT ALL PRIVILEGES ON DATABASE lesson_db TO lesson_db_user;
 
 \c lesson_db
 GRANT ALL ON SCHEMA public TO lesson_db_user;
+
+
+CREATE DATABASE subject_db;
+CREATE USER subject_db_user WITH PASSWORD 'subject_db_password';
+GRANT ALL PRIVILEGES ON DATABASE subject_db TO subject_db_user;
+
+\c subject_db
+GRANT ALL ON SCHEMA public TO subject_db_user;
