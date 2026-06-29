@@ -1,0 +1,13 @@
+services:
+  learning-platform-schedules:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    container_name: learning-platform-schedules
+    restart: on-failure
+    depends_on:
+      - learning-platform-postgres
+    ports:
+      - "50056:50056"
+    volumes:
+      - ..:/app
