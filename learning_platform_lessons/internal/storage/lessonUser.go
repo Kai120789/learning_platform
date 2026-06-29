@@ -39,7 +39,7 @@ func (lu *LessonUserStorage) DeleteUsersFromLesson(lessonID int64, userIDs []int
 
 	_, err := lu.conn.Exec(context.Background(), query, userIDs, lessonID)
 	if err != nil {
-		return fmt.Errorf("delete users %d to lesson %d: %w", userIDs, lessonID, err)
+		return fmt.Errorf("delete users %d from lesson %d: %w", userIDs, lessonID, err)
 	}
 
 	return nil
