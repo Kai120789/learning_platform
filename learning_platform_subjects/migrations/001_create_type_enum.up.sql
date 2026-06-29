@@ -1,0 +1,1 @@
+CREATE TYPE type_enum AS ENUM ('ЕГЭ', 'ОГЭ', 'Повышение успеваемости');
