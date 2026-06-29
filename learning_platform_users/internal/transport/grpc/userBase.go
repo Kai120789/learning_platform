@@ -162,11 +162,11 @@ func (g *UserGRPCServer) ChangeEmail(
 func protoRoleToEnum(role userGRPC.UserRole) enum.UserRole {
 	switch role {
 	case userGRPC.UserRole_TUTOR:
-		return "TUTOR"
+		return enum.RoleTutor
 	case userGRPC.UserRole_STUDENT:
-		return "STUDENT"
+		return enum.RoleStudent
 	case userGRPC.UserRole_ADMIN:
-		return "ADMIN"
+		return enum.RoleAdmin
 	default:
 		return "UNSPECIFIED"
 	}
@@ -174,11 +174,11 @@ func protoRoleToEnum(role userGRPC.UserRole) enum.UserRole {
 
 func enumToProtoRole(role enum.UserRole) userGRPC.UserRole {
 	switch role {
-	case "TUTOR":
+	case enum.RoleTutor:
 		return userGRPC.UserRole_TUTOR
-	case "STUDENT":
+	case enum.RoleStudent:
 		return userGRPC.UserRole_STUDENT
-	case "ADMIN":
+	case enum.RoleAdmin:
 		return userGRPC.UserRole_ADMIN
 	default:
 		return userGRPC.UserRole_USER_ROLE_UNSPECIFIED
@@ -187,11 +187,11 @@ func enumToProtoRole(role enum.UserRole) userGRPC.UserRole {
 
 func enumToProtoStatus(status enum.UserStatus) userGRPC.Status {
 	switch status {
-	case "ACTIVE":
+	case enum.StatusActive:
 		return userGRPC.Status_ACTIVE
-	case "INACTIVE":
+	case enum.StatusInactive:
 		return userGRPC.Status_INACTIVE
-	case "BANNED":
+	case enum.StatusBanned:
 		return userGRPC.Status_BANNED
 	default:
 		return userGRPC.Status_STATUS_UNSPECIFIED
