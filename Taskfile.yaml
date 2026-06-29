@@ -10,6 +10,8 @@ tasks:
       - task: migrate_down_user
       - task: migrate_up_group
       - task: migrate_down_group
+      - task: migrate_up_lesson
+      - task: migrate_down_lesson
   migrate_up_user:
     aliases:
       - gen
@@ -19,7 +21,7 @@ tasks:
   migrate_down_user:
     aliases:
       - gen
-    desc: "down migrations to group db"
+    desc: "down migrations to user db"
     cmds:
       - migrate -path ./learning_platform_users/migrations -database "${USER_DBDSN}?sslmode=disable" down
   migrate_up_group:
@@ -31,6 +33,18 @@ tasks:
   migrate_down_group:
     aliases:
       - gen
-    desc: "down migrations to user db"
+    desc: "down migrations to group db"
     cmds:
       - migrate -path ./learning_platform_groups/migrations -database "${GROUP_DBDSN}?sslmode=disable" down
+  migrate_up_lesson:
+    aliases:
+      - gen
+    desc: "up migrations to lesson db"
+    cmds:
+      - migrate -path ./learning_platform_lessons/migrations -database "${LESSON_DBDSN}?sslmode=disable" up
+  migrate_down_lesson:
+    aliases:
+      - gen
+    desc: "down migrations to lesson db"
+    cmds:
+      - migrate -path ./learning_platform_lessons/migrations -database "${LESSON_DBDSN}?sslmode=disable" down

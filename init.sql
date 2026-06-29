@@ -12,3 +12,11 @@ GRANT ALL PRIVILEGES ON DATABASE group_db TO group_db_user;
 
 \c group_db
 GRANT ALL ON SCHEMA public TO group_db_user;
+
+
+CREATE DATABASE lesson_db;
+CREATE USER lesson_db_user WITH PASSWORD 'lesson_db_password';
+GRANT ALL PRIVILEGES ON DATABASE lesson_db TO lesson_db_user;
+
+\c lesson_db
+GRANT ALL ON SCHEMA public TO lesson_db_user;
