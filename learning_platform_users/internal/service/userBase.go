@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"learning-platform/users/internal/dto"
 	"learning-platform/users/internal/models"
+	"learning-platform/users/internal/utils"
 )
 
 type UserBaseService struct {
@@ -125,9 +126,9 @@ func formUserDto(
 		UserInfo: dto.UserInfo{
 			Name:     userInfo.Name,
 			Surname:  userInfo.Surname,
-			Lastname: &userInfo.Lastname.String,
-			City:     &userInfo.City.String,
-			About:    &userInfo.About.String,
+			Lastname: utils.DBStringToOptional(userInfo.Lastname),
+			City:     utils.DBStringToOptional(userInfo.City),
+			About:    utils.DBStringToOptional(userInfo.About),
 		},
 		UserSettings: dto.UserSettings{
 			Is2FaEnabled:           userSettings.Is2FaEnabled,
