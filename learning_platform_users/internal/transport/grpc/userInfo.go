@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	"learning-platform/users/internal/dto"
 	"learning-platform/users/internal/models"
+	"learning-platform/users/internal/utils"
 )
 
 type UserInfoService interface {
@@ -22,9 +23,9 @@ func (g *UserGRPCServer) UpdateUserInfo(
 		UserID:   in.GetUserId(),
 		Name:     in.GetName(),
 		Surname:  in.GetSurname(),
-		Lastname: stringToOptionalString(in.GetLastname()),
-		City:     stringToOptionalString(in.GetCity()),
-		About:    stringToOptionalString(in.GetAbout()),
+		Lastname: in.Lastname,
+		City:     in.City,
+		About:    in.About,
 	}
 
 	res, err := g.UserInfoService.UpdateUserInfo(userInfo)
@@ -39,12 +40,8 @@ func (g *UserGRPCServer) UpdateUserInfo(
 	return &userGRPC.UpdateUserInfoResponse{
 		Name:     res.Name,
 		Surname:  res.Name,
-		Lastname: &res.Lastname.String,
-		City:     &res.City.String,
-		About:    &res.About.String,
+		Lastname: utils.DBStringToOptional(res.Lastname),
+		City:     utils.DBStringToOptional(res.City),
+		About:    utils.DBStringToOptional(res.About),
 	}, nil
-}
-
-func stringToOptionalString(value string) *string {
-	return &value
 }
