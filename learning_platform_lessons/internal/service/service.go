@@ -4,6 +4,7 @@ import (
 	"learning-platform/lessons/internal/dto"
 	"learning-platform/lessons/internal/models"
 	"learning-platform/lessons/internal/models/enum"
+	"learning-platform/lessons/internal/utils"
 )
 
 type Service struct {
@@ -192,8 +193,8 @@ func (l *Service) buildOneLessonWithMediasDto(
 
 	return &dto.LessonResponse{
 		ID:         lesson.ID,
-		BoardID:    &lesson.BoardID.Int64,
-		MeetLink:   &lesson.MeetLink.String,
+		BoardID:    utils.DBInt8ToOptional(lesson.BoardID),
+		MeetLink:   utils.DBStringToOptional(lesson.MeetLink),
 		StartTime:  lesson.StartTime.Time,
 		Duration:   lesson.Duration,
 		TutorID:    lesson.TutorID,

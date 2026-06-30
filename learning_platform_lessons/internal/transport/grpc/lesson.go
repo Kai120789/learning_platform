@@ -112,12 +112,9 @@ func (l *LessonGRPCServer) CreateLesson(
 		)
 	}
 
-	boardID := in.GetBoardId()
-	meetLink := in.GetMeetLink()
-
 	lesson := dto.CreateLesson{
-		BoardID:    &boardID,
-		MeetLink:   &meetLink,
+		BoardID:    in.BoardId,
+		MeetLink:   in.MeetLink,
 		StartTime:  in.GetStartTime().AsTime(),
 		Duration:   in.GetDuration(),
 		TutorID:    in.GetTutorId(),
@@ -177,13 +174,10 @@ func (l *LessonGRPCServer) UpdateLesson(
 		)
 	}
 
-	boardID := in.GetBoardId()
-	meetLink := in.GetMeetLink()
-
 	lesson := dto.UpdateLesson{
 		ID:              in.GetId(),
-		BoardID:         &boardID,
-		MeetLink:        &meetLink,
+		BoardID:         in.BoardId,
+		MeetLink:        in.MeetLink,
 		StartTime:       in.GetStartTime().AsTime(),
 		Duration:        in.GetDuration(),
 		MediaItems:      mediaItems,
