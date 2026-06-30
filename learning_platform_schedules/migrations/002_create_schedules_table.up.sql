@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS schedules (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tutor_id BIGINT NOT NULL,
+    start_time TIMESTAMPTZ DEFAULT now(),
+    end_time TIMESTAMPTZ DEFAULT now(),
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
