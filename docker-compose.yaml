@@ -11,3 +11,4 @@ include:
   - learning_platform_groups/deployments/docker-compose.yaml
   - learning_platform_lessons/deployment/docker-compose.yaml
   - learning_platform_subjects/deployment/docker-compose.yaml
+  - learning_platform_schedules/deployment/docker-compose.yaml

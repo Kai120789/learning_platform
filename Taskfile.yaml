@@ -6,6 +6,7 @@ dotenv:
 tasks:
   default:
     cmds:
+      - task: migrate_all
       - task: migrate_up_user
       - task: migrate_down_user
       - task: migrate_up_group
@@ -14,6 +15,18 @@ tasks:
       - task: migrate_down_lesson
       - task: migrate_up_subject
       - task: migrate_down_subject
+      - task: migrate_up_schedule
+      - task: migrate_down_schedule
+  migrate_all:
+    aliases:
+      - gen
+    desc: "up migrations for all databases"
+    cmds:
+      - migrate -path ./learning_platform_users/migrations -database "${USER_DBDSN}?sslmode=disable" up
+      - migrate -path ./learning_platform_groups/migrations -database "${GROUP_DBDSN}?sslmode=disable" up
+      - migrate -path ./learning_platform_lessons/migrations -database "${LESSON_DBDSN}?sslmode=disable" up
+      - migrate -path ./learning_platform_subjects/migrations -database "${SUBJECT_DBDSN}?sslmode=disable" up
+      - migrate -path ./learning_platform_schedules/migrations -database "${SCHEDULE_DBDSN}?sslmode=disable" up
   migrate_up_user:
     aliases:
       - gen
@@ -62,3 +75,15 @@ tasks:
     desc: "down migrations to subject db"
     cmds:
       - migrate -path ./learning_platform_subjects/migrations -database "${SUBJECT_DBDSN}?sslmode=disable" down
+  migrate_up_schedule:
+    aliases:
+      - gen
+    desc: "up migrations to schedule db"
+    cmds:
+      - migrate -path ./learning_platform_schedules/migrations -database "${SCHEDULE_DBDSN}?sslmode=disable" up
+  migrate_down_schedule:
+    aliases:
+      - gen
+    desc: "down migrations to schedule db"
+    cmds:
+      - migrate -path ./learning_platform_schedules/migrations -database "${SCHEDULE_DBDSN}?sslmode=disable" down
