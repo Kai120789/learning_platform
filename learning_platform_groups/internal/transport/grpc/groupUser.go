@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/groups/internal/models"
+	"learning-platform/groups/internal/utils"
 )
 
 type GroupUserService interface {
@@ -84,8 +85,8 @@ func (g *GroupGRPCServer) GetUserGroups(
 			Description: group.Description,
 			SubjectId:   group.SubjectID,
 			TutorId:     group.TutorID,
-			TgGroupLink: &group.TgGroupLink.String,
-			TgChatId:    &group.TgChatID.String,
+			TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+			TgChatId:    utils.DBStringToOptional(group.TgChatID),
 		}
 	}
 
@@ -116,8 +117,8 @@ func (g *GroupGRPCServer) GetGroupsByTutorId(
 			Description: group.Description,
 			SubjectId:   group.SubjectID,
 			TutorId:     group.TutorID,
-			TgGroupLink: &group.TgGroupLink.String,
-			TgChatId:    &group.TgChatID.String,
+			TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+			TgChatId:    utils.DBStringToOptional(group.TgChatID),
 		}
 	}
 

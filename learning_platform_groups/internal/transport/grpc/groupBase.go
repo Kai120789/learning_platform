@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	"learning-platform/groups/internal/dto"
 	"learning-platform/groups/internal/models"
+	"learning-platform/groups/internal/utils"
 )
 
 type GroupBaseService interface {
@@ -22,16 +23,13 @@ func (g *GroupGRPCServer) CreateGroup(
 	ctx context.Context,
 	in *groupGRPC.CreateGroupRequest,
 ) (*groupGRPC.CreateGroupResponse, error) {
-	tgGroupLink := in.GetTgGroupLink()
-	tgChatId := in.GetTgChatId()
-
 	createGroupDto := dto.CreateGroup{
 		Title:       in.GetTitle(),
 		Description: in.GetDescription(),
 		SubjectID:   in.GetSubjectId(),
 		TutorID:     in.GetTutorId(),
-		TgGroupLink: &tgGroupLink,
-		TgChatID:    &tgChatId,
+		TgGroupLink: in.TgGroupLink,
+		TgChatID:    in.TgChatId,
 	}
 
 	group, err := g.service.GroupBaseService.CreateGroup(createGroupDto)
@@ -50,8 +48,8 @@ func (g *GroupGRPCServer) CreateGroup(
 		Description: group.Description,
 		SubjectId:   group.SubjectID,
 		TutorId:     group.TutorID,
-		TgGroupLink: &group.TgGroupLink.String,
-		TgChatId:    &group.TgChatID.String,
+		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+		TgChatId:    utils.DBStringToOptional(group.TgChatID),
 	}, nil
 }
 
@@ -59,14 +57,11 @@ func (g *GroupGRPCServer) UpdateGroup(
 	ctx context.Context,
 	in *groupGRPC.UpdateGroupRequest,
 ) (*groupGRPC.UpdateGroupResponse, error) {
-	tgGroupLink := in.GetTgGroupLink()
-	tgChatId := in.GetTgChatId()
-
 	updateGroupDto := dto.UpdateGroup{
 		Title:       in.GetTitle(),
 		Description: in.GetDescription(),
-		TgGroupLink: &tgGroupLink,
-		TgChatId:    &tgChatId,
+		TgGroupLink: in.TgGroupLink,
+		TgChatId:    in.TgChatId,
 	}
 
 	group, err := g.service.GroupBaseService.UpdateGroup(in.GetId(), updateGroupDto)
@@ -85,8 +80,8 @@ func (g *GroupGRPCServer) UpdateGroup(
 		Description: group.Description,
 		SubjectId:   group.SubjectID,
 		TutorId:     group.TutorID,
-		TgGroupLink: &group.TgGroupLink.String,
-		TgChatId:    &group.TgChatID.String,
+		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+		TgChatId:    utils.DBStringToOptional(group.TgChatID),
 	}, nil
 
 }
@@ -137,8 +132,8 @@ func (g *GroupGRPCServer) GetGroupById(
 		Description: group.Description,
 		SubjectId:   group.SubjectID,
 		TutorId:     group.TutorID,
-		TgGroupLink: &group.TgGroupLink.String,
-		TgChatId:    &group.TgChatID.String,
+		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+		TgChatId:    utils.DBStringToOptional(group.TgChatID),
 	}, nil
 }
 
@@ -163,8 +158,8 @@ func (g *GroupGRPCServer) GetGroups(
 			Description: group.Description,
 			SubjectId:   group.SubjectID,
 			TutorId:     group.TutorID,
-			TgGroupLink: &group.TgGroupLink.String,
-			TgChatId:    &group.TgChatID.String,
+			TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+			TgChatId:    utils.DBStringToOptional(group.TgChatID),
 		})
 	}
 	return &groupGRPC.GetGroupsResponse{Groups: resGroups}, nil
