@@ -1,15 +1,17 @@
 package dto
 
+import "learning-platform/api-gateway/internal/dto/enum"
+
 type RegisterRequest struct {
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	LastName string `json:"lastname"`
-	Role     string `json:"role"`
-	Password string `json:"password"`
+	Email    string        `json:"email"`
+	Name     string        `json:"name"`
+	Surname  string        `json:"surname"`
+	LastName string        `json:"lastname"`
+	Role     enum.UserRole `json:"role"`
+	Password string        `json:"password"`
 }
 
 type RegisterResponse struct {
-	SessionId string `json:"session_id"`
-	UserId    int64  `json:"user_id"`
+	SessionID string `json:"session_id"`
+	UserID    int64  `json:"user_id"`
 }

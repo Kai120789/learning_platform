@@ -1,8 +1,8 @@
 package groupDto
 
 type UpdateGroupRequest struct {
-	Title       string
-	Description string
-	TgGroupLink *string
-	TgChatId    *int64
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	TgGroupLink *string `json:"tg_group_link"`
+	TgChatID    *string `json:"tg_chat_id"`
 }

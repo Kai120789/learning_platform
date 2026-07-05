@@ -7,15 +7,21 @@ import (
 )
 
 type Router struct {
-	UserRouter  UserRouter
-	AuthRouter  AuthRouter
-	GroupRouter GroupRouter
+	UserRouter     *UserRouter
+	AuthRouter     *AuthRouter
+	GroupRouter    *GroupRouter
+	LessonRouter   *LessonRouter
+	ScheduleRouter *ScheduleRouter
+	SubjectRouter  *SubjectRouter
 }
 
 type Handler struct {
-	UserHandler  UserHandler
-	AuthHandler  AuthHandler
-	GroupHandler GroupHandler
+	UserHandler     UserHandler
+	AuthHandler     AuthHandler
+	GroupHandler    GroupHandler
+	LessonHandler   LessonHandler
+	ScheduleHandler ScheduleHandler
+	SubjectHandler  SubjectHandler
 }
 
 func New(
@@ -25,14 +31,20 @@ func New(
 	r := chi.NewRouter()
 
 	router := &Router{
-		AuthRouter:  *NewAuthRouter(),
-		UserRouter:  *NewUserRouter(),
-		GroupRouter: *NewGroupRouter(),
+		AuthRouter:     NewAuthRouter(),
+		UserRouter:     NewUserRouter(),
+		GroupRouter:    NewGroupRouter(),
+		LessonRouter:   NewLessonRouter(),
+		ScheduleRouter: NewScheduleRouter(),
+		SubjectRouter:  NewSubjectRouter(),
 	}
 
 	router.UserRouter.UserRoutes(r, handler.UserHandler, jwtMiddleware)
 	router.AuthRouter.AuthRoutes(r, handler.AuthHandler, jwtMiddleware)
 	router.GroupRouter.GroupRoutes(r, handler.GroupHandler, jwtMiddleware)
+	router.LessonRouter.LessonRoutes(r, handler.LessonHandler, jwtMiddleware)
+	router.ScheduleRouter.ScheduleRoutes(r, handler.ScheduleHandler, jwtMiddleware)
+	router.SubjectRouter.SubjectRoutes(r, handler.SubjectHandler, jwtMiddleware)
 
 	return r
 }

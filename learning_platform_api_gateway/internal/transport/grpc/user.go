@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"learning-platform/api-gateway/internal/dto/userDto"
 	"time"
 )
@@ -84,16 +85,15 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 	return &userDto.UserData{
 		UserId: res.GetUserId(),
 		Email:  res.GetEmail(),
+		Role:   protoRoleToEnum(res.GetRole()),
+		Status: protoStatusToEnum(res.GetStatus()),
 		UserInfo: userDto.UserInfo{
 			UserId:   res.GetUserId(),
 			Name:     res.GetUserInfo().GetName(),
 			Surname:  res.GetUserInfo().GetSurname(),
-			Lastname: getOptionalFieldString(res.GetUserInfo().GetLastname()),
-			City:     getOptionalFieldString(res.GetUserInfo().GetCity()),
-			About:    getOptionalFieldString(res.GetUserInfo().GetAbout()),
-			Role:     protoRoleToString(res.GetUserInfo().GetRole()),
-			Status:   protoStatusToString(res.GetUserInfo().GetStatus()),
-			Class:    getOptionalFieldInt(res.GetUserInfo().GetClass()),
+			Lastname: res.GetUserInfo().Lastname,
+			City:     res.GetUserInfo().City,
+			About:    res.GetUserInfo().About,
 		},
 		UserSettings: userDto.UserSettings{
 			UserId:                 res.GetUserId(),
@@ -112,7 +112,7 @@ func (u *UserClient) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
 		Name:         newUser.Name,
 		Surname:      newUser.Surname,
 		LastName:     &newUser.LastName,
-		Role:         stringToProtoUserRole(newUser.Role),
+		Role:         enumToProtoUserRole(newUser.Role),
 		PasswordHash: newUser.Password,
 	})
 	if err != nil {
@@ -124,58 +124,54 @@ func (u *UserClient) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
 	return &resUserId, nil
 }
 
-func stringToProtoUserRole(role string) userGRPC.UserRole {
+func enumToProtoUserRole(role enum.UserRole) userGRPC.UserRole {
 	switch role {
-	case "TUTOR":
+	case enum.RoleTutor:
 		return userGRPC.UserRole_TUTOR
-	case "STUDENT":
+	case enum.RoleStudent:
 		return userGRPC.UserRole_STUDENT
-	case "ADMIN":
+	case enum.RoleAdmin:
 		return userGRPC.UserRole_ADMIN
 	default:
 		return userGRPC.UserRole_USER_ROLE_UNSPECIFIED
 	}
 }
 
-func protoRoleToString(role userGRPC.UserRole) string {
+func protoRoleToEnum(role userGRPC.UserRole) enum.UserRole {
 	switch role {
 	case userGRPC.UserRole_TUTOR:
-		return "TUTOR"
+		return enum.RoleTutor
 	case userGRPC.UserRole_STUDENT:
-		return "STUDENT"
+		return enum.RoleStudent
 	case userGRPC.UserRole_ADMIN:
-		return "ADMIN"
+		return enum.RoleAdmin
 	default:
-		return "UNSPECIFIED"
+		return ""
 	}
 }
 
-func stringToProtoStatus(status string) userGRPC.Status {
+func enumToProtoStatus(status enum.UserStatus) userGRPC.Status {
 	switch status {
-	case "ACTIVE":
+	case enum.StatusActive:
 		return userGRPC.Status_ACTIVE
-	case "INACTIVE":
+	case enum.StatusInactive:
 		return userGRPC.Status_INACTIVE
-	case "BANNED":
+	case enum.StatusBanned:
 		return userGRPC.Status_BANNED
 	default:
 		return userGRPC.Status_STATUS_UNSPECIFIED
 	}
 }
 
-func protoStatusToString(status userGRPC.Status) string {
+func protoStatusToEnum(status userGRPC.Status) enum.UserStatus {
 	switch status {
 	case userGRPC.Status_ACTIVE:
-		return "ACTIVE"
+		return enum.StatusActive
 	case userGRPC.Status_INACTIVE:
-		return "INACTIVE"
+		return enum.StatusInactive
 	case userGRPC.Status_BANNED:
-		return "BANNED"
+		return enum.StatusBanned
 	default:
-		return "UNSPECIFIED"
+		return ""
 	}
 }
-
-func getOptionalFieldString(val string) *string { return &val }
-
-func getOptionalFieldInt(val int64) *int64 { return &val }

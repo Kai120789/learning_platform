@@ -1,13 +1,10 @@
 package userDto
 
 type UserInfo struct {
-	UserId   int64
-	Name     string
-	Surname  string
-	Lastname *string
-	City     *string
-	About    *string
-	Role     string
-	Status   string
-	Class    *int64
+	UserID   int64   `json:"user_id"`
+	Name     string  `json:"name"`
+	Surname  string  `json:"surname"`
+	Lastname *string `json:"lastname"`
+	City     *string `json:"city"`
+	About    *string `json:"about"`
 }

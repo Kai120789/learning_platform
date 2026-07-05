@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"context"
-	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
+	groupGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/group"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"learning-platform/api-gateway/internal/dto/groupDto"
@@ -10,7 +10,7 @@ import (
 )
 
 type GroupClient struct {
-	client userGRPC.GroupClient
+	client groupGRPC.GroupClient
 }
 
 func NewGroupGrpcConnection(groupGrpcUrl string) (*grpc.ClientConn, error) {
@@ -27,7 +27,7 @@ func NewGroupGrpcConnection(groupGrpcUrl string) (*grpc.ClientConn, error) {
 
 func NewGroupClient(connection *grpc.ClientConn) *GroupClient {
 	return &GroupClient{
-		client: userGRPC.NewGroupClient(connection),
+		client: groupGRPC.NewGroupClient(connection),
 	}
 }
 
@@ -35,13 +35,13 @@ func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	reqBody := &userGRPC.CreateGroupRequest{
+	reqBody := &groupGRPC.CreateGroupRequest{
 		Title:       group.Title,
 		Description: group.Description,
-		SubjectId:   group.SubjectId,
-		TutorId:     group.TutorId,
+		SubjectId:   group.SubjectID,
+		TutorId:     group.TutorID,
 		TgGroupLink: group.TgGroupLink,
-		TgChatId:    group.TgChatId,
+		TgChatId:    group.TgChatID,
 	}
 
 	resGroup, err := g.client.CreateGroup(ctx, reqBody)
@@ -50,13 +50,13 @@ func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.
 	}
 
 	return &groupDto.GroupResponse{
-		Id:          resGroup.GetId(),
+		ID:          resGroup.GetId(),
 		Title:       resGroup.GetTitle(),
 		Description: resGroup.GetDescription(),
-		SubjectId:   resGroup.GetSubjectId(),
-		TutorId:     resGroup.GetTutorId(),
-		TgGroupLink: getOptionalFieldString(resGroup.GetTgGroupLink()),
-		TgChatId:    getOptionalFieldInt(resGroup.GetTgChatId()),
+		SubjectID:   resGroup.GetSubjectId(),
+		TutorID:     resGroup.GetTutorId(),
+		TgGroupLink: resGroup.TgGroupLink,
+		TgChatID:    resGroup.TgChatId,
 	}, nil
 }
 
@@ -64,12 +64,12 @@ func (g *GroupClient) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRe
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	reqBody := &userGRPC.UpdateGroupRequest{
+	reqBody := &groupGRPC.UpdateGroupRequest{
 		Id:          groupId,
 		Title:       newGroup.Title,
 		Description: newGroup.Description,
 		TgGroupLink: newGroup.TgGroupLink,
-		TgChatId:    newGroup.TgChatId,
+		TgChatId:    newGroup.TgChatID,
 	}
 
 	resGroup, err := g.client.UpdateGroup(ctx, reqBody)
@@ -78,13 +78,13 @@ func (g *GroupClient) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRe
 	}
 
 	return &groupDto.GroupResponse{
-		Id:          resGroup.GetId(),
+		ID:          resGroup.GetId(),
 		Title:       resGroup.GetTitle(),
 		Description: resGroup.GetDescription(),
-		SubjectId:   resGroup.GetSubjectId(),
-		TutorId:     resGroup.GetTutorId(),
-		TgGroupLink: getOptionalFieldString(resGroup.GetTgGroupLink()),
-		TgChatId:    getOptionalFieldInt(resGroup.GetTgChatId()),
+		SubjectID:   resGroup.GetSubjectId(),
+		TutorID:     resGroup.GetTutorId(),
+		TgGroupLink: resGroup.TgGroupLink,
+		TgChatID:    resGroup.TgChatId,
 	}, nil
 }
 
@@ -92,7 +92,7 @@ func (g *GroupClient) RemoveGroup(groupId int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := g.client.RemoveGroup(ctx, &userGRPC.RemoveGroupRequest{Id: groupId})
+	_, err := g.client.RemoveGroup(ctx, &groupGRPC.RemoveGroupRequest{Id: groupId})
 	if err != nil {
 		return err
 	}
@@ -104,19 +104,19 @@ func (g *GroupClient) GetGroupById(groupId int64) (*groupDto.GroupResponse, erro
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resGroup, err := g.client.GetGroupById(ctx, &userGRPC.GetGroupByIdRequest{Id: groupId})
+	resGroup, err := g.client.GetGroupById(ctx, &groupGRPC.GetGroupByIdRequest{Id: groupId})
 	if err != nil {
 		return nil, err
 	}
 
 	return &groupDto.GroupResponse{
-		Id:          resGroup.GetId(),
+		ID:          resGroup.GetId(),
 		Title:       resGroup.GetTitle(),
 		Description: resGroup.GetDescription(),
-		SubjectId:   resGroup.GetSubjectId(),
-		TutorId:     resGroup.GetTutorId(),
-		TgGroupLink: getOptionalFieldString(resGroup.GetTgGroupLink()),
-		TgChatId:    getOptionalFieldInt(resGroup.GetTgChatId()),
+		SubjectID:   resGroup.GetSubjectId(),
+		TutorID:     resGroup.GetTutorId(),
+		TgGroupLink: resGroup.TgGroupLink,
+		TgChatID:    resGroup.TgChatId,
 	}, nil
 }
 
@@ -124,7 +124,7 @@ func (g *GroupClient) GetGroups() ([]groupDto.GroupResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resGroups, err := g.client.GetGroups(ctx, &userGRPC.GetGroupsRequest{})
+	resGroups, err := g.client.GetGroups(ctx, &groupGRPC.GetGroupsRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -133,24 +133,24 @@ func (g *GroupClient) GetGroups() ([]groupDto.GroupResponse, error) {
 
 	for ind, resGroup := range resGroups.GetGroups() {
 		resGroupsAsDto[ind] = groupDto.GroupResponse{
-			Id:          resGroup.GetId(),
+			ID:          resGroup.GetId(),
 			Title:       resGroup.GetTitle(),
 			Description: resGroup.GetDescription(),
-			SubjectId:   resGroup.GetSubjectId(),
-			TutorId:     resGroup.GetTutorId(),
-			TgGroupLink: getOptionalFieldString(resGroup.GetTgGroupLink()),
-			TgChatId:    getOptionalFieldInt(resGroup.GetTgChatId()),
+			SubjectID:   resGroup.GetSubjectId(),
+			TutorID:     resGroup.GetTutorId(),
+			TgGroupLink: resGroup.TgGroupLink,
+			TgChatID:    resGroup.TgChatId,
 		}
 	}
 
 	return resGroupsAsDto, nil
 }
 
-func (g *GroupClient) AddUsersToGroup(groupId int64, userIds []int64) ([]groupDto.ShortUserInfo, error) {
+func (g *GroupClient) AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resAddUsers, err := g.client.AddUsersToGroup(ctx, &userGRPC.AddUsersToGroupRequest{
+	resUsers, err := g.client.AddUsersToGroup(ctx, &groupGRPC.AddUsersToGroupRequest{
 		GroupId: groupId,
 		UserIds: userIds,
 	})
@@ -158,24 +158,14 @@ func (g *GroupClient) AddUsersToGroup(groupId int64, userIds []int64) ([]groupDt
 		return nil, err
 	}
 
-	resUsers := make([]groupDto.ShortUserInfo, len(resAddUsers.GetUsers()))
-
-	for ind, oneAddedUser := range resAddUsers.Users {
-		resUsers[ind] = groupDto.ShortUserInfo{
-			Id:    oneAddedUser.GetId(),
-			Name:  oneAddedUser.GetName(),
-			Email: oneAddedUser.GetEmail(),
-		}
-	}
-
-	return resUsers, nil
+	return resUsers.GetUserIds(), nil
 }
 
 func (g *GroupClient) RemoveUserFromGroup(userId int64, groupId int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := g.client.RemoveUserFromGroup(ctx, &userGRPC.RemoveUserFromGroupRequest{
+	_, err := g.client.RemoveUserFromGroup(ctx, &groupGRPC.RemoveUserFromGroupRequest{
 		UserId:  userId,
 		GroupId: groupId,
 	})
@@ -190,7 +180,7 @@ func (g *GroupClient) GetUserGroups(userId int64) ([]groupDto.GroupResponse, err
 	ctx, cacnel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cacnel()
 
-	resGroups, err := g.client.GetUserGroups(ctx, &userGRPC.GetUserGroupsRequest{UserId: userId})
+	resGroups, err := g.client.GetUserGroups(ctx, &groupGRPC.GetUserGroupsRequest{UserId: userId})
 	if err != nil {
 		return nil, err
 	}
@@ -199,13 +189,13 @@ func (g *GroupClient) GetUserGroups(userId int64) ([]groupDto.GroupResponse, err
 
 	for ind, resGroup := range resGroups.GetGroups() {
 		resGroupsAsDto[ind] = groupDto.GroupResponse{
-			Id:          resGroup.GetId(),
+			ID:          resGroup.GetId(),
 			Title:       resGroup.GetTitle(),
 			Description: resGroup.GetDescription(),
-			SubjectId:   resGroup.GetSubjectId(),
-			TutorId:     resGroup.GetTutorId(),
-			TgGroupLink: getOptionalFieldString(resGroup.GetTgGroupLink()),
-			TgChatId:    getOptionalFieldInt(resGroup.GetTgChatId()),
+			SubjectID:   resGroup.GetSubjectId(),
+			TutorID:     resGroup.GetTutorId(),
+			TgGroupLink: resGroup.TgGroupLink,
+			TgChatID:    resGroup.TgChatId,
 		}
 	}
 
@@ -216,7 +206,7 @@ func (g *GroupClient) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupRespons
 	ctx, cacnel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cacnel()
 
-	resGroups, err := g.client.GetGroupsByTutorId(ctx, &userGRPC.GetGroupsByTutorIdRequest{TutorId: tutorId})
+	resGroups, err := g.client.GetGroupsByTutorId(ctx, &groupGRPC.GetGroupsByTutorIdRequest{TutorId: tutorId})
 	if err != nil {
 		return nil, err
 	}
@@ -225,36 +215,27 @@ func (g *GroupClient) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupRespons
 
 	for ind, resGroup := range resGroups.GetGroups() {
 		resGroupsAsDto[ind] = groupDto.GroupResponse{
-			Id:          resGroup.GetId(),
+			ID:          resGroup.GetId(),
 			Title:       resGroup.GetTitle(),
 			Description: resGroup.GetDescription(),
-			SubjectId:   resGroup.GetSubjectId(),
-			TutorId:     resGroup.GetTutorId(),
-			TgGroupLink: getOptionalFieldString(resGroup.GetTgGroupLink()),
-			TgChatId:    getOptionalFieldInt(resGroup.GetTgChatId()),
+			SubjectID:   resGroup.GetSubjectId(),
+			TutorID:     resGroup.GetTutorId(),
+			TgGroupLink: resGroup.TgGroupLink,
+			TgChatID:    resGroup.TgChatId,
 		}
 	}
 
 	return resGroupsAsDto, nil
 }
 
-func (g *GroupClient) GetGroupUsers(groupId int64) ([]groupDto.ShortUserInfo, error) {
+func (g *GroupClient) GetGroupUsers(groupId int64) ([]int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resUsers, err := g.client.GetGroupUsers(ctx, &userGRPC.GetGroupUsersRequest{GroupId: groupId})
+	resUsers, err := g.client.GetGroupUsers(ctx, &groupGRPC.GetGroupUsersRequest{GroupId: groupId})
 	if err != nil {
 		return nil, err
 	}
 
-	resUsersAsDto := make([]groupDto.ShortUserInfo, len(resUsers.GetUsers()))
-	for ind, user := range resUsers.GetUsers() {
-		resUsersAsDto[ind] = groupDto.ShortUserInfo{
-			Id:    user.GetId(),
-			Name:  user.GetName(),
-			Email: user.GetEmail(),
-		}
-	}
-
-	return resUsersAsDto, nil
+	return resUsers.GetUserIds(), nil
 }

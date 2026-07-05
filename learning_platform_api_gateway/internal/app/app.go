@@ -37,6 +37,9 @@ func Start() {
 		cfg.UserServiceUrl,
 		cfg.AuthServiceUrl,
 		cfg.GroupServiceUrl,
+		cfg.LessonServiceUrl,
+		cfg.ScheduleServiceUrl,
+		cfg.SubjectServiceUrl,
 	)
 	if err != nil {
 		log.Fatal("init grpc client error", zap.Error(err))
