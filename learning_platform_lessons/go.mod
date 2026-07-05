@@ -5,7 +5,7 @@ go 1.25.6
 require go.uber.org/zap v1.28.0
 
 require (
-	github.com/Kai120789/learning_platform_proto v0.3.10 // indirect
+	github.com/Kai120789/learning_platform_proto v0.5.9 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect

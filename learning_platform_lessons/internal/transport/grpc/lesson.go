@@ -90,8 +90,13 @@ func (l *LessonGRPCServer) GetLessonsByUserId(
 		)
 	}
 
+	var resLessons []*lessonGRPC.GetOneLessonResponse
+	for _, oneLesson := range res {
+		resLessons = append(resLessons, dtoToGRPCResponse(oneLesson))
+	}
+
 	return &lessonGRPC.GetLessonsByUserIdResponse{
-		Lessons: dtoToGRPCResponse(res),
+		Lessons: resLessons,
 	}, nil
 }
 
@@ -145,15 +150,7 @@ func (l *LessonGRPCServer) CreateLesson(
 	}
 
 	return &lessonGRPC.CreateLessonResponse{
-		Id:         res.ID,
-		BoardId:    res.BoardID,
-		MeetLink:   res.MeetLink,
-		StartTime:  timestamppb.New(res.StartTime),
-		MediaItems: resLessonMedias,
-		Duration:   res.Duration,
-		TutorId:    res.TutorID,
-		UserIds:    res.UserIDs,
-		Status:     enumToProtoStatus(res.Status),
+		Lesson: dtoToGRPCResponse(*res),
 	}, nil
 }
 
@@ -207,17 +204,8 @@ func (l *LessonGRPCServer) UpdateLesson(
 			},
 		)
 	}
-
 	return &lessonGRPC.UpdateLessonResponse{
-		Id:         res.ID,
-		BoardId:    res.BoardID,
-		MeetLink:   res.MeetLink,
-		StartTime:  timestamppb.New(res.StartTime),
-		MediaItems: resLessonMedias,
-		Duration:   res.Duration,
-		TutorId:    res.TutorID,
-		UserIds:    res.UserIDs,
-		Status:     enumToProtoStatus(res.Status),
+		Lesson: dtoToGRPCResponse(*res),
 	}, nil
 }
 
@@ -254,8 +242,13 @@ func (l *LessonGRPCServer) GetLessonsByTutorId(
 		)
 	}
 
+	var resLessons []*lessonGRPC.GetOneLessonResponse
+	for _, oneLesson := range res {
+		resLessons = append(resLessons, dtoToGRPCResponse(oneLesson))
+	}
+
 	return &lessonGRPC.GetLessonsByTutorIdResponse{
-		Lessons: dtoToGRPCResponse(res),
+		Lessons: resLessons,
 	}, nil
 }
 
@@ -311,40 +304,31 @@ func enumToProtoStatus(lessonStatus enum.LessonStatus) lessonGRPC.LessonStatus {
 	}
 }
 
-func dtoToGRPCResponse(lessons []dto.LessonResponse) []*lessonGRPC.GetOneLessonResponse {
-	var resLessons []*lessonGRPC.GetOneLessonResponse
+func dtoToGRPCResponse(lesson dto.LessonResponse) *lessonGRPC.GetOneLessonResponse {
+	var lessonMedias []*lessonGRPC.MediaItem
 
-	for _, oneLesson := range lessons {
-		var lessonMedias []*lessonGRPC.MediaItem
-
-		for _, oneMedia := range oneLesson.MediaItems {
-			lessonMedias = append(
-				lessonMedias,
-				&lessonGRPC.MediaItem{
-					Id:        oneMedia.ID,
-					LessonId:  oneMedia.LessonID,
-					S3Link:    oneMedia.S3Link,
-					S3Preview: oneMedia.S3Preview,
-					Type:      enumToProtoType(oneMedia.Type),
-				},
-			)
-		}
-
-		resLessons = append(
-			resLessons,
-			&lessonGRPC.GetOneLessonResponse{
-				Id:         oneLesson.ID,
-				BoardId:    oneLesson.BoardID,
-				MeetLink:   oneLesson.MeetLink,
-				StartTime:  timestamppb.New(oneLesson.StartTime),
-				MediaItems: lessonMedias,
-				Duration:   oneLesson.Duration,
-				TutorId:    oneLesson.TutorID,
-				UserIds:    oneLesson.UserIDs,
-				Status:     enumToProtoStatus(oneLesson.Status),
+	for _, oneMedia := range lesson.MediaItems {
+		lessonMedias = append(
+			lessonMedias,
+			&lessonGRPC.MediaItem{
+				Id:        oneMedia.ID,
+				LessonId:  oneMedia.LessonID,
+				S3Link:    oneMedia.S3Link,
+				S3Preview: oneMedia.S3Preview,
+				Type:      enumToProtoType(oneMedia.Type),
 			},
 		)
 	}
 
-	return resLessons
+	return &lessonGRPC.GetOneLessonResponse{
+		Id:         lesson.ID,
+		BoardId:    lesson.BoardID,
+		MeetLink:   lesson.MeetLink,
+		StartTime:  timestamppb.New(lesson.StartTime),
+		MediaItems: lessonMedias,
+		Duration:   lesson.Duration,
+		TutorId:    lesson.TutorID,
+		UserIds:    lesson.UserIDs,
+		Status:     enumToProtoStatus(lesson.Status),
+	}
 }
