@@ -30,7 +30,7 @@ func (s *ScheduleGRPCServer) GetAllSchedules(
 		return nil, status.Error(codes.Internal, "failed to get all schedules")
 	}
 
-	var resSchedules []*scheduleGRPC.OneSchedule
+	var resSchedules []*scheduleGRPC.GetScheduleByIDResponse
 	for _, oneSchedule := range schedules {
 		resSchedules = append(resSchedules, scheduleResponseDTOToProto(oneSchedule))
 	}
@@ -79,7 +79,7 @@ func (s *ScheduleGRPCServer) GetSchedulesByTutorID(
 		return nil, status.Error(codes.Internal, "failed to get schedules by tutorID")
 	}
 
-	var resSchedules []*scheduleGRPC.OneSchedule
+	var resSchedules []*scheduleGRPC.GetScheduleByIDResponse
 	for _, oneSchedule := range schedules {
 		resSchedules = append(resSchedules, scheduleResponseDTOToProto(oneSchedule))
 	}
@@ -122,11 +122,7 @@ func (s *ScheduleGRPCServer) CreateSchedule(
 	resSchedule := scheduleResponseDTOToProto(*schedule)
 
 	return &scheduleGRPC.CreateScheduleResponse{
-		Id:        resSchedule.GetId(),
-		TutorId:   resSchedule.GetTutorId(),
-		StartTime: resSchedule.GetStartTime(),
-		EndTime:   resSchedule.GetEndTime(),
-		Slots:     resSchedule.GetSlots(),
+		Schedule: resSchedule,
 	}, nil
 }
 
@@ -165,11 +161,7 @@ func (s *ScheduleGRPCServer) UpdateSchedule(
 	resSchedule := scheduleResponseDTOToProto(*schedule)
 
 	return &scheduleGRPC.UpdateScheduleResponse{
-		Id:        resSchedule.GetId(),
-		TutorId:   resSchedule.GetTutorId(),
-		StartTime: resSchedule.GetStartTime(),
-		EndTime:   resSchedule.GetEndTime(),
-		Slots:     resSchedule.GetSlots(),
+		Schedule: resSchedule,
 	}, nil
 }
 
@@ -190,7 +182,7 @@ func (s *ScheduleGRPCServer) DeleteSchedule(
 	return &scheduleGRPC.DeleteScheduleResponse{}, nil
 }
 
-func scheduleResponseDTOToProto(schedule dto.ScheduleResponse) *scheduleGRPC.OneSchedule {
+func scheduleResponseDTOToProto(schedule dto.ScheduleResponse) *scheduleGRPC.GetScheduleByIDResponse {
 	var resScheduleSlots []*scheduleGRPC.ScheduleSlot
 	for _, oneSlot := range schedule.Slots {
 		resScheduleSlots = append(resScheduleSlots, &scheduleGRPC.ScheduleSlot{
@@ -203,7 +195,7 @@ func scheduleResponseDTOToProto(schedule dto.ScheduleResponse) *scheduleGRPC.One
 		})
 	}
 
-	return &scheduleGRPC.OneSchedule{
+	return &scheduleGRPC.GetScheduleByIDResponse{
 		Id:        schedule.ID,
 		TutorId:   schedule.TutorID,
 		StartTime: timestamppb.New(schedule.StartTime),
@@ -212,7 +204,7 @@ func scheduleResponseDTOToProto(schedule dto.ScheduleResponse) *scheduleGRPC.One
 	}
 }
 
-func enumToProtoStatus(status enum.ScheduleStatus) scheduleGRPC.Status {
+func enumToProtoStatus(status enum.ScheduleSlotStatus) scheduleGRPC.Status {
 	switch status {
 	case enum.StatusFree:
 		return scheduleGRPC.Status_FREE

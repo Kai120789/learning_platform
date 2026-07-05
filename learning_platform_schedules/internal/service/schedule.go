@@ -160,8 +160,8 @@ func (s *ScheduleService) buildScheduleWithSlotsDTO(
 			ScheduleID: oneSlot.ScheduleID,
 			StartTime:  oneSlot.StartTime.Time,
 			Status:     oneSlot.Status,
-			Duration:   utils.DBValueToOptional(oneSlot.Duration),
-			LessonID:   utils.DBValueToOptional(oneSlot.LessonID),
+			Duration:   utils.DBInt8ToOptional(oneSlot.Duration),
+			LessonID:   utils.DBInt8ToOptional(oneSlot.LessonID),
 		})
 	}
 
