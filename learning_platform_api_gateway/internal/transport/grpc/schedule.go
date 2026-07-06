@@ -150,7 +150,10 @@ func (s *ScheduleClient) DeleteSchedule(scheduleID int64) error {
 	return nil
 }
 
-func (s *ScheduleClient) UpdateScheduleSlot(scheduleSlotID int64, updatedSlot scheduleDto.CreateScheduleSlot) (*scheduleDto.ScheduleSlot, error) {
+func (s *ScheduleClient) UpdateScheduleSlot(
+	scheduleSlotID int64,
+	updatedSlot scheduleDto.CreateScheduleSlot,
+) (*scheduleDto.ScheduleSlot, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
