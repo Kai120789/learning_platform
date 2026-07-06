@@ -60,7 +60,7 @@ func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, erro
 		return nil, err
 	}
 
-	res, err := a.client.Login(loginReq, user.UserId)
+	res, err := a.client.Login(loginReq, user.UserID)
 	if err != nil {
 		return nil, err
 	}

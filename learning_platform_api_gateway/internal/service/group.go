@@ -17,11 +17,11 @@ type GroupClient interface {
 	RemoveGroup(groupId int64) error
 	GetGroupById(groupId int64) (*groupDto.GroupResponse, error)
 	GetGroups() ([]groupDto.GroupResponse, error)
-	AddUsersToGroup(groupId int64, userIds []int64) ([]groupDto.ShortUserInfo, error)
+	AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error)
 	RemoveUserFromGroup(userId int64, groupId int64) error
 	GetUserGroups(userId int64) ([]groupDto.GroupResponse, error)
 	GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error)
-	GetGroupUsers(groupId int64) ([]groupDto.ShortUserInfo, error)
+	GetGroupUsers(groupId int64) ([]int64, error)
 }
 
 type UserGroupService interface {
@@ -80,7 +80,7 @@ func (g *GroupService) GetGroups() ([]groupDto.GroupResponse, error) {
 	return res, nil
 }
 
-func (g *GroupService) AddUsersToGroup(groupId int64, userIds []int64) ([]groupDto.ShortUserInfo, error) {
+func (g *GroupService) AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error) {
 	res, err := g.client.AddUsersToGroup(groupId, userIds)
 	if err != nil {
 		return nil, err
@@ -143,7 +143,7 @@ func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupRespon
 	return res, nil
 }
 
-func (g *GroupService) GetGroupUsers(groupId int64) ([]groupDto.ShortUserInfo, error) {
+func (g *GroupService) GetGroupUsers(groupId int64) ([]int64, error) {
 	res, err := g.client.GetGroupUsers(groupId)
 	if err != nil {
 		return nil, err

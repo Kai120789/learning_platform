@@ -54,7 +54,7 @@ func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	cookie := utils.CreateCookie(
 		"session_id",
-		res.SessionId,
+		res.SessionID,
 		time.Now().Add(time.Duration(a.cfg.RefreshTokenLiveTime)*time.Hour*24),
 	)
 	http.SetCookie(w, cookie)
@@ -81,7 +81,7 @@ func (a *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	cookie := utils.CreateCookie(
 		"session_id",
-		res.SessionId,
+		res.SessionID,
 		time.Now().Add(time.Duration(a.cfg.RefreshTokenLiveTime)*time.Hour*24),
 	)
 	http.SetCookie(w, cookie)

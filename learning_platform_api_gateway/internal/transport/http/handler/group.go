@@ -20,11 +20,11 @@ type GroupService interface {
 	RemoveGroup(groupId int64) error
 	GetGroupById(groupId int64) (*groupDto.GroupResponse, error)
 	GetGroups() ([]groupDto.GroupResponse, error)
-	AddUsersToGroup(groupId int64, userIds []int64) ([]groupDto.ShortUserInfo, error)
+	AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error)
 	RemoveUserFromGroup(userId int64, groupId int64) error
 	GetUserGroups(userId int64) ([]groupDto.GroupResponse, error)
 	GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error)
-	GetGroupUsers(groupId int64) ([]groupDto.ShortUserInfo, error)
+	GetGroupUsers(groupId int64) ([]int64, error)
 }
 
 func NewGroupHandler(service GroupService, logger *zap.Logger) *GroupHandler {

@@ -51,7 +51,7 @@ func (u *UserClient) GetUserByEmail(email string) (*userDto.GetUser, error) {
 	}
 
 	return &userDto.GetUser{
-		UserId:       res.GetUserId(),
+		UserID:       res.GetUserId(),
 		Email:        res.GetEmail(),
 		PasswordHash: res.GetPasswordHash(),
 	}, nil
@@ -67,7 +67,7 @@ func (u *UserClient) GetUserById(id int64) (*userDto.GetUser, error) {
 	}
 
 	return &userDto.GetUser{
-		UserId:       res.GetUserId(),
+		UserID:       res.GetUserId(),
 		Email:        res.GetEmail(),
 		PasswordHash: res.GetPasswordHash(),
 	}, nil
@@ -83,12 +83,12 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 	}
 
 	return &userDto.UserData{
-		UserId: res.GetUserId(),
+		UserID: res.GetUserId(),
 		Email:  res.GetEmail(),
 		Role:   protoRoleToEnum(res.GetRole()),
 		Status: protoStatusToEnum(res.GetStatus()),
 		UserInfo: userDto.UserInfo{
-			UserId:   res.GetUserId(),
+			UserID:   res.GetUserId(),
 			Name:     res.GetUserInfo().GetName(),
 			Surname:  res.GetUserInfo().GetSurname(),
 			Lastname: res.GetUserInfo().Lastname,
@@ -96,7 +96,7 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 			About:    res.GetUserInfo().About,
 		},
 		UserSettings: userDto.UserSettings{
-			UserId:                 res.GetUserId(),
+			UserID:                 res.GetUserId(),
 			Is2FaEnabled:           res.GetUserSettings().GetIs_2FaEnabled(),
 			IsNotificationsEnabled: res.GetUserSettings().GetIsNotificationsEnabled(),
 		},

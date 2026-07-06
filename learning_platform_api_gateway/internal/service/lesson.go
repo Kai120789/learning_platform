@@ -18,6 +18,12 @@ type LessonClient interface {
 	GetLessonsByTutorId(tutorID int64) ([]lessonDto.LessonResponse, error)
 }
 
+func NewLessonService(client LessonClient) *LessonService {
+	return &LessonService{
+		client: client,
+	}
+}
+
 func (l *LessonService) GetOneLesson(lessonID int64) (*lessonDto.LessonResponse, error) {
 	res, err := l.client.GetOneLesson(lessonID)
 	if err != nil {

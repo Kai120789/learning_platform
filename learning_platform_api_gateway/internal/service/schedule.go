@@ -18,6 +18,12 @@ type ScheduleClient interface {
 	DeleteLessonFromScheduleSlot(scheduleSlotID int64) error
 }
 
+func NewScheduleService(client ScheduleClient) *ScheduleService {
+	return &ScheduleService{
+		client: client,
+	}
+}
+
 func (s *ScheduleService) GetAllSchedules() ([]scheduleDto.ScheduleResponse, error) {
 	res, err := s.client.GetAllSchedules()
 	if err != nil {

@@ -46,25 +46,34 @@ func Start() {
 	}
 
 	serviceLayer := service.New(&service.Client{
-		UserClient:  client.UserClient,
-		AuthClient:  client.AuthClient,
-		GroupClient: client.GroupClient,
+		UserClient:     client.UserClient,
+		AuthClient:     client.AuthClient,
+		GroupClient:    client.GroupClient,
+		LessonClient:   client.LessonClient,
+		ScheduleClient: client.ScheduleClient,
+		SubjectClient:  client.SubjectClient,
 	}, redisLayer)
 
 	_ = serviceLayer
 
 	handlerLayer := handler.New(&handler.Service{
-		AuthService:  serviceLayer.AuthService,
-		UserService:  serviceLayer.UserService,
-		GroupService: serviceLayer.GroupService,
+		AuthService:     serviceLayer.AuthService,
+		UserService:     serviceLayer.UserService,
+		GroupService:    serviceLayer.GroupService,
+		LessonService:   serviceLayer.LessonService,
+		ScheduleService: serviceLayer.ScheduleService,
+		SubjectService:  serviceLayer.SubjectService,
 	}, log, cfg)
 
 	jwtMiddleware := middleware.JWT([]byte(cfg.SignedKey), cfg.RefreshTokenLiveTime, serviceLayer.AuthService)
 
 	r := router.New(&router.Handler{
-		AuthHandler:  handlerLayer.AuthHandler,
-		UserHandler:  handlerLayer.UserHandler,
-		GroupHandler: handlerLayer.GroupHandler,
+		AuthHandler:     handlerLayer.AuthHandler,
+		UserHandler:     handlerLayer.UserHandler,
+		GroupHandler:    handlerLayer.GroupHandler,
+		LessonHandler:   handlerLayer.LessonHandler,
+		ScheduleHandler: handlerLayer.ScheduleHandler,
+		SubjectHandler:  handlerLayer.SubjectHandler,
 	}, jwtMiddleware)
 
 	server := &http.Server{

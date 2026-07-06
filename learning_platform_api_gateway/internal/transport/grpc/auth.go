@@ -57,8 +57,8 @@ func (a *AuthClient) Login(req dto.LoginRequest, userId int64) (*dto.LoginRespon
 	}
 
 	return &dto.LoginResponse{
-		SessionId: res.GetSessionId(),
-		UserId:    res.GetUserId(),
+		SessionID: res.GetSessionId(),
+		UserID:    res.GetUserId(),
 	}, nil
 }
 
@@ -82,8 +82,8 @@ func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.Regis
 	}
 
 	return &dto.RegisterResponse{
-		UserId:    res.GetUserId(),
-		SessionId: res.GetSessionId(),
+		UserID:    res.GetUserId(),
+		SessionID: res.GetSessionId(),
 	}, nil
 }
 

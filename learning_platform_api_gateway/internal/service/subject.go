@@ -14,6 +14,12 @@ type SubjectClient interface {
 	UpdateUserSubjects(userID int64, subjectIDs, deletedSubjectIDs []int64) error
 }
 
+func NewSubjectService(client SubjectClient) *SubjectService {
+	return &SubjectService{
+		client: client,
+	}
+}
+
 func (s *SubjectService) GetOneSubject(subjectID int64) (*subjectDto.Subject, error) {
 	res, err := s.client.GetOneSubject(subjectID)
 	if err != nil {
