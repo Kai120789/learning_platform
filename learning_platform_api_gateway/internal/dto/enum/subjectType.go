@@ -1,9 +1,9 @@
 package enum
 
-type Type string
+type SubjectType string
 
 const (
-	TypeEGE     Type = "ЕГЭ"
-	TypeOGE     Type = "ОГЭ"
-	TypeImprove Type = "Повышение успеваемости"
+	TypeEGE     SubjectType = "ЕГЭ"
+	TypeOGE     SubjectType = "ОГЭ"
+	TypeImprove SubjectType = "Повышение успеваемости"
 )

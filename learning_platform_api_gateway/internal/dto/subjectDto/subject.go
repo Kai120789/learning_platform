@@ -5,8 +5,8 @@ import (
 )
 
 type Subject struct {
-	ID    int64     `json:"id"`
-	Code  string    `json:"code"`
-	Title string    `json:"title"`
-	Type  enum.Type `json:"type"`
+	ID    int64            `json:"id"`
+	Code  string           `json:"code"`
+	Title string           `json:"title"`
+	Type  enum.SubjectType `json:"type"`
 }
