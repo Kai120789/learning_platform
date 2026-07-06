@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"learning-platform/groups/internal/models"
-	"learning-platform/groups/internal/utils"
 )
 
 type GroupUserService interface {
@@ -77,17 +76,9 @@ func (g *GroupGRPCServer) GetUserGroups(
 		return nil, status.Error(codes.Internal, "failed get user groups")
 	}
 
-	resGroups := make([]*groupGRPC.GetGroupByIdResponse, len(groups))
-	for ind, group := range groups {
-		resGroups[ind] = &groupGRPC.GetGroupByIdResponse{
-			Id:          group.ID,
-			Title:       group.Title,
-			Description: group.Description,
-			SubjectId:   group.SubjectID,
-			TutorId:     group.TutorID,
-			TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
-			TgChatId:    utils.DBStringToOptional(group.TgChatID),
-		}
+	var resGroups []*groupGRPC.GetGroupByIdResponse
+	for _, oneGroup := range groups {
+		resGroups = append(resGroups, mapGroupToGrpc(&oneGroup))
 	}
 
 	return &groupGRPC.GetUserGroupsResponse{
@@ -109,17 +100,9 @@ func (g *GroupGRPCServer) GetGroupsByTutorId(
 		return nil, status.Error(codes.Internal, "failed get tutor groups")
 	}
 
-	resGroups := make([]*groupGRPC.GetGroupByIdResponse, len(groups))
-	for ind, group := range groups {
-		resGroups[ind] = &groupGRPC.GetGroupByIdResponse{
-			Id:          group.ID,
-			Title:       group.Title,
-			Description: group.Description,
-			SubjectId:   group.SubjectID,
-			TutorId:     group.TutorID,
-			TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
-			TgChatId:    utils.DBStringToOptional(group.TgChatID),
-		}
+	var resGroups []*groupGRPC.GetGroupByIdResponse
+	for _, oneGroup := range groups {
+		resGroups = append(resGroups, mapGroupToGrpc(&oneGroup))
 	}
 
 	return &groupGRPC.GetGroupsByTutorIdResponse{

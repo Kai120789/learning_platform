@@ -43,13 +43,7 @@ func (g *GroupGRPCServer) CreateGroup(
 	}
 
 	return &groupGRPC.CreateGroupResponse{
-		Id:          group.ID,
-		Title:       group.Title,
-		Description: group.Description,
-		SubjectId:   group.SubjectID,
-		TutorId:     group.TutorID,
-		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
-		TgChatId:    utils.DBStringToOptional(group.TgChatID),
+		Group: mapGroupToGrpc(group),
 	}, nil
 }
 
@@ -75,13 +69,7 @@ func (g *GroupGRPCServer) UpdateGroup(
 	}
 
 	return &groupGRPC.UpdateGroupResponse{
-		Id:          group.ID,
-		Title:       group.Title,
-		Description: group.Description,
-		SubjectId:   group.SubjectID,
-		TutorId:     group.TutorID,
-		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
-		TgChatId:    utils.DBStringToOptional(group.TgChatID),
+		Group: mapGroupToGrpc(group),
 	}, nil
 
 }
@@ -126,15 +114,7 @@ func (g *GroupGRPCServer) GetGroupById(
 		return nil, status.Error(codes.NotFound, "group not found")
 	}
 
-	return &groupGRPC.GetGroupByIdResponse{
-		Id:          group.ID,
-		Title:       group.Title,
-		Description: group.Description,
-		SubjectId:   group.SubjectID,
-		TutorId:     group.TutorID,
-		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
-		TgChatId:    utils.DBStringToOptional(group.TgChatID),
-	}, nil
+	return mapGroupToGrpc(group), nil
 }
 
 func (g *GroupGRPCServer) GetGroups(
@@ -152,15 +132,19 @@ func (g *GroupGRPCServer) GetGroups(
 
 	var resGroups []*groupGRPC.GetGroupByIdResponse
 	for _, group := range groups {
-		resGroups = append(resGroups, &groupGRPC.GetGroupByIdResponse{
-			Id:          group.ID,
-			Title:       group.Title,
-			Description: group.Description,
-			SubjectId:   group.SubjectID,
-			TutorId:     group.TutorID,
-			TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
-			TgChatId:    utils.DBStringToOptional(group.TgChatID),
-		})
+		resGroups = append(resGroups, mapGroupToGrpc(&group))
 	}
 	return &groupGRPC.GetGroupsResponse{Groups: resGroups}, nil
+}
+
+func mapGroupToGrpc(group *models.Group) *groupGRPC.GetGroupByIdResponse {
+	return &groupGRPC.GetGroupByIdResponse{
+		Id:          group.ID,
+		Title:       group.Title,
+		Description: group.Description,
+		SubjectId:   group.SubjectID,
+		TutorId:     group.TutorID,
+		TgGroupLink: utils.DBStringToOptional(group.TgGroupLink),
+		TgChatId:    utils.DBStringToOptional(group.TgChatID),
+	}
 }
