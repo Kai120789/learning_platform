@@ -49,15 +49,7 @@ func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.
 		return nil, err
 	}
 
-	return &groupDto.GroupResponse{
-		ID:          resGroup.GetId(),
-		Title:       resGroup.GetTitle(),
-		Description: resGroup.GetDescription(),
-		SubjectID:   resGroup.GetSubjectId(),
-		TutorID:     resGroup.GetTutorId(),
-		TgGroupLink: resGroup.TgGroupLink,
-		TgChatID:    resGroup.TgChatId,
-	}, nil
+	return mapGroupGrpcToDTO(resGroup.GetGroup()), nil
 }
 
 func (g *GroupClient) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error) {
@@ -77,15 +69,7 @@ func (g *GroupClient) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRe
 		return nil, err
 	}
 
-	return &groupDto.GroupResponse{
-		ID:          resGroup.GetId(),
-		Title:       resGroup.GetTitle(),
-		Description: resGroup.GetDescription(),
-		SubjectID:   resGroup.GetSubjectId(),
-		TutorID:     resGroup.GetTutorId(),
-		TgGroupLink: resGroup.TgGroupLink,
-		TgChatID:    resGroup.TgChatId,
-	}, nil
+	return mapGroupGrpcToDTO(resGroup.GetGroup()), nil
 }
 
 func (g *GroupClient) RemoveGroup(groupId int64) error {
@@ -109,15 +93,7 @@ func (g *GroupClient) GetGroupById(groupId int64) (*groupDto.GroupResponse, erro
 		return nil, err
 	}
 
-	return &groupDto.GroupResponse{
-		ID:          resGroup.GetId(),
-		Title:       resGroup.GetTitle(),
-		Description: resGroup.GetDescription(),
-		SubjectID:   resGroup.GetSubjectId(),
-		TutorID:     resGroup.GetTutorId(),
-		TgGroupLink: resGroup.TgGroupLink,
-		TgChatID:    resGroup.TgChatId,
-	}, nil
+	return mapGroupGrpcToDTO(resGroup), nil
 }
 
 func (g *GroupClient) GetGroups() ([]groupDto.GroupResponse, error) {
@@ -129,21 +105,12 @@ func (g *GroupClient) GetGroups() ([]groupDto.GroupResponse, error) {
 		return nil, err
 	}
 
-	resGroupsAsDto := make([]groupDto.GroupResponse, len(resGroups.GetGroups()))
-
-	for ind, resGroup := range resGroups.GetGroups() {
-		resGroupsAsDto[ind] = groupDto.GroupResponse{
-			ID:          resGroup.GetId(),
-			Title:       resGroup.GetTitle(),
-			Description: resGroup.GetDescription(),
-			SubjectID:   resGroup.GetSubjectId(),
-			TutorID:     resGroup.GetTutorId(),
-			TgGroupLink: resGroup.TgGroupLink,
-			TgChatID:    resGroup.TgChatId,
-		}
+	var groups []groupDto.GroupResponse
+	for _, oneGroup := range resGroups.GetGroups() {
+		groups = append(groups, *mapGroupGrpcToDTO(oneGroup))
 	}
 
-	return resGroupsAsDto, nil
+	return groups, nil
 }
 
 func (g *GroupClient) AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error) {
@@ -177,55 +144,37 @@ func (g *GroupClient) RemoveUserFromGroup(userId int64, groupId int64) error {
 }
 
 func (g *GroupClient) GetUserGroups(userId int64) ([]groupDto.GroupResponse, error) {
-	ctx, cacnel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cacnel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	resGroups, err := g.client.GetUserGroups(ctx, &groupGRPC.GetUserGroupsRequest{UserId: userId})
 	if err != nil {
 		return nil, err
 	}
 
-	resGroupsAsDto := make([]groupDto.GroupResponse, len(resGroups.GetGroups()))
-
-	for ind, resGroup := range resGroups.GetGroups() {
-		resGroupsAsDto[ind] = groupDto.GroupResponse{
-			ID:          resGroup.GetId(),
-			Title:       resGroup.GetTitle(),
-			Description: resGroup.GetDescription(),
-			SubjectID:   resGroup.GetSubjectId(),
-			TutorID:     resGroup.GetTutorId(),
-			TgGroupLink: resGroup.TgGroupLink,
-			TgChatID:    resGroup.TgChatId,
-		}
+	var groups []groupDto.GroupResponse
+	for _, oneGroup := range resGroups.GetGroups() {
+		groups = append(groups, *mapGroupGrpcToDTO(oneGroup))
 	}
 
-	return resGroupsAsDto, nil
+	return groups, nil
 }
 
 func (g *GroupClient) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error) {
-	ctx, cacnel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cacnel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	resGroups, err := g.client.GetGroupsByTutorId(ctx, &groupGRPC.GetGroupsByTutorIdRequest{TutorId: tutorId})
 	if err != nil {
 		return nil, err
 	}
 
-	resGroupsAsDto := make([]groupDto.GroupResponse, len(resGroups.GetGroups()))
-
-	for ind, resGroup := range resGroups.GetGroups() {
-		resGroupsAsDto[ind] = groupDto.GroupResponse{
-			ID:          resGroup.GetId(),
-			Title:       resGroup.GetTitle(),
-			Description: resGroup.GetDescription(),
-			SubjectID:   resGroup.GetSubjectId(),
-			TutorID:     resGroup.GetTutorId(),
-			TgGroupLink: resGroup.TgGroupLink,
-			TgChatID:    resGroup.TgChatId,
-		}
+	var groups []groupDto.GroupResponse
+	for _, oneGroup := range resGroups.GetGroups() {
+		groups = append(groups, *mapGroupGrpcToDTO(oneGroup))
 	}
 
-	return resGroupsAsDto, nil
+	return groups, nil
 }
 
 func (g *GroupClient) GetGroupUsers(groupId int64) ([]int64, error) {
@@ -238,4 +187,16 @@ func (g *GroupClient) GetGroupUsers(groupId int64) ([]int64, error) {
 	}
 
 	return resUsers.GetUserIds(), nil
+}
+
+func mapGroupGrpcToDTO(group *groupGRPC.GetGroupByIdResponse) *groupDto.GroupResponse {
+	return &groupDto.GroupResponse{
+		ID:          group.GetId(),
+		Title:       group.GetTitle(),
+		Description: group.GetDescription(),
+		SubjectID:   group.GetSubjectId(),
+		TutorID:     group.GetTutorId(),
+		TgGroupLink: group.TgGroupLink,
+		TgChatID:    group.TgChatId,
+	}
 }

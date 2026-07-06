@@ -43,7 +43,7 @@ func (s *ScheduleService) GetScheduleByID(scheduleID int64) (*scheduleDto.Schedu
 }
 
 func (s *ScheduleService) GetSchedulesByTutorID(tutorID int64) ([]scheduleDto.ScheduleResponse, error) {
-	res, err := s.client.GetAllSchedules()
+	res, err := s.client.GetSchedulesByTutorID(tutorID)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,10 @@ func (s *ScheduleService) DeleteSchedule(scheduleID int64) error {
 	return nil
 }
 
-func (s *ScheduleService) UpdateScheduleSlot(scheduleSlotID int64, updatedSlot scheduleDto.CreateScheduleSlot) (*scheduleDto.ScheduleSlot, error) {
+func (s *ScheduleService) UpdateScheduleSlot(
+	scheduleSlotID int64,
+	updatedSlot scheduleDto.CreateScheduleSlot,
+) (*scheduleDto.ScheduleSlot, error) {
 	res, err := s.client.UpdateScheduleSlot(scheduleSlotID, updatedSlot)
 	if err != nil {
 		return nil, err

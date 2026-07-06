@@ -113,16 +113,7 @@ func (a *AuthService) Logout(sessionId string) error {
 }
 
 func (a *AuthService) LogoutAll(userId int64) error {
-	user, err := a.userService.GetUserById(userId)
-	if err != nil {
-		return err
-	}
-
-	if user == nil {
-		return fmt.Errorf("user does not exists, %w", err)
-	}
-
-	err = a.client.LogoutAll(userId)
+	err := a.client.LogoutAll(userId)
 	if err != nil {
 		return err
 	}
@@ -131,5 +122,10 @@ func (a *AuthService) LogoutAll(userId int64) error {
 }
 
 func (a *AuthService) GetTokens(sessionId string) (*dto.RedisTokens, error) {
-	return a.redis.GetTokens(sessionId)
+	tokens, err := a.redis.GetTokens(sessionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
 }

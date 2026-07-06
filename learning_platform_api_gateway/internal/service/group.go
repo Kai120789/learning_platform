@@ -1,14 +1,11 @@
 package service
 
 import (
-	"fmt"
 	"learning-platform/api-gateway/internal/dto/groupDto"
-	"learning-platform/api-gateway/internal/dto/userDto"
 )
 
 type GroupService struct {
-	client      GroupClient
-	userService UserGroupService
+	client GroupClient
 }
 
 type GroupClient interface {
@@ -24,14 +21,9 @@ type GroupClient interface {
 	GetGroupUsers(groupId int64) ([]int64, error)
 }
 
-type UserGroupService interface {
-	GetUserById(id int64) (*userDto.GetUser, error)
-}
-
-func NewGroupService(client GroupClient, userService UserGroupService) *GroupService {
+func NewGroupService(client GroupClient) *GroupService {
 	return &GroupService{
-		client:      client,
-		userService: userService,
+		client: client,
 	}
 }
 
@@ -90,16 +82,7 @@ func (g *GroupService) AddUsersToGroup(groupId int64, userIds []int64) ([]int64,
 }
 
 func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
-	user, err := g.userService.GetUserById(userId)
-	if err != nil {
-		return err
-	}
-
-	if user == nil {
-		return fmt.Errorf("user does not exists, %w", err)
-	}
-
-	err = g.client.RemoveUserFromGroup(userId, groupId)
+	err := g.client.RemoveUserFromGroup(userId, groupId)
 	if err != nil {
 		return err
 	}
@@ -108,15 +91,6 @@ func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
 }
 
 func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupResponse, error) {
-	user, err := g.userService.GetUserById(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-		return nil, fmt.Errorf("user does not exists, %w", err)
-	}
-
 	res, err := g.client.GetUserGroups(userId)
 	if err != nil {
 		return nil, err
@@ -126,15 +100,6 @@ func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupResponse, er
 }
 
 func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error) {
-	user, err := g.userService.GetUserById(tutorId)
-	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-		return nil, fmt.Errorf("user does not exists, %w", err)
-	}
-
 	res, err := g.client.GetGroupsByTutorId(tutorId)
 	if err != nil {
 		return nil, err

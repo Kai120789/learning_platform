@@ -16,7 +16,6 @@ type AuthClient struct {
 }
 
 /*
-LogoutAll
 ChangePassword
 ForceChangePassword
 ChangeEmail

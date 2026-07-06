@@ -27,7 +27,7 @@ func New(client *Client, redis *redis.RedisStorage) *Service {
 	return &Service{
 		AuthService:     NewAuthService(client.AuthClient, userService, redis),
 		UserService:     userService,
-		GroupService:    NewGroupService(client.GroupClient, userService),
+		GroupService:    NewGroupService(client.GroupClient),
 		LessonService:   NewLessonService(client.LessonClient),
 		ScheduleService: NewScheduleService(client.ScheduleClient),
 		SubjectService:  NewSubjectService(client.SubjectClient),
