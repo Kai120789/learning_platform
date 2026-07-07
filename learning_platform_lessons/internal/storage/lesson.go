@@ -63,6 +63,7 @@ func (l *LessonStorage) GetAllLesson() ([]models.Lesson, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get all lessons: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneLesson models.Lesson
@@ -128,6 +129,7 @@ func (l *LessonStorage) GetLessonsByUserId(userID int64) ([]models.Lesson, error
 	if err != nil {
 		return nil, fmt.Errorf("get all user %d lessons: %w", userID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneLesson models.Lesson
@@ -162,6 +164,7 @@ func (l *LessonStorage) GetLessonsByTutorId(tutorID int64) ([]models.Lesson, err
 	if err != nil {
 		return nil, fmt.Errorf("get all tutor %d lessons: %w", tutorID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneLesson models.Lesson
@@ -215,7 +218,7 @@ func (l *LessonStorage) UpdateLesson(lessonDto dto.UpdateLesson) (*models.Lesson
 		&resLesson.Status,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("insert lesson to db: %w", err)
+		return nil, fmt.Errorf("update lesson in db: %w", err)
 	}
 
 	return &resLesson, nil

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"learning-platform/lessons/internal/dto"
 	"learning-platform/lessons/internal/models"
 	"learning-platform/lessons/internal/models/enum"
@@ -48,12 +49,12 @@ func New(storage *Storage) *Service {
 func (l *Service) GetOneLesson(lessonID int64) (*dto.LessonResponse, error) {
 	resLesson, err := l.storage.LessonStorage.GetLessonById(lessonID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get one lesson %d: %w", lessonID, err)
 	}
 
 	lessonWithMedias, err := l.buildOneLessonWithMediasDto(resLesson)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get one lesson %d (get lesson medias): %w", lessonID, err)
 	}
 
 	return lessonWithMedias, nil
@@ -63,13 +64,13 @@ func (l *Service) GetLessonsByUserId(userID int64) ([]dto.LessonResponse, error)
 	var resLessons []dto.LessonResponse
 	lessons, err := l.storage.LessonStorage.GetLessonsByUserId(userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get lessons by user id %d: %w", userID, err)
 	}
 
 	for _, oneLesson := range lessons {
 		oneLessonWithMedias, err := l.buildOneLessonWithMediasDto(&oneLesson)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("get lessons by user id %d (get lesson medias): %w", userID, err)
 		}
 
 		resLessons = append(resLessons, *oneLessonWithMedias)
@@ -81,22 +82,22 @@ func (l *Service) GetLessonsByUserId(userID int64) ([]dto.LessonResponse, error)
 func (l *Service) CreateLesson(lesson dto.CreateLesson) (*dto.LessonResponse, error) {
 	resLesson, err := l.storage.LessonStorage.CreateLesson(lesson)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create lesson: %w", err)
 	}
 
 	err = l.storage.LessonMediaStorage.SetLessonMedias(resLesson.ID, lesson.MediaItems)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create lesson (set lesson medias): %w", err)
 	}
 
 	err = l.storage.LessonUserStorage.SetUsersToLesson(resLesson.ID, lesson.UserIDs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create lesson (set users to lesson): %w", err)
 	}
 
 	lessonWithMedias, err := l.buildOneLessonWithMediasDto(resLesson)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create lesson (get lesson medias): %w", err)
 	}
 
 	return lessonWithMedias, nil
@@ -105,32 +106,32 @@ func (l *Service) CreateLesson(lesson dto.CreateLesson) (*dto.LessonResponse, er
 func (l *Service) UpdateLesson(lesson dto.UpdateLesson) (*dto.LessonResponse, error) {
 	resLesson, err := l.storage.LessonStorage.UpdateLesson(lesson)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update lesson %d: %w", lesson.ID, err)
 	}
 
 	err = l.storage.LessonMediaStorage.DeleteLessonMedias(lesson.ID, lesson.DeletedMediaIDs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update lesson %d (delete lesson medias): %w", lesson.ID, err)
 	}
 
 	err = l.storage.LessonMediaStorage.SetLessonMedias(resLesson.ID, lesson.MediaItems)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update lesson %d (set lesson medias): %w", lesson.ID, err)
 	}
 
 	err = l.storage.LessonUserStorage.SetUsersToLesson(resLesson.ID, lesson.UserIDs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update lesson %d (set users to lesson): %w", lesson.ID, err)
 	}
 
 	err = l.storage.LessonUserStorage.DeleteUsersFromLesson(resLesson.ID, lesson.DeletedUserIDs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update lesson %d (delete users from lesson): %w", lesson.ID, err)
 	}
 
 	lessonWithMedias, err := l.buildOneLessonWithMediasDto(resLesson)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update lesson %d (get lesson medias): %w", lesson.ID, err)
 	}
 
 	return lessonWithMedias, nil
@@ -139,7 +140,7 @@ func (l *Service) UpdateLesson(lesson dto.UpdateLesson) (*dto.LessonResponse, er
 func (l *Service) UpdateLessonStatus(lessonID int64, status enum.LessonStatus) error {
 	err := l.storage.LessonStorage.UpdateLessonStatus(lessonID, status)
 	if err != nil {
-		return err
+		return fmt.Errorf("update lesson %d status to %s: %w", lessonID, status, err)
 	}
 
 	return nil
@@ -149,13 +150,13 @@ func (l *Service) GetLessonsByTutorId(tutorID int64) ([]dto.LessonResponse, erro
 	var resLessons []dto.LessonResponse
 	lessons, err := l.storage.LessonStorage.GetLessonsByTutorId(tutorID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get lessons by tutor id %d: %w", tutorID, err)
 	}
 
 	for _, oneLesson := range lessons {
 		oneLessonWithMedias, err := l.buildOneLessonWithMediasDto(&oneLesson)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("get lessons by tutor id %d (get lesson medias): %w", tutorID, err)
 		}
 
 		resLessons = append(resLessons, *oneLessonWithMedias)
@@ -169,12 +170,12 @@ func (l *Service) buildOneLessonWithMediasDto(
 ) (*dto.LessonResponse, error) {
 	lessonMedias, err := l.storage.LessonMediaStorage.GetAllLessonMedias(lesson.ID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get lesson %d medias: %w", lesson.ID, err)
 	}
 
 	lessonUsers, err := l.storage.LessonUserStorage.GetAllLessonParticipants(lesson.ID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get lesson %d participants: %w", lesson.ID, err)
 	}
 
 	var resLessonMedias []dto.MediaItemResponse

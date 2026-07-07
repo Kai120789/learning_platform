@@ -30,6 +30,7 @@ func (lm *LessonMediaStorage) GetAllLessonMedias(lessonID int64) ([]models.Lesso
 	if err != nil {
 		return nil, fmt.Errorf("get all medias for lesson %d from db: %w", lessonID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneLesson models.LessonMedia

@@ -57,6 +57,7 @@ func (lu *LessonUserStorage) GetAllLessonParticipants(lessonID int64) ([]int64, 
 	if err != nil {
 		return nil, fmt.Errorf("get all users for lesson %d from db: %w", lessonID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneUserID int64
