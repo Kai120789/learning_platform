@@ -1,0 +1,1 @@
+export { PracticesPageAsync as PracticesPage } from './ui/PracticesPage.async'

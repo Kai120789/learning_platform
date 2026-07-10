@@ -1,0 +1,1 @@
+export { LessonsPageAsync as LessonsPage } from './ui/LessonsPage.async'

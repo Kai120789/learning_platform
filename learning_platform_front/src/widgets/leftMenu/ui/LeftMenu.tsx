@@ -1,0 +1,40 @@
+import { LeftMenuItemsType } from '@/shared/types/leftMenuItems'
+import Logo from '@/shared/assets/logo.png'
+import LeftMenuItem from './LeftMenuItem'
+import { CgClose } from "react-icons/cg";
+import { Switch } from '@/shared/ui/switch';
+
+type LeftMenuProps = {
+    isOpen: boolean
+    onClick: () => void
+}
+
+const LeftMenu = ({ isOpen, onClick }: LeftMenuProps) => {
+    return (
+        <div className={`fixed top-0 left-0 z-50 flex h-screen w-[300px] flex-col items-center 
+            border-r-2 border-[#D9D9D9] bg-white p-5 pt-0 bg-white rounded-tr-2xl rounded-br-2xl
+            transition-transform duration-300 ease-in-out
+            ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+            <div className='flex justify-between w-full mb-[40px]'>
+
+                <img className="h-[100px]" src={Logo} />
+                <CgClose onClick={onClick} className='size-6 mt-[20px] cursor-pointer' />
+            </div>
+
+            <div className="flex items-start w-full h-full border-b-2 border-[#D9D9D9]">
+                <nav>
+                    {LeftMenuItemsType().map((item) => (
+                        <LeftMenuItem onClick={onClick} key={item.path} item={item} />
+                    ))}
+                </nav>
+            </div>
+
+            <div className="flex flex-row items-center gap-5 pb-5 pt-5 text-lg">
+                Темная тема
+                <Switch size="default" />
+            </div>
+        </div>
+    )
+}
+
+export default LeftMenu

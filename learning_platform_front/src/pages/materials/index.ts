@@ -1,0 +1,1 @@
+export { MaterialsPageAsync as MaterialsPage } from './ui/MaterialsPage.async'

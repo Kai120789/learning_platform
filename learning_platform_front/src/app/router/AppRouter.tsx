@@ -1,6 +1,6 @@
-import React from 'react'
 import { Route, Routes, type RouteProps } from 'react-router-dom';
 import { routeConfig } from './routeConfig';
+import { AuthLayout } from '../layouts';
 
 
 export type AppRoutesProps = RouteProps & {
@@ -22,7 +22,7 @@ const AppRouter = () => {
 
     return (
         <Routes>
-            <Route>
+            <Route element={<AuthLayout />}>
                 {Object.values(routeConfig).map((item) => render(item))}
             </Route>
         </Routes>
