@@ -1,7 +1,7 @@
 import { getRouteCourses, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
 import { LeftMenuTabs } from "./leftMenuTabs"
 import { AiOutlineHome, AiOutlineCalendar } from "react-icons/ai";
-import { FiUsers, FiShoppingCart } from "react-icons/fi";
+import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool } from "react-icons/fi";
 import { PiStudent } from "react-icons/pi";
 import type { IconType } from "react-icons/lib";
 
@@ -66,13 +66,13 @@ export const LeftMenuItemsType = (): LeftMenuItemTab[] => {
                     field: LeftMenuTabs.COURSES
                 },
                 {
-                    icon: FiShoppingCart,
+                    icon: FiPenTool,
                     path: getRoutePractices(),
                     text: 'Задания',
                     field: LeftMenuTabs.PRACTICES
                 },
                 {
-                    icon: FiShoppingCart,
+                    icon: FiBookOpen,
                     path: getRouteMaterials(),
                     text: 'Материалы',
                     field: LeftMenuTabs.MATERIALS

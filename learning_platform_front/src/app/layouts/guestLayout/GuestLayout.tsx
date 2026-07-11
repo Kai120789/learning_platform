@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 
-export function AuthLayout() {
+export function GuestLayout() {
     return (
-        <div className="min-h-[100vh] bg-muted">
+        <div className="min-h-[100vh]">
             <Outlet />
         </div>
     )

@@ -1,7 +1,7 @@
 export enum AppRoutes {
     WELCOME = 'welcome',
     LOGIN = 'login',
-    REGISTRATION = 'registration',
+    REGISTER = 'register',
     LESSONS = 'lessons',
     SCHEDULE = 'schedule',
     PROFILE = 'profile',
@@ -10,11 +10,12 @@ export enum AppRoutes {
     MATERIALS = 'materials',
     PRACTICES = 'practices',
     TUTORS = 'tutors',
+    SETTINGS = 'settings'
 }
 
 export const getRouteWelcome = () => '/welcome'
 export const getRouteLogin = () => '/login'
-export const getRouteRegistration = () => '/registration'
+export const getRouteRegister = () => '/register'
 export const getRouteCourses = () => '/courses'
 export const getRouteLessons = () => '/lessons'
 export const getRouteSchedule = () => '/schedule'
@@ -23,3 +24,4 @@ export const getRouteMain = () => '/'
 export const getRouteMaterials = () => '/materials'
 export const getRoutePractices = () => '/practices'
 export const getRouteTutors = () => '/tutors'
+export const getRouteSettings = () => '/settings'

@@ -9,7 +9,7 @@ type LeftMenuItemProps = {
     onClick: () => void
 };
 
-const LeftMenuItem = ({ item, onClick }: LeftMenuItemProps) => {
+export function LeftMenuItem({ item, onClick }: LeftMenuItemProps) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -53,5 +53,3 @@ const LeftMenuItem = ({ item, onClick }: LeftMenuItemProps) => {
         </div>
     );
 };
-
-export default LeftMenuItem;

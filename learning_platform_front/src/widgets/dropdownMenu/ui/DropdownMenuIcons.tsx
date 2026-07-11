@@ -6,28 +6,38 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu"
+} from "@/shared/ui/DropdownMenu"
 import type { ReactElement } from "react"
+import { useNavigate } from "react-router-dom";
+import { getRouteProfile, getRouteSettings, getRouteWelcome } from "@/app/router/routePaths";
 
 type DropdownMenuIconsProps = {
     trigger: ReactElement
 }
 
 export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
+    const navigate = useNavigate()
+
+    const onClickExit = () => {
+        //TODO: запрос на логаут
+        localStorage.removeItem("isAuth")
+        navigate(getRouteWelcome())
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger render={trigger} />
-            <DropdownMenuContent className="min-w-50 p-3 space-y-2">
-                <DropdownMenuItem className="text-lg gap-2">
+            <DropdownMenuContent className="bg-muted min-w-50 py-2 px-3 space-y-1 font-medium">
+                <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2">
                     <FiUser className="size-6" />
                     Профиль
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-lg gap-2">
+                <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2">
                     <FiSettings className="size-6" />
                     Настройки
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive" className="text-lg gap-2">
+                <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2">
                     <FiLogOut className="size-6" />
                     Выйти
                 </DropdownMenuItem>
