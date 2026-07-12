@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/go-chi/cors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -29,6 +30,25 @@ func New(
 	jwtMiddleware func(http.Handler) http.Handler,
 ) http.Handler {
 	r := chi.NewRouter()
+
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{
+			"*",
+		},
+		AllowedMethods: []string{
+			"GET",
+			"POST",
+			"PUT",
+			"DELETE",
+			"OPTIONS",
+		},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+		},
+		AllowCredentials: true,
+	}))
 
 	router := &Router{
 		AuthRouter:     NewAuthRouter(),
