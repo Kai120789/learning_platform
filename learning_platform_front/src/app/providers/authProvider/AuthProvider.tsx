@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { type JSX } from 'react';
-import { getRouteLogin } from '../router/routePaths';
+import { getRouteLogin } from '@/app/router/routePaths';
 
 
 type AuthProviderProps = {

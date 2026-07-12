@@ -10,18 +10,49 @@ import {
 } from "@/shared/ui/Field"
 import { Input } from "@/shared/ui/Input"
 import { useNavigate } from "react-router-dom"
+import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
+import type { LoginRequestDTO } from "../types/types"
+import { login } from "../api/login"
+import { notificationActions } from "@/features/notifications"
+import { useState } from "react"
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
     const navigate = useNavigate()
+    const dispatch = useAppDispatch()
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const request: LoginRequestDTO = {
+            email: email,
+            password: password,
+        }
+        const response = await dispatch(login(request))
+        if (response.meta.requestStatus == "fulfilled") {
+            localStorage.setItem("isAuth", "true")
+            dispatch(notificationActions.addNotification({
+                message: 'Успешный вход!',
+                type: 'success',
+            }))
+        } else {
+            dispatch(notificationActions.addNotification({
+                message: 'Не удалось войти!',
+                type: 'error',
+            }))
+        }
+    }
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2 min-h-[60vh] items-center">
-                    <form className="p-6 md:p-8">
+                    <form className="p-6 md:p-8" onSubmit={onSubmit}>
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
                                 <h1 className="text-2xl font-bold">Добро пожаловать</h1>
@@ -36,6 +67,8 @@ export function LoginForm({
                                     type="email"
                                     placeholder="m@example.com"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </Field>
                             <Field>
@@ -48,7 +81,12 @@ export function LoginForm({
                                         Забыли пароль?
                                     </a>
                                 </div>
-                                <Input id="password" type="password" required />
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
                             </Field>
                             <Field>
                                 <Button type="submit">Войти</Button>
