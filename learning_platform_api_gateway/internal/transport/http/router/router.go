@@ -33,7 +33,7 @@ func New(
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
-			"*",
+			"http://localhost:5173",
 		},
 		AllowedMethods: []string{
 			"GET",

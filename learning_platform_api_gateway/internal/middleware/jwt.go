@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/utils"
 	"net/http"
 	"time"
@@ -20,7 +20,7 @@ type CustomJwtClaims struct {
 
 type AuthService interface {
 	RefreshTokens(refreshToken string) (*string, error)
-	GetTokens(sessionId string) (*dto.RedisTokens, error)
+	GetTokens(sessionId string) (*authDto.RedisTokens, error)
 }
 
 func JWT(secretKey []byte, refreshTokenTTL int64, authService AuthService) func(http.Handler) http.Handler {

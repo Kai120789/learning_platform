@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/dto/userDto"
 	"learning-platform/api-gateway/internal/redis"
 )
@@ -14,8 +14,8 @@ type AuthService struct {
 }
 
 type AuthClient interface {
-	Login(req dto.LoginRequest, userId int64) (*dto.LoginResponse, error)
-	Register(req dto.RegisterRequest, userId int64) (*dto.RegisterResponse, error)
+	Login(req authDto.LoginRequest, userId int64) (*authDto.LoginResponse, error)
+	Register(req authDto.RegisterRequest, userId int64) (*authDto.RegisterResponse, error)
 	RefreshTokens(accessToken string) (*string, error)
 	CheckPassword(password string, passwordHash string) (bool, error)
 	GeneratePasswordHash(password string) (*string, error)
@@ -25,12 +25,12 @@ type AuthClient interface {
 
 type UserAuthService interface {
 	GetUserByEmail(email string) (*userDto.GetUser, error)
-	CreateUser(newUser dto.RegisterRequest) (*int64, error)
+	CreateUser(newUser authDto.RegisterRequest) (*int64, error)
 	GetUserById(id int64) (*userDto.GetUser, error)
 }
 
 type RedisStorage interface {
-	GetTokens(sessionId string) (*dto.RedisTokens, error)
+	GetTokens(sessionId string) (*authDto.RedisTokens, error)
 }
 
 func NewAuthService(
@@ -45,7 +45,7 @@ func NewAuthService(
 	}
 }
 
-func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, error) {
+func (a *AuthService) Login(loginReq authDto.LoginRequest) (*authDto.LoginResponse, error) {
 	user, err := a.userService.GetUserByEmail(loginReq.Email)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (a *AuthService) Login(loginReq dto.LoginRequest) (*dto.LoginResponse, erro
 	return res, nil
 }
 
-func (a *AuthService) Register(registerReq dto.RegisterRequest) (*dto.RegisterResponse, error) {
+func (a *AuthService) Register(registerReq authDto.RegisterRequest) (*authDto.RegisterResponse, error) {
 	passwordHash, err := a.client.GeneratePasswordHash(registerReq.Password)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (a *AuthService) LogoutAll(userId int64) error {
 	return nil
 }
 
-func (a *AuthService) GetTokens(sessionId string) (*dto.RedisTokens, error) {
+func (a *AuthService) GetTokens(sessionId string) (*authDto.RedisTokens, error) {
 	tokens, err := a.redis.GetTokens(sessionId)
 	if err != nil {
 		return nil, err

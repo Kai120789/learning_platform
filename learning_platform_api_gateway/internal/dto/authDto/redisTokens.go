@@ -1,4 +1,4 @@
-package dto
+package authDto
 
 type RedisTokens struct {
 	AccessToken  string `json:"access_token"`

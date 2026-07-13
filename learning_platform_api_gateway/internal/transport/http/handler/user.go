@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/dto/userDto"
 	"net/http"
 	"strconv"
@@ -18,7 +18,7 @@ type UserHandler struct {
 type UserService interface {
 	GetUserById(id int64) (*userDto.GetUser, error)
 	GetUserData(id int64) (*userDto.UserData, error)
-	CreateUser(newUser dto.RegisterRequest) (*int64, error)
+	CreateUser(newUser authDto.RegisterRequest) (*int64, error)
 }
 
 func NewUserHandler(service UserService, logger *zap.Logger) *UserHandler {
@@ -73,7 +73,7 @@ func (u *UserHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var createUserDto dto.RegisterRequest
+	var createUserDto authDto.RegisterRequest
 	err := json.NewDecoder(r.Body).Decode(&createUserDto)
 	if err != nil {
 		u.logger.Error("invalid create user dto")

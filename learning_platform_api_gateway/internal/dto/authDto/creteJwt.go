@@ -1,4 +1,4 @@
-package dto
+package authDto
 
 type CreateJWT struct {
 	UserID      int64  `json:"user_id"`

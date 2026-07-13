@@ -1,7 +1,7 @@
 package service
 
 import (
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/dto/userDto"
 )
 
@@ -13,7 +13,7 @@ type UserClient interface {
 	GetUserByEmail(email string) (*userDto.GetUser, error)
 	GetUserById(id int64) (*userDto.GetUser, error)
 	GetUserData(id int64) (*userDto.UserData, error)
-	CreateUser(newUser dto.RegisterRequest) (*int64, error)
+	CreateUser(newUser authDto.RegisterRequest) (*int64, error)
 }
 
 func NewUserService(client UserClient) *UserService {
@@ -49,7 +49,7 @@ func (u *UserService) GetUserData(id int64) (*userDto.UserData, error) {
 	return res, nil
 }
 
-func (u *UserService) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
+func (u *UserService) CreateUser(newUser authDto.RegisterRequest) (*int64, error) {
 	res, err := u.client.CreateUser(newUser)
 	if err != nil {
 		return nil, err

@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/dto/enum"
 	"time"
 )
@@ -40,7 +40,7 @@ func NewAuthClient(connection *grpc.ClientConn) *AuthClient {
 	}
 }
 
-func (a *AuthClient) Login(req dto.LoginRequest, userId int64) (*dto.LoginResponse, error) {
+func (a *AuthClient) Login(req authDto.LoginRequest, userId int64) (*authDto.LoginResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -55,13 +55,13 @@ func (a *AuthClient) Login(req dto.LoginRequest, userId int64) (*dto.LoginRespon
 		return nil, err
 	}
 
-	return &dto.LoginResponse{
+	return &authDto.LoginResponse{
 		SessionID: res.GetSessionId(),
 		UserID:    res.GetUserId(),
 	}, nil
 }
 
-func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.RegisterResponse, error) {
+func (a *AuthClient) Register(req authDto.RegisterRequest, userId int64) (*authDto.RegisterResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -80,7 +80,7 @@ func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.Regis
 		return nil, err
 	}
 
-	return &dto.RegisterResponse{
+	return &authDto.RegisterResponse{
 		UserID:    res.GetUserId(),
 		SessionID: res.GetSessionId(),
 	}, nil

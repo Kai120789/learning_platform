@@ -5,7 +5,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 	"learning-platform/api-gateway/internal/config"
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/utils"
 	"net/http"
 	"strconv"
@@ -19,8 +19,8 @@ type AuthHandler struct {
 }
 
 type AuthService interface {
-	Login(loginReq dto.LoginRequest) (*dto.LoginResponse, error)
-	Register(registerReq dto.RegisterRequest) (*dto.RegisterResponse, error)
+	Login(loginReq authDto.LoginRequest) (*authDto.LoginResponse, error)
+	Register(registerReq authDto.RegisterRequest) (*authDto.RegisterResponse, error)
 	Logout(accessToken string) error
 	LogoutAll(userId int64) error
 }
@@ -38,7 +38,7 @@ func NewAuthHandler(
 }
 
 func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var loginReq dto.LoginRequest
+	var loginReq authDto.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
 		a.logger.Error("failed decode login request", zap.Error(err))
 		http.Error(w, "invalid input", http.StatusBadRequest)
@@ -65,7 +65,7 @@ func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	var registerReq dto.RegisterRequest
+	var registerReq authDto.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&registerReq); err != nil {
 		a.logger.Error("failed decode register body", zap.Error(err))
 		http.Error(w, "invalid input", http.StatusBadRequest)

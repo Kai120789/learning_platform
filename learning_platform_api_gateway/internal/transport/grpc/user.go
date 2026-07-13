@@ -5,7 +5,7 @@ import (
 	userGRPC "github.com/Kai120789/learning_platform_proto/protos/gen/go/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"learning-platform/api-gateway/internal/dto"
+	"learning-platform/api-gateway/internal/dto/authDto"
 	"learning-platform/api-gateway/internal/dto/enum"
 	"learning-platform/api-gateway/internal/dto/userDto"
 	"time"
@@ -103,7 +103,7 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 	}, nil
 }
 
-func (u *UserClient) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
+func (u *UserClient) CreateUser(newUser authDto.RegisterRequest) (*int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

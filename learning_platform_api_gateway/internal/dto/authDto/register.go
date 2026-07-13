@@ -1,4 +1,4 @@
-package dto
+package authDto
 
 import "learning-platform/api-gateway/internal/dto/enum"
 

@@ -1,4 +1,4 @@
-package dto
+package authDto
 
 type TokenBundle struct {
 	SessionID    string `json:"session_id"`
