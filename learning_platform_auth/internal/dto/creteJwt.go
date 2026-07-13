@@ -1,11 +1,11 @@
 package dto
 
 type CreateJWT struct {
-	UserId      int64
-	UserEmail   string
-	SignedKey   string
-	SessionId   *string
-	Issuer      string
-	AccessTime  int64
-	RefreshTime int64
+	UserId      int64   `json:"user_id"`
+	UserEmail   string  `json:"user_email "`
+	SignedKey   string  `json:"signed_key"`
+	SessionId   *string `json:"session_id"`
+	Issuer      string  `json:"issuer"`
+	AccessTime  int64   `json:"access_time"`
+	RefreshTime int64   `json:"refresh_time"`
 }

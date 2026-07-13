@@ -71,7 +71,7 @@ func (g *AuthGRPCServer) Register(
 		Email:    in.GetEmail(),
 		Name:     in.GetName(),
 		Surname:  in.GetSurname(),
-		LastName: in.GetLastName(),
+		LastName: in.LastName,
 		Role:     protoAuthRoleToString(in.GetRole()),
 		Password: in.GetPassword(),
 	}
