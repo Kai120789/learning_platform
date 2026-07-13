@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios'
 import type { RegisterRequestDTO } from '../types/types';
+import { $api } from '@/app/providers/storeProvider/config/api';
 
 export const register = createAsyncThunk(
     'register',
     async (request: RegisterRequestDTO, { rejectWithValue }) => {
         try {
-            const response = await axios.post(
+            const response = await $api.post(
                 `${import.meta.env.VITE_SERVER_ENDPOINT}/api/auth/register`,
                 request,
             )

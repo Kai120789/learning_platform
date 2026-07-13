@@ -1,4 +1,4 @@
-import { getRouteLogin } from "@/app/router/routePaths"
+import { getRouteLogin, getRouteMain } from "@/app/router/routePaths"
 import { cn } from "@/shared/lib/utils"
 import { Button } from "@/shared/ui/Button"
 import { Card, CardContent } from "@/shared/ui/Card"
@@ -33,7 +33,7 @@ export function RegisterForm({
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [lastname, setLastname] = useState("");
-    const [role, setRole] = useState<RegisterRoleEnum>(RegisterRoleEnum.USER);
+    const [role, setRole] = useState<RegisterRoleEnum>(RegisterRoleEnum.STUDENT);
 
     const dispatch = useAppDispatch()
 
@@ -55,7 +55,7 @@ export function RegisterForm({
 
     const enumToString = (role: RegisterRoleEnum): string => {
         switch (role) {
-            case RegisterRoleEnum.USER:
+            case RegisterRoleEnum.STUDENT:
                 return "Ученик"
             case RegisterRoleEnum.TUTOR:
                 return "Преподаватель"
@@ -79,12 +79,13 @@ export function RegisterForm({
         if (response.meta.requestStatus == "fulfilled") {
             localStorage.setItem("isAuth", "true")
             dispatch(notificationActions.addNotification({
-                message: 'Успешный вход!',
+                message: 'Успешная регистрация!',
                 type: 'success',
             }))
+            navigate(getRouteMain())
         } else {
             dispatch(notificationActions.addNotification({
-                message: 'Не удалось войти!',
+                message: 'Не удалось зарегистрировать пользователя!',
                 type: 'error',
             }))
         }
@@ -138,16 +139,6 @@ export function RegisterForm({
                 return (
                     <>
                         <Field>
-                            <FieldLabel htmlFor="name">Имя</FieldLabel>
-                            <Input
-                                id="name"
-                                type="name"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </Field>
-                        <Field>
                             <FieldLabel htmlFor="surname">Фамилия</FieldLabel>
                             <Input
                                 id="surname"
@@ -155,6 +146,16 @@ export function RegisterForm({
                                 required
                                 value={surname}
                                 onChange={(e) => setSurname(e.target.value)}
+                            />
+                        </Field>
+                        <Field>
+                            <FieldLabel htmlFor="name">Имя</FieldLabel>
+                            <Input
+                                id="name"
+                                type="name"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                         </Field>
                         <Field>

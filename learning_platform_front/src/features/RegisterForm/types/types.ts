@@ -8,6 +8,6 @@ export type RegisterRequestDTO = {
 }
 
 export enum RegisterRoleEnum {
-    USER = "USER",
+    STUDENT = "STUDENT",
     TUTOR = "TUTOR"
 }

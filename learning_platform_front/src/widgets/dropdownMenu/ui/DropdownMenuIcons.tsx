@@ -10,6 +10,9 @@ import {
 import type { ReactElement } from "react"
 import { useNavigate } from "react-router-dom";
 import { getRouteProfile, getRouteSettings, getRouteWelcome } from "@/app/router/routePaths";
+import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
+import { logout } from "../api/logout";
+import { notificationActions } from "@/features/notifications";
 
 type DropdownMenuIconsProps = {
     trigger: ReactElement
@@ -18,10 +21,20 @@ type DropdownMenuIconsProps = {
 export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
     const navigate = useNavigate()
 
-    const onClickExit = () => {
-        //TODO: запрос на логаут
-        localStorage.removeItem("isAuth")
-        navigate(getRouteWelcome())
+    const dispatch = useAppDispatch()
+
+    const onClickExit = async () => {
+        const response = await dispatch(logout())
+
+        if (response.meta.requestStatus == "fulfilled") {
+            localStorage.removeItem("isAuth")
+            navigate(getRouteWelcome())
+        } else {
+            dispatch(notificationActions.addNotification({
+                message: 'Ошибка',
+                type: 'error',
+            }))
+        }
     }
 
     return (

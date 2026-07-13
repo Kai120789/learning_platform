@@ -1,4 +1,4 @@
-import { getRouteRegister } from "@/app/router/routePaths"
+import { getRouteMain, getRouteRegister } from "@/app/router/routePaths"
 import { cn } from "@/shared/lib/utils"
 import { Button } from "@/shared/ui/Button"
 import { Card, CardContent } from "@/shared/ui/Card"
@@ -40,6 +40,7 @@ export function LoginForm({
                 message: 'Успешный вход!',
                 type: 'success',
             }))
+            navigate(getRouteMain())
         } else {
             dispatch(notificationActions.addNotification({
                 message: 'Не удалось войти!',

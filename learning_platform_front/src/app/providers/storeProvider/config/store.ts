@@ -2,7 +2,7 @@ import { configureStore, type Reducer, type ReducersMapObject } from "@reduxjs/t
 import type { StateSchema } from "./StateSchema";
 import { notificationReducer } from "@/features/notifications";
 import { createReducerManager } from "./reducerManager";
-import axios from "axios";
+import { $api } from "./api";
 
 export function createReduxStore(
     initialState: StateSchema,
@@ -16,7 +16,7 @@ export function createReduxStore(
     const reducerManager = createReducerManager(rootReducer);
 
     const extraArg = {
-        api: axios.create,
+        api: $api,
     };
 
     const store = configureStore({
