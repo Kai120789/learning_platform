@@ -1,7 +1,6 @@
 import { FiBell, FiMenu } from "react-icons/fi";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaRegFontAwesomeLogoFull, FaRegUserCircle } from "react-icons/fa";
 import { DropdownMenuIcons } from "@/widgets/dropdownMenu/ui/DropdownMenuIcons";
-import Logo from '@/shared/assets/Logo-Test.png'
 
 type TopMenuProps = {
     onClick: () => void
@@ -9,12 +8,12 @@ type TopMenuProps = {
 
 export function TopMenu({ onClick }: TopMenuProps) {
     return (
-        <div className="border-b-2 border-[#D9D9D9]">
+        <div className="border-b-2 border-border">
             <div className="flex flex-row p-[20px] justify-between items-center">
-                <div className="flex flex-row items-center gap-4">
+                <div className="flex flex-row items-center gap-10">
                     <FiMenu onClick={onClick} className="size-6 cursor-pointer" />
                     <div className='z-50'>
-                        <img className="h-[40px] w-[100px]" src={Logo} />
+                        <FaRegFontAwesomeLogoFull className="h-[40px] w-[150px]" />
                     </div>
                 </div>
                 <div className="flex flex-row  gap-4">

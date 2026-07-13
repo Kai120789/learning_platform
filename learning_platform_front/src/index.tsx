@@ -4,6 +4,7 @@ import './index.css'
 import App from './app/App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { StoreProvider } from './app/providers/storeProvider/index.ts';
+import { ThemeProvider } from '@teispace/next-themes/client';
 
 const router = createBrowserRouter([
 	{ path: '/*', element: <App /> },
@@ -15,7 +16,9 @@ const renderApp = async () => {
 	);
 	root.render(
 		<StoreProvider>
-			<RouterProvider router={router} />
+			<ThemeProvider attribute="class">
+				<RouterProvider router={router} />
+			</ThemeProvider>
 		</StoreProvider>
 	);
 }

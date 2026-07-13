@@ -42,16 +42,16 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
             <DropdownMenuTrigger render={trigger} />
             <DropdownMenuContent className="bg-muted min-w-50 py-2 px-3 space-y-1 font-medium">
                 <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2">
-                    <FiUser className="size-6" />
+                    <FiUser className="size-5" />
                     Профиль
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2">
-                    <FiSettings className="size-6" />
+                    <FiSettings className="size-5" />
                     Настройки
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2">
-                    <FiLogOut className="size-6" />
+                    <FiLogOut className="size-5" />
                     Выйти
                 </DropdownMenuItem>
             </DropdownMenuContent>

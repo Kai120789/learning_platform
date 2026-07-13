@@ -2,33 +2,35 @@
 import { getRouteLogin, getRouteRegister } from "@/app/router/routePaths";
 import { Button } from "@/shared/ui/Button";
 import { useNavigate } from "react-router-dom";
-import Logo from '@/shared/assets/Logo-Test.png'
+import { FaRegFontAwesomeLogoFull } from "react-icons/fa";
+import { ThemeSwitch } from "@/widgets/themeSwitch";
 
-type GuestTopMenuProps = {}
-
-export function GuestTopMenu(props: GuestTopMenuProps) {
+export function GuestTopMenu() {
     const navigate = useNavigate()
 
     return (
-        <div className="border-b-2 border-[#D9D9D9]">
+        <div className="border-b-2 border-border">
             <div className="flex flex-row p-[20px] justify-between">
-                <img className="h-[40px] w-[100px]" src={Logo} />
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="lg"
-                        className="cursor-pointer"
-                        onClick={() => navigate(getRouteRegister())}
-                    >
-                        Зарегистрироваться
-                    </Button>
-                    <Button
-                        size="lg"
-                        className="cursor-pointer"
-                        onClick={() => navigate(getRouteLogin())}
-                    >
-                        Войти
-                    </Button>
+                <FaRegFontAwesomeLogoFull className="h-[40px] w-[150px]" />
+                <div className="flex gap-10 items-center">
+                    <ThemeSwitch />
+                    <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            className="cursor-pointer"
+                            onClick={() => navigate(getRouteRegister())}
+                        >
+                            Зарегистрироваться
+                        </Button>
+                        <Button
+                            size="lg"
+                            className="cursor-pointer"
+                            onClick={() => navigate(getRouteLogin())}
+                        >
+                            Войти
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

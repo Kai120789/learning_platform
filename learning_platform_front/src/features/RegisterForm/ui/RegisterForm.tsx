@@ -168,7 +168,7 @@ export function RegisterForm({
                             />
                         </Field>
                         <Field>
-                            <FieldLabel className="text-black/60" htmlFor="lastname">Отчество (не обязательно)</FieldLabel>
+                            <FieldLabel className="text-primary/60" htmlFor="lastname">Отчество (не обязательно)</FieldLabel>
                             <Input
                                 id="lastname"
                                 type="lastname"
@@ -284,7 +284,7 @@ export function RegisterForm({
                                 <Field>
                                     <Button
                                         onClick={prevStep}
-                                        className={"border-black/20"}
+                                        className={"border-border"}
                                         variant="secondary"
                                         disabled={currentStep === 1}
                                     >
