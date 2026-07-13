@@ -9,7 +9,7 @@ export const getUserData = createAsyncThunk<
     { rejectValue: string }
 >(
     'getUserData',
-    async (userId, { rejectWithValue }) => {
+    async ({ userId }, { rejectWithValue }) => {
         try {
             const response = await $api.get<UserData>(
                 `${import.meta.env.VITE_SERVER_ENDPOINT}/api/user/data/${userId}`,

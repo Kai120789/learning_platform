@@ -3,6 +3,7 @@ import type { StateSchema } from "./StateSchema";
 import { notificationReducer } from "@/features/notifications";
 import { createReducerManager } from "./reducerManager";
 import { $api } from "./api";
+import { userReducer } from "@/entities/user/slice/userSlice";
 
 export function createReduxStore(
     initialState: StateSchema,
@@ -11,6 +12,7 @@ export function createReduxStore(
     const rootReducer: ReducersMapObject<StateSchema> = {
         ...asyncReducers,
         notifications: notificationReducer,
+        user: userReducer
     };
 
     const reducerManager = createReducerManager(rootReducer);

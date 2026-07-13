@@ -1,3 +1,4 @@
+import type { UserSchema } from '@/entities/user/types/types'
 import type { NotificationSchema } from '@/features/notifications'
 import type { AnyAction, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit'
 import type { AxiosInstance } from 'axios'
@@ -6,6 +7,7 @@ import type { NavigateOptions, To } from 'react-router'
 
 export interface StateSchema {
     notifications: NotificationSchema
+    user: UserSchema
 }
 
 export type StateSchemaKey = keyof StateSchema

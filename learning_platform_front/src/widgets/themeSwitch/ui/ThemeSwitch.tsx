@@ -16,6 +16,7 @@ export function ThemeSwitch() {
         <div className="flex gap-3">
             <FiSun />
             <Switch
+                className="border border-ring"
                 checked={theme == 'dark'}
                 onCheckedChange={toggleTheme}
             />

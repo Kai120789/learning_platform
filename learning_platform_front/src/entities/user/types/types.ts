@@ -1,3 +1,28 @@
+export interface UserSchema {
+    data: {
+        user: {
+            userID: number;
+            email: string;
+            role: UserRoleEnum;
+            status: UserStatusEnum;
+        };
+        userInfo: {
+            name: string;
+            surname: string;
+            lastname?: string;
+            city?: string;
+            about?: string;
+        };
+        userSettings: {
+            isNotificationsEnabled: boolean;
+            is2FaEnabled: boolean;
+        };
+    } | null;
+
+    isLoading: boolean;
+    error?: string;
+}
+
 export type UserData = {
     user_id: number
     email: string
