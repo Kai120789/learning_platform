@@ -43,6 +43,7 @@ export function LoginForm({
             }))
             navigate(getRouteMain())
 
+            console.log((response.payload as LoginResponseDTO).user_id)
             const userRes = await dispatch(getUserData({ userId: (response.payload as LoginResponseDTO).user_id }))
             if (userRes.meta.requestStatus != "fulfilled") {
                 dispatch(notificationActions.addNotification({
