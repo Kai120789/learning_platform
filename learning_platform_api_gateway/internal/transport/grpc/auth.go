@@ -70,7 +70,7 @@ func (a *AuthClient) Register(req dto.RegisterRequest, userId int64) (*dto.Regis
 		Email:    req.Email,
 		Name:     req.Name,
 		Surname:  req.Surname,
-		LastName: &req.LastName,
+		LastName: req.LastName,
 		Role:     enumAuthToProtoUserRole(req.Role),
 		Password: req.Password,
 	}

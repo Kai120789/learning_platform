@@ -6,7 +6,7 @@ type RegisterRequest struct {
 	Email    string        `json:"email"`
 	Name     string        `json:"name"`
 	Surname  string        `json:"surname"`
-	LastName string        `json:"lastname"`
+	LastName *string       `json:"lastname"`
 	Role     enum.UserRole `json:"role"`
 	Password string        `json:"password"`
 }

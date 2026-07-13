@@ -111,7 +111,7 @@ func (u *UserClient) CreateUser(newUser dto.RegisterRequest) (*int64, error) {
 		Email:        newUser.Email,
 		Name:         newUser.Name,
 		Surname:      newUser.Surname,
-		LastName:     &newUser.LastName,
+		LastName:     newUser.LastName,
 		Role:         enumToProtoUserRole(newUser.Role),
 		PasswordHash: newUser.Password,
 	})
