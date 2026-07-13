@@ -1,9 +1,10 @@
-import { Check } from "lucide-react";
+import { FaRegCheckCircle } from "react-icons/fa";
 import { cn } from "@/shared/lib/utils";
+import type { ReactNode } from "react";
 
 export type Step = {
     id: number
-    icon: unknown
+    icon: ReactNode
 };
 
 type StepperProps = {
@@ -48,7 +49,7 @@ export function Stepper({
                                 )}
                                 disabled={step.id > currentStep}
                             >
-                                {completed ? <Check className="h-5 w-5" /> : step.id}
+                                {completed ? <FaRegCheckCircle className="h-5 w-5" /> : step.icon}
                             </button>
 
                             {index !== steps.length - 1 && (
