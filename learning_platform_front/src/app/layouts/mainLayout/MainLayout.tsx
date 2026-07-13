@@ -1,5 +1,5 @@
 import { LeftMenu } from "@/widgets/leftMenu"
-import { RightTopMenu } from "@/widgets/rightTopMenu"
+import { TopMenu } from "@/widgets/topMenu"
 import { useState } from "react"
 import { Outlet } from "react-router-dom"
 
@@ -14,7 +14,7 @@ export function MainLayout() {
         <div className="min-h-[100vh] bg-muted">
             <div className="flex flex-row items-start">
                 <div className='flex flex-1 flex-col'>
-                    <RightTopMenu onClick={onClick} />
+                    <TopMenu onClick={onClick} />
                     <Outlet />
                 </div>
             </div>

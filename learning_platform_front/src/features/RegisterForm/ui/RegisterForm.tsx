@@ -15,11 +15,12 @@ import { CgProfile } from "react-icons/cg"
 import { MdLockOutline } from "react-icons/md";
 
 import { useNavigate } from "react-router-dom"
-import { RegisterRoleEnum, type RegisterRequestDTO } from "../types/types"
+import { RegisterRoleEnum, type RegisterRequestDTO, type RegisterResponseDTO } from "../types/types"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
 import { register } from "../api/register"
 import { notificationActions } from "@/features/notifications"
 import { PiStudent } from "react-icons/pi"
+import { getUserData } from "@/entities/user"
 
 export function RegisterForm({
     className,
@@ -70,7 +71,7 @@ export function RegisterForm({
         const request: RegisterRequestDTO = {
             name: name,
             surname: surname,
-            last_name: lastname,
+            lastname: lastname,
             role: role,
             email: email,
             password: password,
@@ -83,6 +84,14 @@ export function RegisterForm({
                 type: 'success',
             }))
             navigate(getRouteMain())
+
+            const userRes = await dispatch(getUserData({ userId: (response.payload as RegisterResponseDTO).user_id }))
+            if (userRes.meta.requestStatus != "fulfilled") {
+                dispatch(notificationActions.addNotification({
+                    message: 'Не удалось получить данные пользователя!',
+                    type: 'error',
+                }))
+            }
         } else {
             dispatch(notificationActions.addNotification({
                 message: 'Не удалось зарегистрировать пользователя!',

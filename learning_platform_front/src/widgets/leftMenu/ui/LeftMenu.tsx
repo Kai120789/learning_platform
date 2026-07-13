@@ -1,5 +1,5 @@
 import { LeftMenuItemsType } from '@/shared/types/leftMenuItems'
-import Logo from '@/shared/assets/logo.png'
+import Logo from '@/shared/assets/Logo-Test.png'
 import { LeftMenuItem } from './LeftMenuItem'
 import { CgClose } from "react-icons/cg";
 import { Switch } from '@/shared/ui/Switch';
@@ -16,8 +16,9 @@ export function LeftMenu({ isOpen, onClick }: LeftMenuProps) {
             transition-transform duration-300 ease-in-out
             ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             <div className='flex justify-between w-full mb-[40px]'>
-
-                <img className="h-[100px]" src={Logo} />
+                <div className='pt-4 z-50'>
+                    <img className="h-[40px] w-[100px]" src={Logo} />
+                </div>
                 <CgClose onClick={onClick} className='size-6 mt-[20px] cursor-pointer' />
             </div>
 

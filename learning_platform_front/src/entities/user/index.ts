@@ -1,0 +1,1 @@
+export { getUserData } from "./api/getUserData"

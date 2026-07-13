@@ -1,20 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { LoginRequestDTO } from '..';
 import { $api } from '@/app/providers/storeProvider/config/api';
-import type { LoginResponseDTO } from '../types/types';
+import type { UserData } from '../types/types';
 import axios from 'axios';
 
-export const login = createAsyncThunk<
-    LoginResponseDTO,
-    LoginRequestDTO,
+export const getUserData = createAsyncThunk<
+    UserData,
+    { userId: number },
     { rejectValue: string }
 >(
-    'login',
-    async (request: LoginRequestDTO, { rejectWithValue }) => {
+    'getUserData',
+    async (userId, { rejectWithValue }) => {
         try {
-            const response = await $api.post<LoginResponseDTO>(
-                `${import.meta.env.VITE_SERVER_ENDPOINT}/api/auth/login`,
-                request,
+            const response = await $api.get<UserData>(
+                `${import.meta.env.VITE_SERVER_ENDPOINT}/api/user/data/${userId}`,
             )
 
             return response.data
