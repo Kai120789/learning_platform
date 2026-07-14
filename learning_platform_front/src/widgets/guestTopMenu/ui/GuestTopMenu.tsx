@@ -4,8 +4,10 @@ import { Button } from "@/shared/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { FaRegFontAwesomeLogoFull } from "react-icons/fa";
 import { ThemeSwitch } from "@/widgets/themeSwitch";
+import { useTranslation } from "react-i18next";
 
 export function GuestTopMenu() {
+    const { t } = useTranslation()
     const navigate = useNavigate()
 
     return (
@@ -21,14 +23,14 @@ export function GuestTopMenu() {
                             className="cursor-pointer"
                             onClick={() => navigate(getRouteRegister())}
                         >
-                            Зарегистрироваться
+                            {t("guest.register")}
                         </Button>
                         <Button
                             size="lg"
                             className="cursor-pointer"
                             onClick={() => navigate(getRouteLogin())}
                         >
-                            Войти
+                            {t("guest.login")}
                         </Button>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import App from './app/App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { StoreProvider } from './app/providers/storeProvider/index.ts';
 import { ThemeProvider } from '@teispace/next-themes/client';
+import "./app/providers/i18n/config";
 
 const router = createBrowserRouter([
 	{ path: '/*', element: <App /> },

@@ -1,0 +1,24 @@
+{
+    "theme": "Оформление",
+    "tabs": {
+        "main": "Главная",
+        "schedules": "Расписания",
+        "tutors": "Репетиторы",
+        "services": "Услуги",
+        "items": "Предложения",
+        "orders": "Заказы",
+        "studying": "Обучение",
+        "courses": "Курсы",
+        "practices": "Задания",
+        "materials": "Материалы"
+    },
+    "rightMenu": {
+        "profile": "Профиль",
+        "settings": "Настройки",
+        "logout": "Выйти"
+    },
+    "guest": {
+        "register": "Зарегистрироваться",
+        "login": "Войти"
+    }
+}

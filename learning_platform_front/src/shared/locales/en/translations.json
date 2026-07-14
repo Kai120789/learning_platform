@@ -1,0 +1,24 @@
+{
+    "theme": "Theme",
+    "tabs": {
+        "main": "Main",
+        "schedules": "Schedules",
+        "tutors": "Tutors",
+        "services": "Services",
+        "items": "Items",
+        "orders": "Orders",
+        "studying": "Studying",
+        "courses": "Courses",
+        "practices": "Practices",
+        "materials": "Materials"
+    },
+    "rightMenu": {
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "guest": {
+        "register": "Create account",
+        "login": "Log In"
+    }
+}

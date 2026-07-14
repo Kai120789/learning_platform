@@ -13,12 +13,14 @@ import { getRouteProfile, getRouteSettings, getRouteWelcome } from "@/app/router
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { logout } from "../api/logout";
 import { notificationActions } from "@/features/notifications";
+import { useTranslation } from "react-i18next";
 
 type DropdownMenuIconsProps = {
     trigger: ReactElement
 }
 
 export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
+    const { t } = useTranslation()
     const navigate = useNavigate()
 
     const dispatch = useAppDispatch()
@@ -43,16 +45,16 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
             <DropdownMenuContent className="bg-muted min-w-50 py-2 px-3 space-y-1 font-medium">
                 <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2">
                     <FiUser className="size-5" />
-                    Профиль
+                    {t("rightMenu.profile")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2">
                     <FiSettings className="size-5" />
-                    Настройки
+                    {t("rightMenu.settings")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2">
                     <FiLogOut className="size-5" />
-                    Выйти
+                    {t("rightMenu.logout")}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

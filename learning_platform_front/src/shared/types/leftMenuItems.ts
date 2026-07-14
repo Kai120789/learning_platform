@@ -4,6 +4,7 @@ import { AiOutlineHome, AiOutlineCalendar } from "react-icons/ai";
 import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool } from "react-icons/fi";
 import { PiStudent } from "react-icons/pi";
 import type { IconType } from "react-icons/lib";
+import { useTranslation } from "react-i18next";
 
 export interface LeftMenuItemTab {
     icon: IconType
@@ -14,41 +15,43 @@ export interface LeftMenuItemTab {
 }
 
 export const LeftMenuItemsType = (): LeftMenuItemTab[] => {
+    const { t } = useTranslation()
+
     return [
         {
             icon: AiOutlineHome,
             path: getRouteMain(),
-            text: 'Главная',
+            text: t("tabs.main"),
             field: LeftMenuTabs.MAIN
         },
         {
             icon: AiOutlineCalendar,
             path: getRouteSchedule(),
-            text: 'Расписания',
+            text: t("tabs.schedules"),
             field: LeftMenuTabs.SCHEDULE
         },
         {
             icon: FiUsers,
             path: getRouteTutors(),
-            text: 'Репетиторы',
+            text: t("tabs.tutors"),
             field: LeftMenuTabs.TUTORS
         },
         {
             icon: FiShoppingCart,
             path: "",
-            text: 'Услуги',
+            text: t("tabs.services"),
             field: LeftMenuTabs.SERVICES,
             childrens: [
                 {
                     icon: FiShoppingCart,
                     path: "",
-                    text: 'Предложения',
+                    text: t("tabs.items"),
                     field: LeftMenuTabs.SERVICES_ITEMS
                 },
                 {
                     icon: FiShoppingCart,
                     path: "",
-                    text: 'Заказы',
+                    text: t("tabs.orders"),
                     field: LeftMenuTabs.SERVICES_ORDERS
                 },
             ]
@@ -56,25 +59,25 @@ export const LeftMenuItemsType = (): LeftMenuItemTab[] => {
         {
             icon: PiStudent,
             path: "",
-            text: 'Обучение',
-            field: LeftMenuTabs.STUDY,
+            text: t("tabs.studying"),
+            field: LeftMenuTabs.STUDYING,
             childrens: [
                 {
                     icon: FiUsers,
                     path: getRouteCourses(),
-                    text: 'Курсы',
+                    text: t("tabs.courses"),
                     field: LeftMenuTabs.COURSES
                 },
                 {
                     icon: FiPenTool,
                     path: getRoutePractices(),
-                    text: 'Задания',
+                    text: t("tabs.practices"),
                     field: LeftMenuTabs.PRACTICES
                 },
                 {
                     icon: FiBookOpen,
                     path: getRouteMaterials(),
-                    text: 'Материалы',
+                    text: t("tabs.materials"),
                     field: LeftMenuTabs.MATERIALS
                 },
             ]
