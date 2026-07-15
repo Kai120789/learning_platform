@@ -10,6 +10,8 @@ github.com/Kai120789/learning_platform_proto v0.5.16 h1:gQwIR8/kvrmUP1Cylc0f9dkB
 github.com/Kai120789/learning_platform_proto v0.5.16/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/Kai120789/learning_platform_proto v0.5.17 h1:KTfqObd/R/cFVHlzrggD3HmYqq6uVCfMlUoIiXW1JUc=
 github.com/Kai120789/learning_platform_proto v0.5.17/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.5.18 h1:xoL4xVYlTQOt67fGiVeIn3gKn83k8JJRwmJM7KH0eFs=
+github.com/Kai120789/learning_platform_proto v0.5.18/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
