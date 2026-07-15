@@ -18,7 +18,7 @@ type AuthService interface {
 	CheckPassword(password string, passwordHash string) (bool, error)
 	GeneratePasswordHash(password string) (*string, error)
 	Logout(accessToken string) error
-	LogoutAll(userId int64) error
+	LogoutAll(userID int64) error
 	ChangePassword()
 	ForceChangePassword()
 	ChangeEmail()
@@ -43,7 +43,7 @@ func (g *AuthGRPCServer) Login(
 	in *authGRPC.LoginRequest,
 ) (*authGRPC.LoginResponse, error) {
 	res, err := g.service.Login(dto.LoginRequest{
-		UserId:   in.GetUserId(),
+		UserID:   in.GetUserId(),
 		Email:    in.GetEmail(),
 		Password: in.GetPassword(),
 	})
@@ -57,8 +57,7 @@ func (g *AuthGRPCServer) Login(
 	}
 
 	return &authGRPC.LoginResponse{
-		SessionId: res.SessionId,
-		UserId:    res.UserId,
+		SessionId: res.SessionID,
 	}, nil
 }
 
@@ -67,12 +66,8 @@ func (g *AuthGRPCServer) Register(
 	in *authGRPC.RegisterRequest,
 ) (*authGRPC.RegisterResponse, error) {
 	request := dto.RegisterRequest{
-		UserId:   in.GetUserId(),
+		UserID:   in.GetUserId(),
 		Email:    in.GetEmail(),
-		Name:     in.GetName(),
-		Surname:  in.GetSurname(),
-		LastName: in.LastName,
-		Role:     protoAuthRoleToString(in.GetRole()),
 		Password: in.GetPassword(),
 	}
 
@@ -87,8 +82,7 @@ func (g *AuthGRPCServer) Register(
 	}
 
 	return &authGRPC.RegisterResponse{
-		UserId:    res.UserId,
-		SessionId: res.SessionId,
+		SessionId: res.SessionID,
 	}, nil
 }
 
@@ -166,7 +160,7 @@ func (g *AuthGRPCServer) LogoutAll(
 	if err != nil {
 		g.logger.Error(
 			"failed logout all sessions for user",
-			zap.Int64("userId", in.GetUserId()),
+			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
 		)
 		return nil, status.Error(codes.Internal, "failed logout all sessions for user")
