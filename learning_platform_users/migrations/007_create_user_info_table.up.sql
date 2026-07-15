@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS user_info (
     about TEXT,
     avatar VARCHAR(250),
     gender gender_enum DEFAULT 'UNKNOWN',
-    birth_date DATE,
+    birth_date DATE DEFAULT NULL,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

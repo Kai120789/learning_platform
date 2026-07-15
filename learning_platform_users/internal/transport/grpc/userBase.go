@@ -112,6 +112,15 @@ func (u *UserGRPCServer) GetUserData(
 		return nil, status.Error(codes.Internal, "failed to get user data")
 	}
 
+	var birthDate *userGRPC.Date
+	if res.UserInfo.BirthDate != nil {
+		birthDate = &userGRPC.Date{
+			Day:   int32(res.UserInfo.BirthDate.Day()),
+			Month: int32(res.UserInfo.BirthDate.Month()),
+			Year:  int32(res.UserInfo.BirthDate.Year()),
+		}
+	}
+
 	return &userGRPC.GetUserDataResponse{
 		UserId: res.UserID,
 		Email:  res.Email,
@@ -125,11 +134,7 @@ func (u *UserGRPCServer) GetUserData(
 			About:      res.UserInfo.About,
 			Avatar:     res.UserInfo.Avatar,
 			Gender:     enumToProtoGender(res.UserInfo.Gender),
-			BirthDate: &userGRPC.Date{
-				Day:   int32(res.UserInfo.BirthDate.Day()),
-				Month: int32(res.UserInfo.BirthDate.Month()),
-				Year:  int32(res.UserInfo.BirthDate.Year()),
-			},
+			BirthDate:  birthDate,
 		},
 		UserSettings: &userGRPC.UpdateUserSettingsResponse{
 			Is_2FaEnabled:          res.UserSettings.Is2FaEnabled,
@@ -191,6 +196,8 @@ func protoToEnumGender(gender userGRPC.UserGender) enum.UserGender {
 		return enum.GenderMale
 	case userGRPC.UserGender_FEMALE:
 		return enum.GenderFemale
+	case userGRPC.UserGender_UNKNOWN:
+		return enum.GenderUnknown
 	default:
 		return enum.GenderUnknown
 	}
@@ -250,6 +257,8 @@ func enumToProtoGender(gender enum.UserGender) userGRPC.UserGender {
 		return userGRPC.UserGender_MALE
 	case enum.GenderFemale:
 		return userGRPC.UserGender_FEMALE
+	case enum.GenderUnknown:
+		return userGRPC.UserGender_UNKNOWN
 	default:
 		return userGRPC.UserGender_ENUM_GENDER_UNSPECIFIED
 	}
@@ -278,6 +287,10 @@ func enumToProtoLanguage(language enum.UserLanguage) userGRPC.UserLanguage {
 }
 
 func mapDate(bd *userGRPC.Date) *time.Time {
+	if bd == nil {
+		return nil
+	}
+
 	birthDate := time.Date(
 		int(bd.GetYear()),
 		time.Month(bd.GetMonth()),

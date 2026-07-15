@@ -6,6 +6,7 @@ import (
 	"learning-platform/users/internal/models"
 	"learning-platform/users/internal/models/enum"
 	"learning-platform/users/internal/utils"
+	"time"
 )
 
 type UserBaseService struct {
@@ -119,6 +120,10 @@ func formUserDto(
 	userInfo *models.UserInfo,
 	userSettings *models.UserSettings,
 ) *dto.UserData {
+	var birthDate *time.Time
+	if userInfo.BirthDate.Valid {
+		birthDate = &userInfo.BirthDate.Time
+	}
 	return &dto.UserData{
 		UserID: user.ID,
 		Email:  user.Email,
@@ -132,7 +137,7 @@ func formUserDto(
 			About:      utils.DBStringToOptional(userInfo.About),
 			Avatar:     utils.DBStringToOptional(userInfo.Avatar),
 			Gender:     userInfo.Gender,
-			BirthDate:  &userInfo.BirthDate.Time,
+			BirthDate:  birthDate,
 		},
 		UserSettings: dto.UserSettingsResponse{
 			Is2FaEnabled:           userSettings.Is2FaEnabled,
