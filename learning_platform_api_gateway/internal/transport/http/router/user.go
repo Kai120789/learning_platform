@@ -24,7 +24,7 @@ func (u *UserRouter) UserRoutes(
 ) {
 	r.With(jwtMiddleware).Route("/api/user", func(r chi.Router) {
 		r.Get("/{userId}", h.GetUserById)
-		r.Get("/data/{userId}", h.GetUserData)
+		r.Get("/data", h.GetUserData)
 		r.Post("/", h.CreateUser)
 	})
 }

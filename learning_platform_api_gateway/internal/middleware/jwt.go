@@ -12,7 +12,7 @@ import (
 )
 
 type CustomJwtClaims struct {
-	UserId    int64  `json:"user_id"`
+	UserID    int64  `json:"user_id"`
 	UserEmail string `json:"user_email"`
 	SessionId string `json:"session_id"`
 	jwt.RegisteredClaims
@@ -87,7 +87,7 @@ func JWT(secretKey []byte, refreshTokenTTL int64, authService AuthService) func(
 				}
 			}
 
-			ctx := context.WithValue(r.Context(), "user_id", accessClaims.UserId)
+			ctx := context.WithValue(r.Context(), "user_id", accessClaims.UserID)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

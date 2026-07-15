@@ -7,5 +7,4 @@ type LoginRequest struct {
 
 type LoginResponse struct {
 	SessionID string `json:"session_id"`
-	UserID    int64  `json:"user_id"`
 }

@@ -51,16 +51,17 @@ func (u *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UserHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "userId")
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		u.logger.Error("invalid param user id")
-		http.Error(w, "invalid param user id", http.StatusBadRequest)
+	userID, ok := r.Context().Value("user_id").(int64)
+	if !ok {
+		u.logger.Error(
+			"user unauthorized",
+			zap.Int64("userID", userID),
+		)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	userData, err := u.service.GetUserData(int64(id))
+	userData, err := u.service.GetUserData(userID)
 	if err != nil {
 		u.logger.Error("failed get user data by id")
 		http.Error(w, "failed get user data by id", http.StatusInternalServerError)

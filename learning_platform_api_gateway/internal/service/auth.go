@@ -14,13 +14,13 @@ type AuthService struct {
 }
 
 type AuthClient interface {
-	Login(req authDto.LoginRequest, userId int64) (*authDto.LoginResponse, error)
-	Register(req authDto.RegisterRequest, userId int64) (*authDto.RegisterResponse, error)
+	Login(req authDto.LoginRequest, userID int64) (*authDto.LoginResponse, error)
+	Register(req authDto.RegisterRequest, userID int64) (*authDto.RegisterResponse, error)
 	RefreshTokens(accessToken string) (*string, error)
 	CheckPassword(password string, passwordHash string) (bool, error)
 	GeneratePasswordHash(password string) (*string, error)
 	Logout(accessToken string) error
-	LogoutAll(userId int64) error
+	LogoutAll(userID int64) error
 }
 
 type UserAuthService interface {
@@ -76,12 +76,12 @@ func (a *AuthService) Register(registerReq authDto.RegisterRequest) (*authDto.Re
 
 	registerReq.Password = *passwordHash
 
-	userId, err := a.userService.CreateUser(registerReq)
+	userID, err := a.userService.CreateUser(registerReq)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := a.client.Register(registerReq, *userId)
+	res, err := a.client.Register(registerReq, *userID)
 	if err != nil {
 		return nil, err
 	}
@@ -112,8 +112,8 @@ func (a *AuthService) Logout(sessionId string) error {
 	return nil
 }
 
-func (a *AuthService) LogoutAll(userId int64) error {
-	err := a.client.LogoutAll(userId)
+func (a *AuthService) LogoutAll(userID int64) error {
+	err := a.client.LogoutAll(userID)
 	if err != nil {
 		return err
 	}

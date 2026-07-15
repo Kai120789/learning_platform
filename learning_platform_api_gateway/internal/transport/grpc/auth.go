@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 	"learning-platform/api-gateway/internal/dto/authDto"
-	"learning-platform/api-gateway/internal/dto/enum"
 	"time"
 )
 
@@ -57,7 +56,6 @@ func (a *AuthClient) Login(req authDto.LoginRequest, userId int64) (*authDto.Log
 
 	return &authDto.LoginResponse{
 		SessionID: res.GetSessionId(),
-		UserID:    res.GetUserId(),
 	}, nil
 }
 
@@ -68,10 +66,6 @@ func (a *AuthClient) Register(req authDto.RegisterRequest, userId int64) (*authD
 	grpcBody := &authGRPC.RegisterRequest{
 		UserId:   userId,
 		Email:    req.Email,
-		Name:     req.Name,
-		Surname:  req.Surname,
-		LastName: req.LastName,
-		Role:     enumAuthToProtoUserRole(req.Role),
 		Password: req.Password,
 	}
 
@@ -81,7 +75,6 @@ func (a *AuthClient) Register(req authDto.RegisterRequest, userId int64) (*authD
 	}
 
 	return &authDto.RegisterResponse{
-		UserID:    res.GetUserId(),
 		SessionID: res.GetSessionId(),
 	}, nil
 }
@@ -157,15 +150,4 @@ func (a *AuthClient) LogoutAll(userId int64) error {
 	}
 
 	return nil
-}
-
-func enumAuthToProtoUserRole(role enum.UserRole) authGRPC.UserRole {
-	switch role {
-	case enum.RoleTutor:
-		return authGRPC.UserRole_TUTOR
-	case enum.RoleStudent:
-		return authGRPC.UserRole_STUDENT
-	default:
-		return authGRPC.UserRole_ENUM_NAME_UNSPECIFIED
-	}
 }
