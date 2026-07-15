@@ -120,9 +120,9 @@
 
     --destructive: oklch(0.577 0.245 27.325);
 
-    --border: oklch(0.922 0 0);
+    --border: oklch(0.822 0 0);
 
-    --input: oklch(0.922 0 0);
+    --input: oklch(0.822 0 0);
 
     --ring: oklch(0.708 0 0);
 
@@ -157,7 +157,7 @@
 
 .dark {
 
-    --background: oklch(0.145 0 0);
+    --background: oklch(0.200 0 0);
 
     --foreground: oklch(0.985 0 0);
 
@@ -187,9 +187,9 @@
 
     --destructive: oklch(0.704 0.191 22.216);
 
-    --border: oklch(1 0 0 / 10%);
+    --border: oklch(1 0 0 / 40%);
 
-    --input: oklch(1 0 0 / 15%);
+    --input: oklch(1 0 0 / 40%);
 
     --ring: oklch(0.556 0 0);
 

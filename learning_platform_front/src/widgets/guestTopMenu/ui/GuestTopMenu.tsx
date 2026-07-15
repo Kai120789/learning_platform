@@ -11,7 +11,7 @@ export function GuestTopMenu() {
     const navigate = useNavigate()
 
     return (
-        <div className="border-b-2 border-border">
+        <div className="border-b-2 border-border bg-background">
             <div className="flex flex-row p-[20px] justify-between">
                 <FaRegFontAwesomeLogoFull className="h-[40px] w-[150px]" />
                 <div className="flex gap-10 items-center">

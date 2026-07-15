@@ -2,9 +2,10 @@ import { Route, Routes, type RouteProps } from 'react-router-dom';
 import { routeConfig } from './routeConfig';
 import { Suspense, type JSX } from 'react';
 import { Loader } from 'lucide-react';
-import { AuthProvider } from '../providers/authProvider/AuthProvider';
+import { AuthProvider } from '@/app/providers';
 import { NotificationList } from '@/features/notifications';
 import { ToastContainer } from 'react-toastify';
+import { useTheme } from '@teispace/next-themes/client';
 
 
 export type AppRoutesProps = RouteProps & {
@@ -13,6 +14,8 @@ export type AppRoutesProps = RouteProps & {
 };
 
 export function AppRouter() {
+    const { theme, } = useTheme();
+
     const render = (route: AppRoutesProps) => {
         const element = (
             <Suspense fallback={<Loader />}>
@@ -42,7 +45,7 @@ export function AppRouter() {
             <NotificationList />
             <ToastContainer
                 position="top-right"
-                autoClose={4000}
+                autoClose={5000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -50,7 +53,7 @@ export function AppRouter() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="light"
+                theme={theme}
             />
             <Routes>
                 <Route>

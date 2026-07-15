@@ -8,7 +8,7 @@ type TopMenuProps = {
 
 export function TopMenu({ onClick }: TopMenuProps) {
     return (
-        <div className="border-b-2 border-border">
+        <div className="border-b-2 border-border bg-background">
             <div className="flex flex-row p-[20px] justify-between items-center">
                 <div className="flex flex-row items-center gap-10">
                     <FiMenu onClick={onClick} className="size-6 cursor-pointer" />

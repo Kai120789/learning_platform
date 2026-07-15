@@ -1,14 +1,18 @@
+import type { UserGenderEnum, UserLanguageEnum } from "@/shared/enums/user"
+
 export type RegisterRequestDTO = {
+    email: string
     name: string
     surname: string
-    lastname?: string
+    patronymic?: string
     role: RegisterRoleEnum
-    email: string
+    gender: UserGenderEnum
+    language: UserLanguageEnum
+    birth_date?: Date
     password: string
 }
 
 export type RegisterResponseDTO = {
-    user_id: number
     session_id: string
 }
 

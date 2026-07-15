@@ -13,7 +13,7 @@ export const NotificationList = () => {
         notifications.forEach(notification => {
             const toastOptions = {
                 toastId: notification.id,
-                autoClose: 4000,
+                autoClose: 5000,
                 onClose: () => dispatch(notificationActions.removeNotification(notification.id)),
             };
 

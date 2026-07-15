@@ -4,6 +4,5 @@ export type LoginRequestDTO = {
 }
 
 export type LoginResponseDTO = {
-    user_id: number
     session_id: string
 }

@@ -1,3 +1,5 @@
+import type { UserGenderEnum, UserLanguageEnum, UserRoleEnum, UserStatusEnum, UserThemeEnum } from "@/shared/enums/user";
+
 export interface UserSchema {
     data: {
         user: {
@@ -36,25 +38,18 @@ export type UserInfo = {
     user_id: number
     name: string
     surname: string
-    lastname?: string
+    patronymic?: string
     city?: string
     about?: string
+    avatar?: string
+    gender: UserGenderEnum
+    birth_date?: string
 }
 
 export type UserSettings = {
     user_id: number
     is_notifications_enabled: boolean
     is_2_fa_enabled: boolean
-}
-
-export enum UserRoleEnum {
-    ADMIN = "ADMIN",
-    STUDENT = "STUDENT",
-    TUTOR = "TUTOR"
-}
-
-export enum UserStatusEnum {
-    ACTIVE = "ACTIVE",
-    INACTIVE = "INACTIVE",
-    BANNED = "BANNED"
+    language: UserLanguageEnum
+    theme: UserThemeEnum
 }

@@ -15,12 +15,18 @@ import { CgProfile } from "react-icons/cg"
 import { MdLockOutline } from "react-icons/md";
 
 import { useNavigate } from "react-router-dom"
-import { RegisterRoleEnum, type RegisterRequestDTO, type RegisterResponseDTO } from "../types/types"
+import { RegisterRoleEnum, type RegisterRequestDTO } from "../types/types"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
 import { register } from "../api/register"
 import { notificationActions } from "@/features/notifications"
 import { PiStudent } from "react-icons/pi"
 import { getUserData } from "@/entities/user"
+import { UserGenderEnum, UserLanguageEnum } from "@/shared/enums/user"
+import { FiUserCheck } from "react-icons/fi"
+import { RoleAndLanguageStep } from "./steps/RoleAndLanguageStep"
+import { UserDataStep } from "./steps/UserDataStep"
+import { AuthDataStep } from "./steps/AuthDataStep"
+import { ConfirmStep } from "./steps/ConfirmStep"
 
 export function RegisterForm({
     className,
@@ -28,13 +34,17 @@ export function RegisterForm({
 }: React.ComponentProps<"div">) {
     const navigate = useNavigate()
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("");
-    const [lastname, setLastname] = useState("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [name, setName] = useState<string>("");
+    const [surname, setSurname] = useState<string>("");
+    const [patronymic, setPatronymic] = useState<string>("");
     const [role, setRole] = useState<RegisterRoleEnum>(RegisterRoleEnum.STUDENT);
+    const [gender, setGender] = useState<UserGenderEnum>(UserGenderEnum.UNKNOWN);
+    const [language, setLanguage] = useState<UserLanguageEnum>(UserLanguageEnum.RU);
+    const [birthDate, setBirthDate] = useState<Date>()
+    const [isChecked, setIsCheked] = useState<boolean>(false)
 
     const dispatch = useAppDispatch()
 
@@ -42,6 +52,7 @@ export function RegisterForm({
         { id: 1, icon: <PiStudent size={20} /> },
         { id: 2, icon: <CgProfile size={20} /> },
         { id: 3, icon: <MdLockOutline size={20} /> },
+        { id: 4, icon: <FiUserCheck size={20} /> }
     ]
 
     const [currentStep, setCurrentStep] = useState<number>(1)
@@ -54,27 +65,19 @@ export function RegisterForm({
         setCurrentStep(currentStep - 1)
     }
 
-    const enumToString = (role: RegisterRoleEnum): string => {
-        switch (role) {
-            case RegisterRoleEnum.STUDENT:
-                return "Ученик"
-            case RegisterRoleEnum.TUTOR:
-                return "Преподаватель"
-            default:
-                return "Ученик"
-        }
-    }
-
     const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const request: RegisterRequestDTO = {
             name: name,
             surname: surname,
-            lastname: lastname,
+            patronymic: patronymic,
             role: role,
             email: email,
             password: password,
+            gender: gender,
+            language: language,
+            birth_date: birthDate || undefined,
         }
         const response = await dispatch(register(request))
         if (response.meta.requestStatus == "fulfilled") {
@@ -85,7 +88,7 @@ export function RegisterForm({
             }))
             navigate(getRouteMain())
 
-            const userRes = await dispatch(getUserData({ userId: (response.payload as RegisterResponseDTO).user_id }))
+            const userRes = await dispatch(getUserData())
             if (userRes.meta.requestStatus != "fulfilled") {
                 dispatch(notificationActions.addNotification({
                     message: 'Не удалось получить данные пользователя!',
@@ -110,14 +113,13 @@ export function RegisterForm({
     const checkNextStepDisabled = (): boolean => {
         switch (currentStep) {
             case 1:
-                if (!role) return true
-                return false
+                return (!role)
             case 2:
-                if (!name || !surname) return true
-                return false
+                return (!name || !surname)
             case 3:
-                if (!email || !password || !checkConfirmPasswordCorrect()) return true
-                return false
+                return (!email || !password || !checkConfirmPasswordCorrect())
+            case 4:
+                return (!isChecked)
             default:
                 return true
         }
@@ -127,93 +129,52 @@ export function RegisterForm({
         switch (currentStep) {
             case 1:
                 return (
-                    <>
-                        <Field>
-                            <FieldLabel htmlFor="role">Роль</FieldLabel>
-                            <select
-                                className="border border-input rounded-lg p-2"
-                                value={role}
-                                onChange={(e) => setRole(e.target.value as RegisterRoleEnum)}
-                            >
-                                {Object.values(RegisterRoleEnum).map((role) => (
-                                    <option key={role} value={role}>
-                                        {enumToString(role)}
-                                    </option>
-                                ))}
-                            </select>
-                        </Field>
-                    </>
+                    <RoleAndLanguageStep
+                        language={language}
+                        setLanguage={setLanguage}
+                        role={role}
+                        setRole={setRole}
+                    />
                 )
             case 2:
                 return (
-                    <>
-                        <Field>
-                            <FieldLabel htmlFor="surname">Фамилия</FieldLabel>
-                            <Input
-                                id="surname"
-                                type="surname"
-                                required
-                                value={surname}
-                                onChange={(e) => setSurname(e.target.value)}
-                            />
-                        </Field>
-                        <Field>
-                            <FieldLabel htmlFor="name">Имя</FieldLabel>
-                            <Input
-                                id="name"
-                                type="name"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </Field>
-                        <Field>
-                            <FieldLabel className="text-primary/60" htmlFor="lastname">Отчество (не обязательно)</FieldLabel>
-                            <Input
-                                id="lastname"
-                                type="lastname"
-                                value={lastname}
-                                onChange={(e) => setLastname(e.target.value)}
-                            />
-                        </Field>
-                    </>
+                    <UserDataStep
+                        name={name}
+                        setName={setName}
+                        surname={surname}
+                        setSurname={setSurname}
+                        patronymic={patronymic}
+                        setPatronymic={setPatronymic}
+                        gender={gender}
+                        setGender={setGender}
+                        birthDate={birthDate}
+                        setBirthDate={setBirthDate}
+                    />
                 )
             case 3:
                 return (
-                    <>
-                        <Field>
-                            <FieldLabel htmlFor="email">Почта</FieldLabel>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </Field>
-                        <Field>
-                            <FieldLabel htmlFor="password">Пароль</FieldLabel>
-                            <Input
-                                id="password"
-                                type="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)} />
-                        </Field>
-                        <Field>
-                            <FieldLabel htmlFor="confirmPassword">
-                                Повторите пароль
-                            </FieldLabel>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                required
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </Field>
-                    </>
+                    <AuthDataStep
+                        email={email}
+                        setEmail={setEmail}
+                        password={password}
+                        setPassword={setPassword}
+                        confirmPassword={confirmPassword}
+                        setConfirmPassword={setConfirmPassword}
+                    />
+                )
+            case 4:
+                return (
+                    <ConfirmStep
+                        isCheked={isChecked}
+                        setIsCheked={setIsCheked}
+                        name={name}
+                        surname={surname}
+                        patronymic={patronymic}
+                        gender={gender}
+                        birthDate={birthDate}
+                        email={email}
+                        language={language}
+                    />
                 )
             default:
                 return (

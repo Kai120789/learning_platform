@@ -42,7 +42,7 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger render={trigger} />
-            <DropdownMenuContent className="bg-muted min-w-50 py-2 px-3 space-y-1 font-medium">
+            <DropdownMenuContent className="bg-background min-w-50 py-2 px-3 space-y-1 font-medium">
                 <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2">
                     <FiUser className="size-5" />
                     {t("rightMenu.profile")}

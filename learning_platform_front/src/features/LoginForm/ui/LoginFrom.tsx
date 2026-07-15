@@ -11,7 +11,7 @@ import {
 import { Input } from "@/shared/ui/Input"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
-import type { LoginRequestDTO, LoginResponseDTO } from "../types/types"
+import type { LoginRequestDTO } from "../types/types"
 import { login } from "../api/login"
 import { notificationActions } from "@/features/notifications"
 import { useState } from "react"
@@ -43,8 +43,7 @@ export function LoginForm({
             }))
             navigate(getRouteMain())
 
-            console.log((response.payload as LoginResponseDTO).user_id)
-            const userRes = await dispatch(getUserData({ userId: (response.payload as LoginResponseDTO).user_id }))
+            const userRes = await dispatch(getUserData())
             if (userRes.meta.requestStatus != "fulfilled") {
                 dispatch(notificationActions.addNotification({
                     message: 'Не удалось получить данные пользователя!',

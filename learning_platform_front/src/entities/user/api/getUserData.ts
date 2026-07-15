@@ -5,14 +5,14 @@ import axios from 'axios';
 
 export const getUserData = createAsyncThunk<
     UserData,
-    { userId: number },
+    void,
     { rejectValue: string }
 >(
     'getUserData',
-    async ({ userId }, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
             const response = await $api.get<UserData>(
-                `${import.meta.env.VITE_SERVER_ENDPOINT}/api/user/data/${userId}`,
+                `${import.meta.env.VITE_SERVER_ENDPOINT}/api/user/data`,
             )
 
             return response.data
