@@ -66,8 +66,6 @@ func (lm *LessonMediaStorage) SetLessonMedias(lessonID int64, lessonMedias []dto
 		lessonIDs = append(lessonIDs, lessonID)
 	}
 
-	fmt.Println(lessonID)
-
 	query := `
 		INSERT INTO lesson_medias (
 			s3_link,
