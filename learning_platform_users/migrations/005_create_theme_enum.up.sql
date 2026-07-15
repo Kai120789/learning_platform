@@ -1,0 +1,1 @@
+CREATE TYPE theme_enum AS ENUM ('LIGHT', 'DARK');

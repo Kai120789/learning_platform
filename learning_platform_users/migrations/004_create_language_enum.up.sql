@@ -1,0 +1,1 @@
+CREATE TYPE language_enum AS ENUM ('RU', 'EN', 'UNKNOWN');

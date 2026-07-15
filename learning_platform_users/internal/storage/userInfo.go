@@ -20,19 +20,21 @@ func NewUserInfoStorage(
 	}
 }
 
-func (s *UserInfoStorage) CreateUserInfo(userID int64, userDto dto.CreateUser) error {
+func (ui *UserInfoStorage) CreateUserInfo(userID int64, userDto dto.CreateUser) error {
 	query := `
-		INSERT INTO user_info (user_id, name, surname, lastname) 
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO user_info (user_id, name, surname, patronymic, gender, birth_date) 
+		VALUES ($1, $2, $3, $4, $5, $6)
 	`
 
-	_, err := s.conn.Exec(
+	_, err := ui.conn.Exec(
 		context.Background(),
 		query,
 		userID,
 		userDto.Name,
 		userDto.Surname,
-		userDto.LastName,
+		userDto.Patronymic,
+		userDto.Gender,
+		userDto.BirthDate,
 	)
 
 	if err != nil {
@@ -42,22 +44,25 @@ func (s *UserInfoStorage) CreateUserInfo(userID int64, userDto dto.CreateUser) e
 	return nil
 }
 
-func (s *UserInfoStorage) GetUserInfo(userID int64) (*models.UserInfo, error) {
+func (ui *UserInfoStorage) GetUserInfo(userID int64) (*models.UserInfo, error) {
 	var userInfo models.UserInfo
 	query := `
-		SElECT user_id, name, surname, lastname, city, about
+		SElECT user_id, name, surname, patronymic, city, about, avatar, gender, birth_date
 		FROM user_info
 		WHERE user_id = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, userID)
+	row := ui.conn.QueryRow(context.Background(), query, userID)
 	err := row.Scan(
 		&userInfo.UserID,
 		&userInfo.Name,
 		&userInfo.Surname,
-		&userInfo.Lastname,
+		&userInfo.Patronymic,
 		&userInfo.City,
 		&userInfo.About,
+		&userInfo.Avatar,
+		&userInfo.Gender,
+		&userInfo.BirthDate,
 	)
 
 	if err != nil {
@@ -66,31 +71,50 @@ func (s *UserInfoStorage) GetUserInfo(userID int64) (*models.UserInfo, error) {
 	return &userInfo, nil
 }
 
-func (s *UserInfoStorage) UpdateUserInfo(userInfo dto.UserInfo) error {
+func (ui *UserInfoStorage) UpdateUserInfo(userInfo dto.UserInfoRequest) error {
 	query := `
 		UPDATE user_info
 		SET
 		    name = $2,
 			surname = $3,
-			lastname = $4,
+			patronymic = $4,
 			city = $5,
 			about = $6,
+			gender = $7,
+			birth_date = $8
 		WHERE user_id = $1
 	`
 
-	_, err := s.conn.Exec(
+	_, err := ui.conn.Exec(
 		context.Background(),
 		query,
 		userInfo.UserID,
 		userInfo.Name,
 		userInfo.Surname,
-		userInfo.Lastname,
+		userInfo.Patronymic,
 		userInfo.City,
 		userInfo.About,
+		userInfo.Gender,
+		userInfo.BirthDate,
 	)
 
 	if err != nil {
 		return fmt.Errorf("update info for user %d: %w", userInfo.UserID, err)
 	}
+	return nil
+}
+
+func (ui *UserInfoStorage) UpdateUserAvatar(userID int64, avatar string) error {
+	query := `
+		UPDATE user_info
+		SET avatar = $2
+		WHERE user_id = $1
+	`
+
+	_, err := ui.conn.Exec(context.Background(), query, userID, avatar)
+	if err != nil {
+		return fmt.Errorf("update avatar for user %d: %w", userID, err)
+	}
+
 	return nil
 }

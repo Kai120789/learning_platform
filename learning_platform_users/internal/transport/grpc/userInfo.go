@@ -12,25 +12,28 @@ import (
 )
 
 type UserInfoService interface {
-	UpdateUserInfo(userInfo dto.UserInfo) (*models.UserInfo, error)
+	UpdateUserInfo(userInfo dto.UserInfoRequest) (*models.UserInfo, error)
+	UpdateUserAvatar(userID int64, avatar string) error
 }
 
-func (g *UserGRPCServer) UpdateUserInfo(
+func (u *UserGRPCServer) UpdateUserInfo(
 	ctx context.Context,
 	in *userGRPC.UpdateUserInfoRequest,
 ) (*userGRPC.UpdateUserInfoResponse, error) {
-	userInfo := dto.UserInfo{
-		UserID:   in.GetUserId(),
-		Name:     in.GetName(),
-		Surname:  in.GetSurname(),
-		Lastname: in.Lastname,
-		City:     in.City,
-		About:    in.About,
+	userInfo := dto.UserInfoRequest{
+		UserID:     in.GetUserId(),
+		Name:       in.GetName(),
+		Surname:    in.GetSurname(),
+		Patronymic: in.Patronymic,
+		City:       in.City,
+		About:      in.About,
+		Gender:     protoToEnumGender(in.GetGender()),
+		BirthDate:  mapDate(in.BirthDate),
 	}
 
-	res, err := g.UserInfoService.UpdateUserInfo(userInfo)
+	res, err := u.UserInfoService.UpdateUserInfo(userInfo)
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to update user info",
 			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
@@ -38,10 +41,33 @@ func (g *UserGRPCServer) UpdateUserInfo(
 		return nil, status.Error(codes.Internal, "failed to update user info")
 	}
 	return &userGRPC.UpdateUserInfoResponse{
-		Name:     res.Name,
-		Surname:  res.Name,
-		Lastname: utils.DBStringToOptional(res.Lastname),
-		City:     utils.DBStringToOptional(res.City),
-		About:    utils.DBStringToOptional(res.About),
+		Name:       res.Name,
+		Surname:    res.Name,
+		Patronymic: utils.DBStringToOptional(res.Patronymic),
+		City:       utils.DBStringToOptional(res.City),
+		About:      utils.DBStringToOptional(res.About),
+		Avatar:     utils.DBStringToOptional(res.Avatar),
+		Gender:     enumToProtoGender(res.Gender),
+		BirthDate: &userGRPC.Date{
+			Year:  int32(res.BirthDate.Time.Year()),
+			Month: int32(res.BirthDate.Time.Month()),
+			Day:   int32(res.BirthDate.Time.Day()),
+		},
 	}, nil
+}
+
+func (u *UserGRPCServer) UpdateUserAvatar(
+	ctx context.Context,
+	in *userGRPC.UpdateUserAvatarRequest,
+) (*userGRPC.UpdateUserAvatarResponse, error) {
+	err := u.UserInfoService.UpdateUserAvatar(in.GetUserId(), in.GetAvatarUrl())
+	if err != nil {
+		u.logger.Error(
+			"failed to update user avatar",
+			zap.Int64("userID", in.GetUserId()),
+			zap.Error(err),
+		)
+		return nil, status.Error(codes.Internal, "failed to update user avatar")
+	}
+	return nil, nil
 }

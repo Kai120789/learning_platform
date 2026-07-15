@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"learning-platform/users/internal/dto"
 	"learning-platform/users/internal/models"
+	"learning-platform/users/internal/models/enum"
 )
 
 type UserBaseStorage struct {
@@ -20,7 +21,7 @@ func NewUserBaseStorage(
 	}
 }
 
-func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
+func (u *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	var id int64
 	query := `
 		INSERT INTO users (email, password_hash, role, status) 
@@ -28,12 +29,12 @@ func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 		RETURNING id
 	`
 
-	status := "ACTIVE"
-	if userDto.Role == "TUTOR" {
-		status = "INACTIVE"
+	status := enum.StatusActive
+	if userDto.Role == enum.RoleTutor {
+		status = enum.StatusInactive
 	}
 
-	err := s.conn.QueryRow(
+	err := u.conn.QueryRow(
 		context.Background(),
 		query,
 		userDto.Email,
@@ -48,7 +49,7 @@ func (s *UserBaseStorage) CreateUser(userDto dto.CreateUser) (*int64, error) {
 	return &id, nil
 }
 
-func (s *UserBaseStorage) GetUserById(userID int64) (*models.User, error) {
+func (u *UserBaseStorage) GetUserById(userID int64) (*models.User, error) {
 	var user models.User
 	query := `
 		SELECT id, email, password_hash, role, status
@@ -56,7 +57,7 @@ func (s *UserBaseStorage) GetUserById(userID int64) (*models.User, error) {
 		WHERE id = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, userID)
+	row := u.conn.QueryRow(context.Background(), query, userID)
 
 	err := row.Scan(
 		&user.ID,
@@ -73,7 +74,7 @@ func (s *UserBaseStorage) GetUserById(userID int64) (*models.User, error) {
 	return &user, nil
 }
 
-func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
+func (u *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	query := `
 		SELECT id, email, password_hash, role, status
@@ -81,7 +82,7 @@ func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 		WHERE email = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, email)
+	row := u.conn.QueryRow(context.Background(), query, email)
 
 	err := row.Scan(
 		&user.ID,
@@ -98,14 +99,14 @@ func (s *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (s *UserBaseStorage) ChangePassword(userID int64, newPasswordHash string) error {
+func (u *UserBaseStorage) ChangePassword(userID int64, newPasswordHash string) error {
 	query := `
 		UPDATE users
 		SET password = $2
 		WHERE id = $1
 	`
 
-	_, err := s.conn.Exec(context.Background(), query, userID, newPasswordHash)
+	_, err := u.conn.Exec(context.Background(), query, userID, newPasswordHash)
 	if err != nil {
 		return fmt.Errorf("change password for user %d: %w", userID, err)
 	}
@@ -113,14 +114,14 @@ func (s *UserBaseStorage) ChangePassword(userID int64, newPasswordHash string) e
 	return nil
 }
 
-func (s *UserBaseStorage) ChangeEmail(userID int64, newEmail string) error {
+func (u *UserBaseStorage) ChangeEmail(userID int64, newEmail string) error {
 	query := `
 		UPDATE users
 		SET email = $2
 		WHERE id = $1
 	`
 
-	_, err := s.conn.Exec(context.Background(), query, userID, newEmail)
+	_, err := u.conn.Exec(context.Background(), query, userID, newEmail)
 	if err != nil {
 		return fmt.Errorf("change email for user %d: %w", userID, err)
 	}

@@ -13,7 +13,8 @@ type UserInfoService struct {
 type UserInfoStorage interface {
 	CreateUserInfo(userID int64, userDto dto.CreateUser) error
 	GetUserInfo(userID int64) (*models.UserInfo, error)
-	UpdateUserInfo(userInfo dto.UserInfo) error
+	UpdateUserInfo(userInfo dto.UserInfoRequest) error
+	UpdateUserAvatar(userID int64, avatar string) error
 }
 
 func NewUserInfoService(
@@ -24,8 +25,8 @@ func NewUserInfoService(
 	}
 }
 
-func (s *UserInfoService) CreateUserInfo(userID int64, userDto dto.CreateUser) error {
-	err := s.storage.CreateUserInfo(userID, userDto)
+func (ui *UserInfoService) CreateUserInfo(userID int64, userDto dto.CreateUser) error {
+	err := ui.storage.CreateUserInfo(userID, userDto)
 	if err != nil {
 		return fmt.Errorf("create user info: %w", err)
 	}
@@ -33,8 +34,8 @@ func (s *UserInfoService) CreateUserInfo(userID int64, userDto dto.CreateUser) e
 	return nil
 }
 
-func (s *UserInfoService) GetUserInfo(userID int64) (*models.UserInfo, error) {
-	userInfo, err := s.storage.GetUserInfo(userID)
+func (ui *UserInfoService) GetUserInfo(userID int64) (*models.UserInfo, error) {
+	userInfo, err := ui.storage.GetUserInfo(userID)
 	if err != nil {
 		return nil, fmt.Errorf("get user info: %w", err)
 	}
@@ -42,11 +43,20 @@ func (s *UserInfoService) GetUserInfo(userID int64) (*models.UserInfo, error) {
 	return userInfo, nil
 }
 
-func (s *UserInfoService) UpdateUserInfo(userInfo dto.UserInfo) (*models.UserInfo, error) {
-	err := s.storage.UpdateUserInfo(userInfo)
+func (ui *UserInfoService) UpdateUserInfo(userInfo dto.UserInfoRequest) (*models.UserInfo, error) {
+	err := ui.storage.UpdateUserInfo(userInfo)
 	if err != nil {
 		return nil, fmt.Errorf("update user info: %w", err)
 	}
 
-	return s.storage.GetUserInfo(userInfo.UserID)
+	return ui.storage.GetUserInfo(userInfo.UserID)
+}
+
+func (ui *UserInfoService) UpdateUserAvatar(userID int64, avatar string) error {
+	err := ui.storage.UpdateUserAvatar(userID, avatar)
+	if err != nil {
+		return fmt.Errorf("update user avatar: %w", err)
+	}
+
+	return nil
 }

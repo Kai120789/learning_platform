@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"learning-platform/users/internal/dto"
 	"learning-platform/users/internal/models"
+	"learning-platform/users/internal/models/enum"
 )
 
 type UserSettingsStorage struct {
@@ -20,15 +21,17 @@ func NewUserSettingsStorage(
 	}
 }
 
-func (s *UserSettingsStorage) CreateUserSettings(userID int64) error {
+func (us *UserSettingsStorage) CreateUserSettings(userID int64, language enum.UserLanguage) error {
 	query := `
-		INSERT INTO user_settings (user_id)
-		VALUES ($1)
+		INSERT INTO user_settings (user_id, language)
+		VALUES ($1, $2)
 	`
 
-	_, err := s.conn.Exec(
+	_, err := us.conn.Exec(
 		context.Background(),
-		query, userID,
+		query,
+		userID,
+		language,
 	)
 
 	if err != nil {
@@ -38,19 +41,21 @@ func (s *UserSettingsStorage) CreateUserSettings(userID int64) error {
 	return nil
 }
 
-func (s *UserSettingsStorage) GetUserSettings(userID int64) (*models.UserSettings, error) {
+func (us *UserSettingsStorage) GetUserSettings(userID int64) (*models.UserSettings, error) {
 	var userSettings models.UserSettings
 	query := `
-		SELECT user_id, is_2fa_enabled, is_notifications_enabled
+		SELECT user_id, is_2fa_enabled, is_notifications_enabled, language, theme
 		FROM user_settings
 		WHERE user_id = $1
 	`
 
-	row := s.conn.QueryRow(context.Background(), query, userID)
+	row := us.conn.QueryRow(context.Background(), query, userID)
 	err := row.Scan(
 		&userSettings.UserID,
 		&userSettings.Is2FaEnabled,
 		&userSettings.IsNotificationsEnabled,
+		&userSettings.Language,
+		&userSettings.Theme,
 	)
 
 	if err != nil {
@@ -59,25 +64,42 @@ func (s *UserSettingsStorage) GetUserSettings(userID int64) (*models.UserSetting
 	return &userSettings, nil
 }
 
-func (s *UserSettingsStorage) UpdateUserSettings(userSettings dto.UserSettings) error {
+func (us *UserSettingsStorage) UpdateUserSettings(userSettings dto.UserSettingsRequest) error {
 	query := `
 		UPDATE user_settings
 		SET
 		    is_2fa_enabled = $2,
-			is_notifications_enabled = $3
+			is_notifications_enabled = $3,
+			language = $4
 		WHERE user_id = $1
 	`
 
-	_, err := s.conn.Exec(
+	_, err := us.conn.Exec(
 		context.Background(),
 		query,
 		userSettings.UserID,
 		userSettings.Is2FaEnabled,
 		userSettings.IsNotificationsEnabled,
+		userSettings.Language,
 	)
 
 	if err != nil {
 		return fmt.Errorf("update info for user %d: %w", userSettings.UserID, err)
 	}
+	return nil
+}
+
+func (us *UserSettingsStorage) UpdateUserTheme(userID int64, theme enum.UserTheme) error {
+	query := `
+		UPDATE user_settings
+		SET theme = $2
+		WHERE user_id = $1
+	`
+
+	_, err := us.conn.Exec(context.Background(), query, userID, string(theme))
+	if err != nil {
+		return fmt.Errorf("update theme for user %d: %w", userID, err)
+	}
+
 	return nil
 }

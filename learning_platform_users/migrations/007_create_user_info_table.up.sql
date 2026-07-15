@@ -2,9 +2,12 @@ CREATE TABLE IF NOT EXISTS user_info (
     user_id BIGINT PRIMARY KEY REFERENCES users(id),
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
-    lastname VARCHAR(50),
-    city VARCHAR(50),
+    patronymic VARCHAR(50),
+    city VARCHAR(100),
     about TEXT,
+    avatar VARCHAR(250),
+    gender gender_enum DEFAULT 'UNKNOWN',
+    birth_date DATE,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

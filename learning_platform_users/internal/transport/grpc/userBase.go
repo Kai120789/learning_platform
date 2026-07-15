@@ -9,6 +9,7 @@ import (
 	"learning-platform/users/internal/dto"
 	"learning-platform/users/internal/models"
 	"learning-platform/users/internal/models/enum"
+	"time"
 )
 
 type UserBaseService interface {
@@ -20,7 +21,7 @@ type UserBaseService interface {
 	GetUserData(userID int64) (*dto.UserData, error)
 }
 
-func (g *UserGRPCServer) CreateUser(
+func (u *UserGRPCServer) CreateUser(
 	ctx context.Context,
 	in *userGRPC.CreateUserRequest,
 ) (*userGRPC.CreateUserResponse, error) {
@@ -28,14 +29,17 @@ func (g *UserGRPCServer) CreateUser(
 		Email:        in.GetEmail(),
 		Name:         in.GetName(),
 		Surname:      in.GetSurname(),
-		LastName:     in.GetLastName(),
-		Role:         protoRoleToEnum(in.GetRole()),
+		Patronymic:   in.Patronymic,
+		Role:         protoToEnumRole(in.GetRole()),
+		Gender:       protoToEnumGender(in.GetGender()),
+		Language:     protoToEnumLanguage(in.GetLanguage()),
 		PasswordHash: in.GetPasswordHash(),
+		BirthDate:    mapDate(in.BirthDate),
 	}
 
-	userID, err := g.UserBaseService.CreateUser(userDto)
+	userID, err := u.UserBaseService.CreateUser(userDto)
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to create user",
 			zap.String("email", in.GetEmail()),
 			zap.Error(err),
@@ -48,13 +52,13 @@ func (g *UserGRPCServer) CreateUser(
 	}, nil
 }
 
-func (g *UserGRPCServer) GetUserById(
+func (u *UserGRPCServer) GetUserById(
 	ctx context.Context,
 	in *userGRPC.GetUserByIdRequest,
 ) (*userGRPC.GetUserByIdResponse, error) {
-	res, err := g.UserBaseService.GetUserById(in.GetUserId())
+	res, err := u.UserBaseService.GetUserById(in.GetUserId())
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to get user",
 			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
@@ -71,13 +75,13 @@ func (g *UserGRPCServer) GetUserById(
 	}, nil
 }
 
-func (g *UserGRPCServer) GetUserByEmail(
+func (u *UserGRPCServer) GetUserByEmail(
 	ctx context.Context,
 	in *userGRPC.GetUserByEmailRequest,
 ) (*userGRPC.GetUserByEmailResponse, error) {
-	res, err := g.UserBaseService.GetUserByEmail(in.GetEmail())
+	res, err := u.UserBaseService.GetUserByEmail(in.GetEmail())
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to get user by email",
 			zap.String("userEmail", in.GetEmail()),
 			zap.Error(err),
@@ -94,13 +98,13 @@ func (g *UserGRPCServer) GetUserByEmail(
 	}, nil
 }
 
-func (g *UserGRPCServer) GetUserData(
+func (u *UserGRPCServer) GetUserData(
 	ctx context.Context,
 	in *userGRPC.GetUserDataRequest,
 ) (*userGRPC.GetUserDataResponse, error) {
-	res, err := g.UserBaseService.GetUserData(in.GetUserId())
+	res, err := u.UserBaseService.GetUserData(in.GetUserId())
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to get user data",
 			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
@@ -114,26 +118,35 @@ func (g *UserGRPCServer) GetUserData(
 		Role:   enumToProtoRole(res.Role),
 		Status: enumToProtoStatus(res.Status),
 		UserInfo: &userGRPC.UpdateUserInfoResponse{
-			Name:     res.UserInfo.Name,
-			Surname:  res.UserInfo.Surname,
-			Lastname: res.UserInfo.Lastname,
-			City:     res.UserInfo.City,
-			About:    res.UserInfo.About,
+			Name:       res.UserInfo.Name,
+			Surname:    res.UserInfo.Surname,
+			Patronymic: res.UserInfo.Patronymic,
+			City:       res.UserInfo.City,
+			About:      res.UserInfo.About,
+			Avatar:     res.UserInfo.Avatar,
+			Gender:     enumToProtoGender(res.UserInfo.Gender),
+			BirthDate: &userGRPC.Date{
+				Day:   int32(res.UserInfo.BirthDate.Day()),
+				Month: int32(res.UserInfo.BirthDate.Month()),
+				Year:  int32(res.UserInfo.BirthDate.Year()),
+			},
 		},
 		UserSettings: &userGRPC.UpdateUserSettingsResponse{
 			Is_2FaEnabled:          res.UserSettings.Is2FaEnabled,
 			IsNotificationsEnabled: res.UserSettings.IsNotificationsEnabled,
+			Language:               enumToProtoLanguage(res.UserSettings.Language),
+			Theme:                  enumToProtoTheme(res.UserSettings.Theme),
 		},
 	}, nil
 }
 
-func (g *UserGRPCServer) ChangePassword(
+func (u *UserGRPCServer) ChangePassword(
 	ctx context.Context,
 	in *userGRPC.ChangePasswordRequest,
 ) (*userGRPC.ChangePasswordResponse, error) {
-	err := g.UserBaseService.ChangePassword(in.GetUserId(), in.GetNewPassword())
+	err := u.UserBaseService.ChangePassword(in.GetUserId(), in.GetNewPassword())
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to change password",
 			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
@@ -143,13 +156,13 @@ func (g *UserGRPCServer) ChangePassword(
 	return &userGRPC.ChangePasswordResponse{}, nil
 }
 
-func (g *UserGRPCServer) ChangeEmail(
+func (u *UserGRPCServer) ChangeEmail(
 	ctx context.Context,
 	in *userGRPC.ChangeEmailRequest,
 ) (*userGRPC.ChangeEmailResponse, error) {
-	err := g.UserBaseService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
+	err := u.UserBaseService.ChangeEmail(in.GetUserId(), in.GetNewEmail())
 	if err != nil {
-		g.logger.Error(
+		u.logger.Error(
 			"failed to change email",
 			zap.Int64("userID", in.GetUserId()),
 			zap.Error(err),
@@ -159,7 +172,7 @@ func (g *UserGRPCServer) ChangeEmail(
 	return &userGRPC.ChangeEmailResponse{}, nil
 }
 
-func protoRoleToEnum(role userGRPC.UserRole) enum.UserRole {
+func protoToEnumRole(role userGRPC.UserRole) enum.UserRole {
 	switch role {
 	case userGRPC.UserRole_TUTOR:
 		return enum.RoleTutor
@@ -168,7 +181,40 @@ func protoRoleToEnum(role userGRPC.UserRole) enum.UserRole {
 	case userGRPC.UserRole_ADMIN:
 		return enum.RoleAdmin
 	default:
-		return "UNSPECIFIED"
+		return ""
+	}
+}
+
+func protoToEnumGender(gender userGRPC.UserGender) enum.UserGender {
+	switch gender {
+	case userGRPC.UserGender_MALE:
+		return enum.GenderMale
+	case userGRPC.UserGender_FEMALE:
+		return enum.GenderFemale
+	default:
+		return enum.GenderUnknown
+	}
+}
+
+func protoToEnumLanguage(language userGRPC.UserLanguage) enum.UserLanguage {
+	switch language {
+	case userGRPC.UserLanguage_RU:
+		return enum.LanguageRU
+	case userGRPC.UserLanguage_EN:
+		return enum.LanguageEN
+	default:
+		return ""
+	}
+}
+
+func protoToEnumTheme(theme userGRPC.UserTheme) enum.UserTheme {
+	switch theme {
+	case userGRPC.UserTheme_LIGHT:
+		return enum.ThemeLight
+	case userGRPC.UserTheme_DARK:
+		return enum.ThemeDark
+	default:
+		return ""
 	}
 }
 
@@ -185,15 +231,60 @@ func enumToProtoRole(role enum.UserRole) userGRPC.UserRole {
 	}
 }
 
-func enumToProtoStatus(status enum.UserStatus) userGRPC.Status {
+func enumToProtoStatus(status enum.UserStatus) userGRPC.UserStatus {
 	switch status {
 	case enum.StatusActive:
-		return userGRPC.Status_ACTIVE
+		return userGRPC.UserStatus_ACTIVE
 	case enum.StatusInactive:
-		return userGRPC.Status_INACTIVE
+		return userGRPC.UserStatus_INACTIVE
 	case enum.StatusBanned:
-		return userGRPC.Status_BANNED
+		return userGRPC.UserStatus_BANNED
 	default:
-		return userGRPC.Status_STATUS_UNSPECIFIED
+		return userGRPC.UserStatus_STATUS_UNSPECIFIED
 	}
+}
+
+func enumToProtoGender(gender enum.UserGender) userGRPC.UserGender {
+	switch gender {
+	case enum.GenderMale:
+		return userGRPC.UserGender_MALE
+	case enum.GenderFemale:
+		return userGRPC.UserGender_FEMALE
+	default:
+		return userGRPC.UserGender_ENUM_GENDER_UNSPECIFIED
+	}
+}
+
+func enumToProtoTheme(theme enum.UserTheme) userGRPC.UserTheme {
+	switch theme {
+	case enum.ThemeLight:
+		return userGRPC.UserTheme_LIGHT
+	case enum.ThemeDark:
+		return userGRPC.UserTheme_DARK
+	default:
+		return userGRPC.UserTheme_ENUM_THEME_UNSPECIFIED
+	}
+}
+
+func enumToProtoLanguage(language enum.UserLanguage) userGRPC.UserLanguage {
+	switch language {
+	case enum.LanguageRU:
+		return userGRPC.UserLanguage_RU
+	case enum.LanguageEN:
+		return userGRPC.UserLanguage_EN
+	default:
+		return userGRPC.UserLanguage_ENUM_LANGUAGE_UNSPECIFIED
+	}
+}
+
+func mapDate(bd *userGRPC.Date) *time.Time {
+	birthDate := time.Date(
+		int(bd.GetYear()),
+		time.Month(bd.GetMonth()),
+		int(bd.GetDay()),
+		0, 0, 0, 0,
+		time.UTC,
+	)
+
+	return &birthDate
 }
