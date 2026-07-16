@@ -197,17 +197,6 @@ func (g *AuthGRPCServer) ForceChangeEmail(
 	return nil, nil
 }
 
-func protoAuthRoleToString(role authGRPC.UserRole) string {
-	switch role {
-	case authGRPC.UserRole_TUTOR:
-		return "TUTOR"
-	case authGRPC.UserRole_STUDENT:
-		return "STUDENT"
-	default:
-		return "UNSPECIFIED"
-	}
-}
-
 func getAuthTokenFromMetadata(ctx context.Context) (*string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
