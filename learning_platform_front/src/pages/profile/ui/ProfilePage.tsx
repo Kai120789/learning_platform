@@ -1,9 +1,5 @@
-type Props = {}
-
-const ProfilePage = (props: Props) => {
+export default function ProfilePage() {
     return (
         <div>ProfilePage</div>
     )
 }
-
-export default ProfilePage

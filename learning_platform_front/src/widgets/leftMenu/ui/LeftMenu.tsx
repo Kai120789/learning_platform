@@ -14,7 +14,7 @@ export function LeftMenu({ isOpen, onClick }: LeftMenuProps) {
     const { t } = useTranslation()
 
     return (
-        <div className={`fixed top-0 left-0 z-50 flex h-screen w-[300px] flex-col items-center 
+        <div className={`fixed top-0 left-0 z-50 flex h-full w-[300px] flex-col items-center 
             border-r-2 border-border bg-background p-5 pt-0 rounded-tr-2xl rounded-br-2xl
             transition-transform duration-300 ease-in-out
             ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>

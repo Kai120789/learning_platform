@@ -1,18 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { $api } from '@/app/providers/storeProvider/config/api';
-import type { UserDataResponse } from '../types/types';
+import type { UserSettingsRequest, UserSettingsResponse } from '../types/types';
 import axios from 'axios';
 
-export const getUserData = createAsyncThunk<
-    UserDataResponse,
-    void,
+export const updateUserSettings = createAsyncThunk<
+    UserSettingsResponse,
+    UserSettingsRequest,
     { rejectValue: string }
 >(
-    'getUserData',
-    async (_, { rejectWithValue }) => {
+    'updateUserSettings',
+    async (request, { rejectWithValue }) => {
         try {
-            const response = await $api.get<UserDataResponse>(
-                `${import.meta.env.VITE_SERVER_ENDPOINT}/api/user/data`,
+            const response = await $api.put<UserSettingsResponse>(
+                `${import.meta.env.VITE_SERVER_ENDPOINT}/api/user/settings`,
+                request
             )
 
             return response.data

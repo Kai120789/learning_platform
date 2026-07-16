@@ -8,6 +8,7 @@ import {
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
 import { enumToStringGender, enumToStringLanguage } from "../../utils/utils"
+import { InfoRow } from "@/shared/ui/InfoRow"
 
 type ConfirmStepProps = {
     isCheked: boolean
@@ -77,24 +78,5 @@ export function ConfirmStep({
                 </div>
             </div>
         </Field>
-    )
-}
-
-type InfoRowProps = {
-    label: string
-    value: string
-}
-
-function InfoRow({ label, value }: InfoRowProps) {
-    return (
-        <div className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-            <span className="text-sm text-muted-foreground">
-                {label}
-            </span>
-
-            <span className="font-medium text-right">
-                {value}
-            </span>
-        </div>
     )
 }

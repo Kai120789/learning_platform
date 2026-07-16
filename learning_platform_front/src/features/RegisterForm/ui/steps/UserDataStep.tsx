@@ -69,7 +69,6 @@ export function UserDataStep({
             </Field>
             <Field>
                 <FieldLabel>Дата рождения</FieldLabel>
-
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
@@ -80,16 +79,16 @@ export function UserDataStep({
                             )}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-
                             {birthDate
                                 ? format(birthDate, "dd MMMM yyyy", { locale: ru })
                                 : "Выберите дату"}
                         </Button>
                     </PopoverTrigger>
-
                     <PopoverContent className="w-auto p-0">
                         <Calendar
                             mode="single"
+                            month={birthDate}
+                            onMonthChange={setBirthDate}
                             selected={birthDate}
                             onSelect={setBirthDate}
                             captionLayout="dropdown"
@@ -100,7 +99,6 @@ export function UserDataStep({
             </Field>
             <Field>
                 <FieldLabel>Пол</FieldLabel>
-
                 <RadioGroup
                     value={gender}
                     onValueChange={(value) =>
@@ -115,7 +113,6 @@ export function UserDataStep({
                         />
                         <label htmlFor="male">Мужской</label>
                     </div>
-
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem
                             value={UserGenderEnum.FEMALE}
@@ -123,7 +120,6 @@ export function UserDataStep({
                         />
                         <label htmlFor="female">Женский</label>
                     </div>
-
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem
                             value={UserGenderEnum.UNKNOWN}

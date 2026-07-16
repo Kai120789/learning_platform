@@ -36,13 +36,20 @@ const userSlice = createSlice({
                 userInfo: {
                     name: action.payload.user_info.name,
                     surname: action.payload.user_info.surname,
-                    lastname: action.payload.user_info.lastname,
+                    patronymic: action.payload.user_info.patronymic,
                     city: action.payload.user_info.city,
-                    about: action.payload.user_info.about
+                    about: action.payload.user_info.about,
+                    avatar: action.payload.user_info.avatar,
+                    gender: action.payload.user_info.gender,
+                    birthDate: action.payload.user_info.birth_date
+                        ? new Date(action.payload.user_info.birth_date)
+                        : undefined,
                 },
                 userSettings: {
                     is2FaEnabled: action.payload.user_settings.is_2_fa_enabled,
                     isNotificationsEnabled: action.payload.user_settings.is_notifications_enabled,
+                    language: action.payload.user_settings.language,
+                    theme: action.payload.user_settings.theme
                 }
             }
         })

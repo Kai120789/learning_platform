@@ -54,6 +54,9 @@ export function AppRouter() {
                 draggable
                 pauseOnHover
                 theme={theme}
+                style={{
+                    minHeight: "100px"
+                }}
             />
             <Routes>
                 <Route>
