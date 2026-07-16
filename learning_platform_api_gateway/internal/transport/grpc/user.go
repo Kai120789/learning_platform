@@ -87,7 +87,7 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 		Email:  res.GetEmail(),
 		Role:   protoToEnumRole(res.GetRole()),
 		Status: protoToEnumUserStatus(res.GetStatus()),
-		UserInfo: userDto.UserInfo{
+		UserInfo: userDto.UserInfoResponse{
 			Name:       res.GetUserInfo().GetName(),
 			Surname:    res.GetUserInfo().GetSurname(),
 			Patronymic: res.GetUserInfo().Patronymic,
@@ -97,7 +97,7 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 			Gender:     protoToEnumGender(res.GetUserInfo().GetGender()),
 			BirthDate:  mapDate(res.GetUserInfo().BirthDate),
 		},
-		UserSettings: userDto.UserSettings{
+		UserSettings: userDto.UserSettingsResponse{
 			Is2FaEnabled:           res.GetUserSettings().GetIs_2FaEnabled(),
 			IsNotificationsEnabled: res.GetUserSettings().GetIsNotificationsEnabled(),
 			Language:               protoToEnumLanguage(res.GetUserSettings().GetLanguage()),
@@ -137,6 +137,107 @@ func (u *UserClient) CreateUser(newUser authDto.RegisterRequest) (*int64, error)
 	resUserId := res.GetUserId()
 
 	return &resUserId, nil
+}
+
+func (u *UserClient) UpdateUserInfo(
+	userID int64,
+	userInfo userDto.UserInfoRequest,
+) (*userDto.UserInfoResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var birthDate *userGRPC.Date
+	if userInfo.BirthDate != nil {
+		birthDate = &userGRPC.Date{
+			Day:   int32(userInfo.BirthDate.Day()),
+			Month: int32(userInfo.BirthDate.Month()),
+			Year:  int32(userInfo.BirthDate.Year()),
+		}
+	}
+
+	request := &userGRPC.UpdateUserInfoRequest{
+		UserId:     userID,
+		Name:       userInfo.Name,
+		Surname:    userInfo.Surname,
+		Patronymic: userInfo.Patronymic,
+		City:       userInfo.City,
+		About:      userInfo.About,
+		Gender:     enumToProtoGender(userInfo.Gender),
+		BirthDate:  birthDate,
+	}
+
+	res, err := u.client.UpdateUserInfo(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userDto.UserInfoResponse{
+		Name:       res.GetName(),
+		Surname:    res.GetSurname(),
+		Patronymic: res.Patronymic,
+		City:       res.City,
+		About:      res.About,
+		Avatar:     res.Avatar,
+		Gender:     protoToEnumGender(res.GetGender()),
+		BirthDate:  mapDate(res.BirthDate),
+	}, nil
+}
+
+func (u *UserClient) UpdateUserSettings(
+	userID int64,
+	userSettings userDto.UserSettingsRequest,
+) (*userDto.UserSettingsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	request := &userGRPC.UpdateUserSettingsRequest{
+		UserId:                 userID,
+		IsNotificationsEnabled: userSettings.IsNotificationsEnabled,
+		Is_2FaEnabled:          userSettings.Is2FaEnabled,
+		Language:               enumToProtoLanguage(userSettings.Language),
+	}
+
+	res, err := u.client.UpdateUserSettings(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userDto.UserSettingsResponse{
+		Is2FaEnabled:           res.GetIs_2FaEnabled(),
+		IsNotificationsEnabled: res.GetIsNotificationsEnabled(),
+		Language:               protoToEnumLanguage(res.GetLanguage()),
+		Theme:                  protoToEnumTheme(res.GetTheme()),
+	}, nil
+}
+
+func (u *UserClient) UpdateUserTheme(userID int64, theme enum.UserTheme) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := u.client.UpdateUserTheme(ctx, &userGRPC.UpdateUserThemeRequest{
+		UserId: userID,
+		Theme:  enumToProtoTheme(theme),
+	})
+	if err != nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (u *UserClient) UpdateUserAvatar(userID int64, avatar string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := u.client.UpdateUserAvatar(ctx, &userGRPC.UpdateUserAvatarRequest{
+		UserId:    userID,
+		AvatarUrl: avatar,
+	})
+	if err != nil {
+		return nil
+	}
+
+	return nil
 }
 
 func protoToEnumRole(role userGRPC.UserRole) enum.UserRole {

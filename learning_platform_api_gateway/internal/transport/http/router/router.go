@@ -38,6 +38,7 @@ func New(
 		AllowedMethods: []string{
 			"GET",
 			"POST",
+			"PATCH",
 			"PUT",
 			"DELETE",
 			"OPTIONS",

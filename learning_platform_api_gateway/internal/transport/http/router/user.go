@@ -11,6 +11,10 @@ type UserHandler interface {
 	GetUserById(w http.ResponseWriter, r *http.Request)
 	GetUserData(w http.ResponseWriter, r *http.Request)
 	CreateUser(w http.ResponseWriter, r *http.Request)
+	UpdateUserInfo(w http.ResponseWriter, r *http.Request)
+	UpdateUserSettings(w http.ResponseWriter, r *http.Request)
+	UpdateUserTheme(w http.ResponseWriter, r *http.Request)
+	UpdateUserAvatar(w http.ResponseWriter, r *http.Request)
 }
 
 func NewUserRouter() *UserRouter {
@@ -25,6 +29,10 @@ func (u *UserRouter) UserRoutes(
 	r.With(jwtMiddleware).Route("/api/user", func(r chi.Router) {
 		r.Get("/{userId}", h.GetUserById)
 		r.Get("/data", h.GetUserData)
+		r.Put("/info", h.UpdateUserInfo)
+		r.Put("/settings", h.UpdateUserSettings)
+		r.Patch("/theme", h.UpdateUserTheme)
+		r.Patch("/avatar", h.UpdateUserAvatar)
 		r.Post("/", h.CreateUser)
 	})
 }
