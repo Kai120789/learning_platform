@@ -38,8 +38,8 @@ func (u *GroupRouter) GroupRoutes(
 		r.Get("/", h.GetGroups)
 		r.Post("/{groupId}/add-user", h.AddUsersToGroup)
 		r.Delete("/{groupId}/remove-user/{userId}", h.RemoveUserFromGroup)
-		r.Get("/user/{userId}", h.GetUserGroups)
-		r.Get("/tutor/{tutorId}", h.GetGroupsByTutorId)
+		r.Get("/user", h.GetUserGroups)
+		r.Get("/tutor", h.GetGroupsByTutorId)
 		r.Get("/{groupId}/get-users", h.GetGroupUsers)
 	})
 }

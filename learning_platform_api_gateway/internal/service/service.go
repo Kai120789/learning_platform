@@ -24,12 +24,13 @@ type Client struct {
 
 func New(client *Client, redis *redis.RedisStorage) *Service {
 	userService := NewUserService(client.UserClient)
+	subjectService := NewSubjectService(client.SubjectClient)
 	return &Service{
 		AuthService:     NewAuthService(client.AuthClient, userService, redis),
 		UserService:     userService,
-		GroupService:    NewGroupService(client.GroupClient),
+		GroupService:    NewGroupService(client.GroupClient, userService, subjectService),
 		LessonService:   NewLessonService(client.LessonClient),
 		ScheduleService: NewScheduleService(client.ScheduleClient),
-		SubjectService:  NewSubjectService(client.SubjectClient),
+		SubjectService:  subjectService,
 	}
 }

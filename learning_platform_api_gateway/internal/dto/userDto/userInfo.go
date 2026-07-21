@@ -19,6 +19,7 @@ type UserInfoResponse struct {
 	Name       string          `json:"name"`
 	Surname    string          `json:"surname"`
 	Patronymic *string         `json:"patronymic"`
+	TgUsername *string         `json:"tg_username"`
 	City       *string         `json:"city"`
 	About      *string         `json:"about"`
 	Avatar     *string         `json:"avatar"`

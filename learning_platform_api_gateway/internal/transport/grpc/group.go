@@ -31,7 +31,7 @@ func NewGroupClient(connection *grpc.ClientConn) *GroupClient {
 	}
 }
 
-func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.GroupResponse, error) {
+func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest, tutorID int64) (*groupDto.GroupResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -39,7 +39,7 @@ func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.
 		Title:       group.Title,
 		Description: group.Description,
 		SubjectId:   group.SubjectID,
-		TutorId:     group.TutorID,
+		TutorId:     tutorID,
 		TgGroupLink: group.TgGroupLink,
 		TgChatId:    group.TgChatID,
 	}

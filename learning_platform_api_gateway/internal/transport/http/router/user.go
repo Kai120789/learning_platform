@@ -15,6 +15,9 @@ type UserHandler interface {
 	UpdateUserSettings(w http.ResponseWriter, r *http.Request)
 	UpdateUserTheme(w http.ResponseWriter, r *http.Request)
 	UpdateUserAvatar(w http.ResponseWriter, r *http.Request)
+	UpdateUserTgUsername(w http.ResponseWriter, r *http.Request)
+	ChangeUserEmail(w http.ResponseWriter, r *http.Request)
+	ChangeUserPassword(w http.ResponseWriter, r *http.Request)
 }
 
 func NewUserRouter() *UserRouter {
@@ -33,6 +36,9 @@ func (u *UserRouter) UserRoutes(
 		r.Put("/settings", h.UpdateUserSettings)
 		r.Patch("/theme", h.UpdateUserTheme)
 		r.Patch("/avatar", h.UpdateUserAvatar)
+		r.Patch("/tg", h.UpdateUserTgUsername)
+		r.Patch("/email", h.ChangeUserEmail)
+		r.Patch("/password", h.ChangeUserPassword)
 		r.Post("/", h.CreateUser)
 	})
 }

@@ -91,6 +91,7 @@ func (u *UserClient) GetUserData(id int64) (*userDto.UserData, error) {
 			Name:       res.GetUserInfo().GetName(),
 			Surname:    res.GetUserInfo().GetSurname(),
 			Patronymic: res.GetUserInfo().Patronymic,
+			TgUsername: res.GetUserInfo().TgUsername,
 			City:       res.GetUserInfo().City,
 			About:      res.GetUserInfo().About,
 			Avatar:     res.GetUserInfo().Avatar,
@@ -175,6 +176,7 @@ func (u *UserClient) UpdateUserInfo(
 		Name:       res.GetName(),
 		Surname:    res.GetSurname(),
 		Patronymic: res.Patronymic,
+		TgUsername: res.TgUsername,
 		City:       res.City,
 		About:      res.About,
 		Avatar:     res.Avatar,
@@ -238,6 +240,29 @@ func (u *UserClient) UpdateUserAvatar(userID int64, avatar string) error {
 	}
 
 	return nil
+}
+
+func (u *UserClient) GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := u.client.GetUsersShortInfo(ctx, &userGRPC.GetUsersShortInfoRequest{UserIds: userIDs})
+	if err != nil {
+		return nil, err
+	}
+
+	var resUsers []userDto.UserShortInfo
+	for _, oneUser := range res.GetUsers() {
+		resUsers = append(resUsers, userDto.UserShortInfo{
+			ID:         oneUser.GetId(),
+			Name:       oneUser.GetName(),
+			Surname:    oneUser.GetSurname(),
+			Patronymic: oneUser.Patronymic,
+			TgUsername: oneUser.TgUsername,
+		})
+	}
+
+	return resUsers, nil
 }
 
 func protoToEnumRole(role userGRPC.UserRole) enum.UserRole {

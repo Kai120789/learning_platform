@@ -19,6 +19,7 @@ type UserClient interface {
 	UpdateUserSettings(userID int64, userSettings userDto.UserSettingsRequest) (*userDto.UserSettingsResponse, error)
 	UpdateUserTheme(userID int64, theme enum.UserTheme) error
 	UpdateUserAvatar(userID int64, avatar string) error
+	GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo, error)
 }
 
 func NewUserService(client UserClient) *UserService {
@@ -97,4 +98,13 @@ func (u *UserService) UpdateUserAvatar(userID int64, avatar string) error {
 	}
 
 	return nil
+}
+
+func (u *UserService) GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo, error) {
+	res, err := u.client.GetUsersShortInfo(userIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

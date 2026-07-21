@@ -2,14 +2,18 @@ package service
 
 import (
 	"learning-platform/api-gateway/internal/dto/groupDto"
+	"learning-platform/api-gateway/internal/dto/subjectDto"
+	"learning-platform/api-gateway/internal/dto/userDto"
 )
 
 type GroupService struct {
-	client GroupClient
+	client         GroupClient
+	userService    GroupUserService
+	subjectService GroupSubjectService
 }
 
 type GroupClient interface {
-	CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.GroupResponse, error)
+	CreateGroup(group groupDto.CreateGroupRequest, tutorID int64) (*groupDto.GroupResponse, error)
 	UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error)
 	RemoveGroup(groupId int64) error
 	GetGroupById(groupId int64) (*groupDto.GroupResponse, error)
@@ -21,19 +25,50 @@ type GroupClient interface {
 	GetGroupUsers(groupId int64) ([]int64, error)
 }
 
-func NewGroupService(client GroupClient) *GroupService {
+type GroupUserService interface {
+	GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo, error)
+}
+
+type GroupSubjectService interface {
+	GetOneSubject(subjectID int64) (*subjectDto.Subject, error)
+	GetAllSubjects() ([]subjectDto.Subject, error)
+}
+
+func NewGroupService(
+	client GroupClient,
+	userService GroupUserService,
+	subjectService GroupSubjectService,
+) *GroupService {
 	return &GroupService{
-		client: client,
+		client:         client,
+		userService:    userService,
+		subjectService: subjectService,
 	}
 }
 
-func (g *GroupService) CreateGroup(group groupDto.CreateGroupRequest) (*groupDto.GroupResponse, error) {
-	res, err := g.client.CreateGroup(group)
+func (g *GroupService) CreateGroup(group groupDto.CreateGroupRequest, tutorID int64) (*groupDto.GroupFullResponse, error) {
+	res, err := g.client.CreateGroup(group, tutorID)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	subject, err := g.subjectService.GetOneSubject(group.SubjectID)
+	if err != nil {
+		return nil, err
+	}
+
+	resGroup := &groupDto.GroupFullResponse{
+		ID:          res.ID,
+		Title:       res.Title,
+		Description: res.Description,
+		Subject:     *subject,
+		Users:       nil,
+		TutorID:     res.TutorID,
+		TgGroupLink: res.TgGroupLink,
+		TgChatID:    res.TgChatID,
+	}
+
+	return resGroup, nil
 }
 
 func (g *GroupService) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error) {
@@ -90,22 +125,51 @@ func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
 	return nil
 }
 
-func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupResponse, error) {
+func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupFullResponse, error) {
+	var resGroups []groupDto.GroupFullResponse
 	res, err := g.client.GetUserGroups(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	subjects, err := g.subjectService.GetAllSubjects()
+	if err != nil {
+		return nil, err
+	}
+
+	subjectByID := make(map[int64]subjectDto.Subject)
+
+	for _, oneSubject := range subjects {
+		subjectByID[oneSubject.ID] = oneSubject
+	}
+
+	for _, oneGroup := range res {
+		resGroups = append(resGroups, groupDto.GroupFullResponse{
+			ID:          oneGroup.ID,
+			Title:       oneGroup.Title,
+			Description: oneGroup.Description,
+			Subject:     subjectByID[oneGroup.SubjectID],
+			TutorID:     oneGroup.TutorID,
+			TgGroupLink: oneGroup.TgGroupLink,
+			TgChatID:    oneGroup.TgChatID,
+		})
+	}
+
+	return resGroups, nil
 }
 
-func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error) {
+func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupFullResponse, error) {
 	res, err := g.client.GetGroupsByTutorId(tutorId)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	resGroups, err := g.mapGroupsWithSubjectAndUsersDTO(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return resGroups, nil
 }
 
 func (g *GroupService) GetGroupUsers(groupId int64) ([]int64, error) {
@@ -115,4 +179,44 @@ func (g *GroupService) GetGroupUsers(groupId int64) ([]int64, error) {
 	}
 
 	return res, nil
+}
+
+func (g *GroupService) mapGroupsWithSubjectAndUsersDTO(groups []groupDto.GroupResponse) ([]groupDto.GroupFullResponse, error) {
+	var resGroups []groupDto.GroupFullResponse
+
+	subjects, err := g.subjectService.GetAllSubjects()
+	if err != nil {
+		return nil, err
+	}
+
+	subjectByID := make(map[int64]subjectDto.Subject)
+
+	for _, oneSubject := range subjects {
+		subjectByID[oneSubject.ID] = oneSubject
+	}
+
+	for _, oneGroup := range groups {
+		userIDs, err := g.client.GetGroupUsers(oneGroup.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		users, err := g.userService.GetUsersShortInfo(userIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		resGroups = append(resGroups, groupDto.GroupFullResponse{
+			ID:          oneGroup.ID,
+			Title:       oneGroup.Title,
+			Description: oneGroup.Description,
+			Subject:     subjectByID[oneGroup.SubjectID],
+			TutorID:     oneGroup.TutorID,
+			Users:       users,
+			TgGroupLink: oneGroup.TgGroupLink,
+			TgChatID:    oneGroup.TgChatID,
+		})
+	}
+
+	return resGroups, nil
 }

@@ -242,3 +242,9 @@ func (u *UserHandler) UpdateUserAvatar(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
+
+func (u *UserHandler) UpdateUserTgUsername(w http.ResponseWriter, r *http.Request) {}
+
+func (u *UserHandler) ChangeUserEmail(w http.ResponseWriter, r *http.Request) {}
+
+func (u *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {}
