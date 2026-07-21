@@ -15,6 +15,8 @@ type UserInfoStorage interface {
 	GetUserInfo(userID int64) (*models.UserInfo, error)
 	UpdateUserInfo(userInfo dto.UserInfoRequest) error
 	UpdateUserAvatar(userID int64, avatar string) error
+	GetUsersShortInfo(userIDs []int64) ([]dto.UserShortInfo, error)
+	UpdateUserTgUsername(userID int64, tgUsername string) error
 }
 
 func NewUserInfoService(
@@ -56,6 +58,24 @@ func (ui *UserInfoService) UpdateUserAvatar(userID int64, avatar string) error {
 	err := ui.storage.UpdateUserAvatar(userID, avatar)
 	if err != nil {
 		return fmt.Errorf("update user avatar: %w", err)
+	}
+
+	return nil
+}
+
+func (ui *UserInfoService) GetUsersShortInfo(userIDs []int64) ([]dto.UserShortInfo, error) {
+	res, err := ui.storage.GetUsersShortInfo(userIDs)
+	if err != nil {
+		return nil, fmt.Errorf("get users short info: %w", err)
+	}
+
+	return res, nil
+}
+
+func (ui *UserInfoService) UpdateUserTgUsername(userID int64, tgUsername string) error {
+	err := ui.storage.UpdateUserTgUsername(userID, tgUsername)
+	if err != nil {
+		return fmt.Errorf("update user tg link: %w", err)
 	}
 
 	return nil

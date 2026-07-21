@@ -130,6 +130,7 @@ func (u *UserGRPCServer) GetUserData(
 			Name:       res.UserInfo.Name,
 			Surname:    res.UserInfo.Surname,
 			Patronymic: res.UserInfo.Patronymic,
+			TgUsername: res.UserInfo.TgUsername,
 			City:       res.UserInfo.City,
 			About:      res.UserInfo.About,
 			Avatar:     res.UserInfo.Avatar,

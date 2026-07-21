@@ -10,6 +10,7 @@ type UserInfo struct {
 	Name       string             `json:"name"`
 	Surname    string             `json:"surname"`
 	Patronymic pgtype.Text        `json:"patronymic"`
+	TgUsername pgtype.Text        `json:"tg_username"`
 	City       pgtype.Text        `json:"city"`
 	About      pgtype.Text        `json:"about"`
 	Avatar     pgtype.Text        `json:"avatar"`

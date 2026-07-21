@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS user_info (
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
     patronymic VARCHAR(50),
+    tg_username VARCHAR(250),
     city VARCHAR(100),
     about TEXT,
     avatar VARCHAR(250),

@@ -133,6 +133,7 @@ func formUserDto(
 			Name:       userInfo.Name,
 			Surname:    userInfo.Surname,
 			Patronymic: utils.DBStringToOptional(userInfo.Patronymic),
+			TgUsername: utils.DBStringToOptional(userInfo.TgUsername),
 			City:       utils.DBStringToOptional(userInfo.City),
 			About:      utils.DBStringToOptional(userInfo.About),
 			Avatar:     utils.DBStringToOptional(userInfo.Avatar),

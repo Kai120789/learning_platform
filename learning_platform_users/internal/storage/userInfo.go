@@ -47,7 +47,7 @@ func (ui *UserInfoStorage) CreateUserInfo(userID int64, userDto dto.CreateUser) 
 func (ui *UserInfoStorage) GetUserInfo(userID int64) (*models.UserInfo, error) {
 	var userInfo models.UserInfo
 	query := `
-		SElECT user_id, name, surname, patronymic, city, about, avatar, gender, birth_date
+		SElECT user_id, name, surname, patronymic, tg_username, city, about, avatar, gender, birth_date
 		FROM user_info
 		WHERE user_id = $1
 	`
@@ -58,6 +58,7 @@ func (ui *UserInfoStorage) GetUserInfo(userID int64) (*models.UserInfo, error) {
 		&userInfo.Name,
 		&userInfo.Surname,
 		&userInfo.Patronymic,
+		&userInfo.TgUsername,
 		&userInfo.City,
 		&userInfo.About,
 		&userInfo.Avatar,
@@ -114,6 +115,54 @@ func (ui *UserInfoStorage) UpdateUserAvatar(userID int64, avatar string) error {
 	_, err := ui.conn.Exec(context.Background(), query, userID, avatar)
 	if err != nil {
 		return fmt.Errorf("update avatar for user %d: %w", userID, err)
+	}
+
+	return nil
+}
+
+func (ui *UserInfoStorage) GetUsersShortInfo(userIDs []int64) ([]dto.UserShortInfo, error) {
+	var users []dto.UserShortInfo
+	query := `
+		SELECT user_id, name, surname, patronymic, tg_username
+		FROM user_info
+		WHERE user_id = ANY($1)
+	`
+
+	rows, err := ui.conn.Query(context.Background(), query, userIDs)
+	if err != nil {
+		return nil, fmt.Errorf("get users short info: %w", err)
+	}
+
+	for rows.Next() {
+		var user dto.UserShortInfo
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Surname,
+			&user.Patronymic,
+			&user.TgUsername,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("scan one user short info: %w", err)
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (ui *UserInfoStorage) UpdateUserTgUsername(userID int64, tgUsername string) error {
+	query := `
+		UPDATE user_info
+		SET tg_username = $2
+		WHERE user_id = $1
+	`
+
+	_, err := ui.conn.Exec(context.Background(), query, userID, tgUsername)
+	if err != nil {
+		return fmt.Errorf("update tg username for user %d: %w", userID, err)
 	}
 
 	return nil
