@@ -1,5 +1,4 @@
-import { FiUser, FiSettings, FiLogOut } from "react-icons/fi";
-
+import { FiUser, FiSettings, FiLogOut, FiUsers } from "react-icons/fi";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,7 +8,7 @@ import {
 } from "@/shared/ui/DropdownMenu"
 import type { ReactElement } from "react"
 import { useNavigate } from "react-router-dom";
-import { getRouteProfile, getRouteSettings, getRouteWelcome } from "@/app/router/routePaths";
+import { getRouteGroups, getRouteProfile, getRouteSettings, getRouteWelcome } from "@/app/router/routePaths";
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { logout } from "../api/logout";
 import { notificationActions } from "@/features/notifications";
@@ -50,6 +49,10 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
                 <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2">
                     <FiSettings className="size-5" />
                     {t("rightMenu.settings")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate(getRouteGroups())} className="text-md gap-2">
+                    <FiUsers className="size-5" />
+                    {t("rightMenu.groups")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2">

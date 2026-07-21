@@ -1,3 +1,5 @@
+import type { GroupSchema } from '@/entities/group/types/types'
+import type { SubjectSchema } from '@/entities/subject/types/types'
 import type { UserSchema } from '@/entities/user/types/types'
 import type { NotificationSchema } from '@/features/notifications'
 import type { AnyAction, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit'
@@ -8,6 +10,8 @@ import type { NavigateOptions, To } from 'react-router'
 export interface StateSchema {
     notifications: NotificationSchema
     user: UserSchema
+    group: GroupSchema
+    subject: SubjectSchema
 }
 
 export type StateSchemaKey = keyof StateSchema

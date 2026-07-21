@@ -9,7 +9,7 @@ export type Section = {
 
 export enum SectionTabs {
     PROFILE = "PROFILE",
-    SECURITY = "SECURITY",
+    ACCOUNT = "ACCOUNT",
     SETTINGS = "SETTINGS",
 }
 
@@ -20,8 +20,8 @@ export const Sections: Section[] = [
         Icon: FiUser,
     },
     {
-        ID: SectionTabs.SECURITY,
-        Title: "Безопасность",
+        ID: SectionTabs.ACCOUNT,
+        Title: "Аккаунт",
         Icon: FiShield,
     },
     {

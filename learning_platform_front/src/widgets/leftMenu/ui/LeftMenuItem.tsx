@@ -29,10 +29,7 @@ export function LeftMenuItem({ item, onClick }: LeftMenuItemProps) {
                     className="flex items-center gap-2 text-lg cursor-pointer"
                 >
                     <item.icon className="size-6" />
-
                     {item.text}
-
-
                 </Button>
                 {hasChildren &&
                     (isOpen ? (
@@ -42,7 +39,6 @@ export function LeftMenuItem({ item, onClick }: LeftMenuItemProps) {
                     ))
                 }
             </div>
-
             {isOpen &&
                 item.childrens?.map((child) => (
                     <div key={child.path} className="ml-10">

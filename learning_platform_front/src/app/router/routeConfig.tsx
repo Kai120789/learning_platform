@@ -1,6 +1,7 @@
 import {
     AppRoutes,
     getRouteCourses,
+    getRouteGroups,
     getRouteLessons,
     getRouteLogin, getRouteMain, getRouteMaterials, getRoutePractices, getRouteProfile,
     getRouteRegister, getRouteSchedule, getRouteSettings, getRouteTutors,
@@ -20,6 +21,7 @@ import { TutorsPage } from "@/pages/tutors";
 import { SettingsPage } from '@/pages/settings'
 import { AuthLayout, GuestLayout, MainLayout } from '../layouts'
 import RegisterPage from '@/pages/registration/ui/RegisterPage'
+import { GroupsPage } from '@/pages/groups';
 
 export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
     [AppRoutes.WELCOME]: {
@@ -114,6 +116,14 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
         path: getRouteSettings(),
         element: (
             <SettingsPage />
+        ),
+        authOnly: true,
+        layout: <MainLayout />
+    },
+    [AppRoutes.GROUPS]: {
+        path: getRouteGroups(),
+        element: (
+            <GroupsPage />
         ),
         authOnly: true,
         layout: <MainLayout />

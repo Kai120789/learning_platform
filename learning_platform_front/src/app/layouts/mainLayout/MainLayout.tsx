@@ -1,8 +1,11 @@
+import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
+import { getAllSubjects } from "@/entities/subject/api/getAllSubjects"
+import { getUserData } from "@/entities/user"
 import { cn } from "@/shared/lib/utils"
 import { LeftMenu } from "@/widgets/leftMenu"
 import { TopMenu } from "@/widgets/topMenu"
 import { useTheme } from "@teispace/next-themes/client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
 
 export function MainLayout() {
@@ -12,6 +15,13 @@ export function MainLayout() {
     const onClick = () => {
         setIsOpen(!isOpen)
     }
+
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        dispatch(getAllSubjects())
+        dispatch(getUserData())
+    }, [])
 
     return (
         <div className="min-h-[100vh] bg-secondary">

@@ -9,7 +9,7 @@ const initialState: UserSchema = {
 };
 
 const userSlice = createSlice({
-    name: 'notifications',
+    name: 'user',
     initialState,
     reducers: {
 
@@ -37,6 +37,7 @@ const userSlice = createSlice({
                     name: action.payload.user_info.name,
                     surname: action.payload.user_info.surname,
                     patronymic: action.payload.user_info.patronymic,
+                    tgLink: action.payload.user_info.tg_link,
                     city: action.payload.user_info.city,
                     about: action.payload.user_info.about,
                     avatar: action.payload.user_info.avatar,

@@ -15,6 +15,7 @@
     "rightMenu": {
         "profile": "Профиль",
         "settings": "Настройки",
+        "groups": "Группы",
         "logout": "Выйти"
     },
     "guest": {

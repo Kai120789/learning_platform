@@ -1,9 +1,9 @@
 import type { UserGenderEnum, UserLanguageEnum, UserRoleEnum, UserStatusEnum, UserThemeEnum } from "@/shared/enums/user";
 
 export interface UserSchema {
-    data: UserFullData | null;
-    isLoading: boolean;
-    error?: string;
+    data: UserFullData | null
+    isLoading: boolean
+    error?: string
 }
 
 export type UserDataResponse = {
@@ -29,6 +29,7 @@ export type UserInfoResponse = {
     name: string
     surname: string
     patronymic?: string
+    tg_link?: string
     city?: string
     about?: string
     avatar?: string
@@ -51,25 +52,26 @@ export type UserSettingsResponse = {
 
 export type UserFullData = {
     user: {
-        userID: number;
-        email: string;
-        role: UserRoleEnum;
-        status: UserStatusEnum;
+        userID: number
+        email: string
+        role: UserRoleEnum
+        status: UserStatusEnum
     };
     userInfo: {
-        name: string;
-        surname: string;
-        patronymic?: string;
-        city?: string;
-        about?: string;
+        name: string
+        surname: string
+        patronymic?: string
+        tgLink?: string
+        city?: string
+        about?: string
         avatar?: string
         gender: UserGenderEnum
         birthDate?: Date
     };
     userSettings: {
-        isNotificationsEnabled: boolean;
-        is2FaEnabled: boolean;
-        language: UserLanguageEnum;
-        theme: UserThemeEnum;
+        isNotificationsEnabled: boolean
+        is2FaEnabled: boolean
+        language: UserLanguageEnum
+        theme: UserThemeEnum
     };
 }

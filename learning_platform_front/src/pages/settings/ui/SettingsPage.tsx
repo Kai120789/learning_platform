@@ -8,6 +8,7 @@ import { ChangeEmaildForm } from "./forms/ChangeEmailForm";
 import { ChangePasswordForm } from "./forms/ChangePasswordForm";
 import { SettingsForm } from "./forms/SettingsForm";
 import { UserDataForm } from "./forms/UserDataForm";
+import { ChangeTgLink } from "./forms/ChangeTgLink";
 
 export default function SettingsPage() {
     const userData = useAppSelector(getUserFullData)
@@ -26,9 +27,12 @@ export default function SettingsPage() {
                         userData={userData}
                     />
                 )
-            case SectionTabs.SECURITY:
+            case SectionTabs.ACCOUNT:
                 return (
                     <>
+                        <ChangeTgLink
+                            userTgLink={userData?.userInfo.tgLink}
+                        />
                         <ChangeEmaildForm
                             userEmail={userData?.user.email}
                         />
