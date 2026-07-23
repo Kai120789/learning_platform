@@ -109,8 +109,8 @@ func (g *GroupHandler) RemoveGroup(w http.ResponseWriter, r *http.Request) {
 
 	err = g.service.RemoveGroup(int64(groupId))
 	if err != nil {
-		g.logger.Error("failed to update group", zap.Error(err))
-		http.Error(w, "failed to update group", http.StatusInternalServerError)
+		g.logger.Error("failed to delete group", zap.Error(err))
+		http.Error(w, "failed to delete group", http.StatusInternalServerError)
 		return
 	}
 
