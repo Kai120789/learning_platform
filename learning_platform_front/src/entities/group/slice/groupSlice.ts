@@ -5,6 +5,7 @@ import { getGroupsByTutorId } from "../api/getGroupsByTutorId";
 import { createGroup } from "../api/createGroup";
 import { deleteGroup } from "../api/deleteGroup";
 import { removeUserFromGroup } from "../api/removeUserFromGroup";
+import { updateGroup } from "../api/updateGroup";
 
 const initialState: GroupSchema = {
     data: null,
@@ -139,6 +140,29 @@ const groupSlice = createSlice({
                 );
             }
         })
+        builder.addCase(updateGroup.pending, (state) => {
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(updateGroup.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(updateGroup.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.error = '';
+
+            const group = state.data?.find(g => g.id === action.meta.arg.groupID);
+
+            console.log(action.payload)
+
+            if (group) {
+                group.title = action.payload.title;
+                group.description = action.payload.description;
+                group.tutorId = action.payload.tutor_id;
+                group.tgGroupLink = action.payload.tg_group_link;
+            }
+        });
     }
 });
 
