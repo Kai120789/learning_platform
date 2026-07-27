@@ -1,37 +1,27 @@
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
-import { getRouteLogin } from "@/app/router/routePaths"
-import { getAllSubjects } from "@/entities/subject/api/getAllSubjects"
-import { getIsAuth, getUserData } from "@/entities/user"
+import { getAllSubjects } from "@/entities/subject"
+import { getUserData } from "@/entities/user"
 import { cn } from "@/shared/lib/utils"
 import { LeftMenu } from "@/widgets/leftMenu"
 import { TopMenu } from "@/widgets/topMenu"
 import { useTheme } from "@teispace/next-themes/client"
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
 export function MainLayout() {
     const { theme } = useTheme()
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
     const dispatch = useAppDispatch()
-    const isAuth = useSelector(getIsAuth);
-    const navigate = useNavigate();
 
     const onClick = () => {
         setIsOpen(!isOpen)
     }
 
     useEffect(() => {
-        if (!isAuth) {
-            navigate(getRouteLogin(), { replace: true });
-        }
-    }, [isAuth, navigate]);
-
-    useEffect(() => {
         dispatch(getAllSubjects())
         dispatch(getUserData())
-    }, [])
+    }, [dispatch])
 
     return (
         <div className="min-h-[100vh] bg-secondary">

@@ -8,6 +8,7 @@ import { logout } from "@/widgets/dropdownMenu/api/logout";
 const initialState: UserSchema = {
     data: null,
     isAuth: false,
+    isInitialized: false,
     isLoading: false,
     error: undefined
 };
@@ -27,10 +28,13 @@ const userSlice = createSlice({
         })
         builder.addCase(getUserData.rejected, (state, action) => {
             state.isLoading = false
+            state.isInitialized = true
+            state.isAuth = false
             state.error = action.payload as string
         })
         builder.addCase(getUserData.fulfilled, (state, action) => {
             state.isLoading = false
+            state.isInitialized = true
             state.error = ''
             state.isAuth = true
             state.data = {
@@ -73,6 +77,7 @@ const userSlice = createSlice({
         })
         builder.addCase(login.fulfilled, (state) => {
             state.isAuth = true
+            state.isInitialized = true
             state.isLoading = true
             state.error = ''
         })
@@ -88,6 +93,7 @@ const userSlice = createSlice({
         })
         builder.addCase(register.fulfilled, (state) => {
             state.isAuth = true
+            state.isInitialized = true
             state.isLoading = true
             state.error = ''
         })

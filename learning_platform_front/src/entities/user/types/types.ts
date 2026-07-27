@@ -3,6 +3,7 @@ import type { UserGenderEnum, UserLanguageEnum, UserRoleEnum, UserStatusEnum, Us
 export interface UserSchema {
     data: UserFullData | null
     isAuth: boolean
+    isInitialized: boolean
     isLoading: boolean
     error?: string
 }

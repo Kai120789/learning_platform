@@ -3,9 +3,9 @@ import type { StateSchema } from "./StateSchema";
 import { notificationReducer } from "@/features/notifications";
 import { createReducerManager } from "./reducerManager";
 import { $api } from "./api";
-import { userReducer } from "@/entities/user/slice/userSlice";
-import { groupReducer } from "@/entities/group/slice/groupSlice";
-import { subjectReducer } from "@/entities/subject/slice/slice";
+import { userReducer } from "@/entities/user";
+import { groupReducer } from "@/entities/group";
+import { subjectReducer } from "@/entities/subject";
 import { interceptor } from "@/shared/api/interceptor.ts";
 
 export function createReduxStore(

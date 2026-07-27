@@ -1,6 +1,7 @@
-import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
-import { deleteGroup, updateGroup } from "@/entities/group"
+import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
+import { deleteGroup, updateGroup, getAllGroups } from "@/entities/group"
 import type { GroupData } from "@/entities/group"
+import { useCanEdit } from "@/entities/user"
 import { notificationActions } from "@/features/notifications"
 import { Badge } from "@/shared/ui/Badge"
 import { Button } from "@/shared/ui/Button"
@@ -22,14 +23,30 @@ type GroupModalProps = {
 export function GroupModal({
     isOpen,
     setIsOpen,
-    group
+    group: groupProp
 }: GroupModalProps) {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
+    const groups = useAppSelector(getAllGroups)
+    const group = groups?.find((item) => item.id === groupProp.id) ?? groupProp
     const [isEditMode, setIsEditMode] = useState<boolean>(false)
     const [isAddUsersOpen, setIsAddUsersOpen] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>(group.title)
-    const [description, setDescription] = useState<string>(group.description)
+    const [draftTitle, setDraftTitle] = useState<string>(group.title)
+    const [draftDescription, setDraftDescription] = useState<string>(group.description)
+    const isCanEdit = useCanEdit()
+
+    const title = isEditMode ? draftTitle : group.title
+    const description = isEditMode ? draftDescription : group.description
+
+    const startEdit = () => {
+        setDraftTitle(group.title)
+        setDraftDescription(group.description)
+        setIsEditMode(true)
+    }
+
+    const cancelEdit = () => {
+        setIsEditMode(false)
+    }
 
     const onClickDelete = async () => {
         const response = await dispatch(deleteGroup(group.id))
@@ -49,8 +66,8 @@ export function GroupModal({
 
     const onClickUpdate = async () => {
         const request = {
-            title: title,
-            description: description,
+            title: draftTitle,
+            description: draftDescription,
         }
 
         const response = await dispatch(updateGroup({
@@ -79,8 +96,8 @@ export function GroupModal({
                         {isEditMode
                             ? (
                                 <Input
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
+                                    value={draftTitle}
+                                    onChange={(e) => setDraftTitle(e.target.value)}
                                 />
                             )
                             : (
@@ -106,7 +123,7 @@ export function GroupModal({
                         disabled={!isEditMode}
                         className="w-full break-words min-h-50"
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        onChange={(e) => setDraftDescription(e.target.value)}
                     />
                 </div>
                 {!isEditMode && (
@@ -117,13 +134,13 @@ export function GroupModal({
                             <div className="font-medium">
                                 {t("groups.users")}
                             </div>
-                            <Button size="xs" onClick={() => setIsAddUsersOpen(true)}>
+                            {isCanEdit && <Button size="xs" onClick={() => setIsAddUsersOpen(true)}>
                                 {t("groups.addUser")}
-                            </Button>
+                            </Button>}
                         </div>
 
                         <div className="space-y-2">
-                            {group.users
+                            {group.users?.length
                                 ? group.users.map((user) => (
                                     <GroupUserItem key={user.id} user={user} groupID={group.id} />
                                 ))
@@ -132,14 +149,14 @@ export function GroupModal({
                         </div>
                     </>
                 )}
-                <Separator className="my-1" />
+                {isCanEdit && <Separator className="my-1" />}
 
-                {isEditMode
+                {isCanEdit && (isEditMode
                     ? (
                         <div className="flex w-full justify-between gap-2">
                             <Button
                                 variant="outline"
-                                onClick={() => setIsEditMode(false)}
+                                onClick={cancelEdit}
                             >
                                 {t("common.cancel")}
                             </Button>
@@ -155,7 +172,7 @@ export function GroupModal({
                         <div className="flex w-full justify-between gap-2">
                             <Button
                                 variant="outline"
-                                onClick={() => setIsEditMode(true)}
+                                onClick={startEdit}
                             >
                                 {t("common.edit")}
                             </Button>
@@ -167,7 +184,7 @@ export function GroupModal({
                                 {t("common.delete")}
                             </Button>
                         </div>
-                    )
+                    ))
                 }
 
                 <AddUsersToGroupModal

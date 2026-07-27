@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
-import { getGroupsByTutorId, getAllGroups } from "@/entities/group"
+import { getAllGroups, loadGroupsByRole } from "@/entities/group"
+import { getUserRole, useCanEdit } from "@/entities/user"
 import { Button } from "@/shared/ui/Button"
 import { Label } from "@/shared/ui/Label"
 import { CreateGroupModal } from "@/widgets/createGroupModal"
@@ -12,16 +13,17 @@ export default function GroupsPage() {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const groups = useAppSelector(getAllGroups)
+    const role = useAppSelector(getUserRole)
+    const isCanEdit = useCanEdit()
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
-    const fetchUserGroups = async () => {
-        await dispatch(getGroupsByTutorId())
-    }
-
     useEffect(() => {
-        fetchUserGroups()
-    }, [])
+        const action = loadGroupsByRole(role)
+        if (action) {
+            dispatch(action)
+        }
+    }, [dispatch, role])
 
     return (
         <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
@@ -30,10 +32,10 @@ export default function GroupsPage() {
                     <Label className="text-2xl lg:text-4xl">
                         {t("groups.title")}
                     </Label>
-                    <Button onClick={() => setIsOpen(true)} size="lg" className="rounded-full">
+                    {isCanEdit && <Button onClick={() => setIsOpen(true)} size="lg" className="rounded-full">
                         <FaPlus className="size-3" />
                         {t("groups.create")}
-                    </Button>
+                    </Button>}
                 </div>
                 <Label className="text-md lg:text-xl font-normal text-primary/50">
                     {t("groups.subtitle")}

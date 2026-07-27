@@ -6,6 +6,7 @@ import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { removeUserFromGroup } from "@/entities/group";
 import { notificationActions } from "@/features/notifications";
 import { useTranslation } from "react-i18next";
+import { useCanEdit } from "@/entities/user";
 
 type GroupUserItemProps = {
     user: GroupUser
@@ -18,6 +19,7 @@ export function GroupUserItem({
 }: GroupUserItemProps) {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
+    const isCanEdit = useCanEdit()
 
     const onClickRemoveUser = async () => {
         const response = await dispatch(removeUserFromGroup({ groupID: groupID, userID: user.id }))
@@ -56,7 +58,7 @@ export function GroupUserItem({
 
             <div className="flex flex-row gap-1">
                 <RiTelegramFill className="cursor-pointer" size={25} />
-                <MdDelete onClick={onClickRemoveUser} className="cursor-pointer text-destructive/70" size={25} />
+                {isCanEdit && <MdDelete onClick={onClickRemoveUser} className="cursor-pointer text-destructive/70" size={25} />}
             </div>
         </div>
     )

@@ -282,6 +282,8 @@
         "addUsersTitle": "Add students",
         "searchUsers": "Search by name or telegram",
         "noUsersFound": "No users found",
+        "searching": "Searching…",
+        "searchError": "Failed to load users",
         "selectedCount": "Selected: {{count}}",
         "addUsersSuccess": "Students added to the group",
         "addUsersError": "Failed to add students"

@@ -1,18 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { $api } from '@/app/providers/storeProvider/config/api';
 import axios from 'axios';
+import type { ShortUserInfo } from '../types/types';
 
 export const addUsersToGroup = createAsyncThunk<
     number[],
     {
         groupID: number,
-        userIDs: number[]
+        users: ShortUserInfo[]
     },
     { rejectValue: string }
 >(
     'addUsersToGroup',
-    async ({ groupID, userIDs }, { rejectWithValue }) => {
+    async ({ groupID, users }, { rejectWithValue }) => {
         try {
+            const userIDs = users.map((user) => user.id)
             const response = await $api.post(
                 `${import.meta.env.VITE_SERVER_ENDPOINT}/api/group/${groupID}/add-user`,
                 userIDs,

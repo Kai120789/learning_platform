@@ -282,6 +282,8 @@
         "addUsersTitle": "Добавление учеников",
         "searchUsers": "Поиск по имени или телеграму",
         "noUsersFound": "Никого не нашлось",
+        "searching": "Ищем…",
+        "searchError": "Не удалось загрузить пользователей",
         "selectedCount": "Выбрано: {{count}}",
         "addUsersSuccess": "Ученики добавлены в группу",
         "addUsersError": "Не удалось добавить учеников"

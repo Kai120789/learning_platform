@@ -1,16 +1,21 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Search } from "lucide-react"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
 import { addUsersToGroup } from "@/entities/group"
-import type { GroupUser } from "@/entities/group"
+import type { GroupUser, ShortUserInfo } from "@/entities/group"
+import { getUsersWithPagination } from "@/entities/user"
+import type { GetUsersWithPaginationResponse } from "@/entities/user"
 import { notificationActions } from "@/features/notifications"
-import { mockGroupCandidates } from "@/shared/mocks"
+import { UserRoleEnum } from "@/shared/enums/user"
 import { Button } from "@/shared/ui/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Dialog"
 import { Input } from "@/shared/ui/Input"
 import { Separator } from "@/shared/ui/Separator"
 import { CandidateUserRow } from "./CandidateUserRow"
+
+const SEARCH_LIMIT = 20
+const SEARCH_DEBOUNCE_MS = 300
 
 type AddUsersToGroupModalProps = {
     isOpen: boolean
@@ -29,23 +34,62 @@ export function AddUsersToGroupModal({
     const dispatch = useAppDispatch()
 
     const [search, setSearch] = useState<string>("")
+    const [debouncedSearch, setDebouncedSearch] = useState<string>("")
+    const [users, setUsers] = useState<ShortUserInfo[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
     const [selectedIDs, setSelectedIDs] = useState<number[]>([])
+
+    useEffect(() => {
+        if (!isOpen) return
+
+        const timeoutId = window.setTimeout(() => {
+            setDebouncedSearch(search.trim())
+        }, SEARCH_DEBOUNCE_MS)
+
+        return () => window.clearTimeout(timeoutId)
+    }, [search, isOpen])
+
+    useEffect(() => {
+        if (!isOpen) return
+
+        let cancelled = false
+
+        const fetchUsers = async () => {
+            setIsLoading(true)
+            setError(null)
+
+            const response = await dispatch(getUsersWithPagination({
+                search: debouncedSearch,
+                page: 1,
+                limit: SEARCH_LIMIT,
+                role: UserRoleEnum.STUDENT,
+            }))
+
+            if (cancelled) return
+
+            if (response.meta.requestStatus === "fulfilled") {
+                const payload = response.payload as GetUsersWithPaginationResponse
+                setUsers(payload.users ?? [])
+            } else {
+                setUsers([])
+                setError(t("groups.searchError"))
+            }
+
+            setIsLoading(false)
+        }
+
+        void fetchUsers()
+
+        return () => {
+            cancelled = true
+        }
+    }, [debouncedSearch, dispatch, isOpen, t])
 
     const candidates = useMemo(() => {
         const existingIDs = new Set(existingUsers?.map((user) => user.id))
-        const query = search.trim().toLowerCase()
-
-        return mockGroupCandidates
-            .filter((user) => !existingIDs.has(user.id))
-            .filter((user) => {
-                if (!query) return true
-                const fullName = `${user.name} ${user.surname}`.toLowerCase()
-                return (
-                    fullName.includes(query) ||
-                    user.tgUsername?.toLowerCase().includes(query)
-                )
-            })
-    }, [existingUsers, search])
+        return users.filter((user) => !existingIDs.has(user.id))
+    }, [existingUsers, users])
 
     const toggleUser = (userID: number) => {
         setSelectedIDs((prev) =>
@@ -59,14 +103,19 @@ export function AddUsersToGroupModal({
         setIsOpen(open)
         if (!open) {
             setSearch("")
+            setDebouncedSearch("")
+            setUsers([])
             setSelectedIDs([])
+            setError(null)
+            setIsLoading(false)
         }
     }
 
     const onClickAdd = async () => {
+        const selectedUsers = candidates.filter((user) => selectedIDs.includes(user.id))
         const response = await dispatch(addUsersToGroup({
             groupID: groupID,
-            userIDs: selectedIDs,
+            users: selectedUsers,
         }))
         if (response.meta.requestStatus == "fulfilled") {
             dispatch(notificationActions.addNotification({
@@ -82,9 +131,45 @@ export function AddUsersToGroupModal({
         }
     }
 
+    const renderList = () => {
+        if (isLoading) {
+            return (
+                <div className="py-6 text-center text-muted-foreground">
+                    {t("groups.searching")}
+                </div>
+            )
+        }
+
+        if (error) {
+            return (
+                <div className="py-6 text-center text-destructive">
+                    {error}
+                </div>
+            )
+        }
+
+        if (candidates.length === 0) {
+            return (
+                <div className="py-6 text-center text-muted-foreground">
+                    {t("groups.noUsersFound")}
+                </div>
+            )
+        }
+
+        return candidates.map((user) => (
+            <CandidateUserRow
+                key={user.id}
+                user={user}
+                isSelected={selectedIDs.includes(user.id)}
+                onToggle={() => toggleUser(user.id)}
+            />
+        ))
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
-            <DialogContent>
+            {/* размер модалки поиска юзеров — sm:max-w-* */}
+            <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl text-left">
                         {t("groups.addUsersTitle")}
@@ -101,22 +186,8 @@ export function AddUsersToGroupModal({
                     />
                 </div>
 
-                <div className="max-h-72 space-y-2 overflow-y-auto">
-                    {candidates.length === 0
-                        ? (
-                            <div className="py-6 text-center text-muted-foreground">
-                                {t("groups.noUsersFound")}
-                            </div>
-                        )
-                        : candidates.map((user) => (
-                            <CandidateUserRow
-                                key={user.id}
-                                user={user}
-                                isSelected={selectedIDs.includes(user.id)}
-                                onToggle={() => toggleUser(user.id)}
-                            />
-                        ))
-                    }
+                <div className="max-h-[50vh] space-y-2 overflow-y-auto">
+                    {renderList()}
                 </div>
 
                 <Separator className="my-1" />

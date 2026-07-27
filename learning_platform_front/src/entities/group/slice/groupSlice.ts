@@ -1,17 +1,41 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { GroupSchema } from "../types/types";
-import { getUserGroups } from "../api/getUsergroups";
-import { getGroupsByTutorId } from "../api/getGroupsByTutorId";
-import { createGroup } from "../api/createGroup";
-import { deleteGroup } from "../api/deleteGroup";
-import { removeUserFromGroup } from "../api/removeUserFromGroup";
-import { updateGroup } from "../api/updateGroup";
+import type { GroupData, GroupResponse, GroupSchema, GroupUser, ShortUserInfo } from "../types/types";
+import { getUserGroups } from "@/entities/group";
+import { getGroupsByTutorId } from "@/entities/group";
+import { createGroup } from "@/entities/group";
+import { deleteGroup } from "@/entities/group";
+import { removeUserFromGroup } from "@/entities/group";
+import { updateGroup } from "@/entities/group";
+import { addUsersToGroup } from "@/entities/group";
 
 const initialState: GroupSchema = {
     data: null,
     isLoading: false,
     error: undefined
 };
+
+function mapShortUser(user: ShortUserInfo): GroupUser {
+    return {
+        id: user.id,
+        name: user.name,
+        surname: user.surname,
+        patronymic: user.patronymic,
+        tgUsername: user.tg_username,
+    }
+}
+
+function mapGroupResponse(group: GroupResponse): GroupData {
+    return {
+        id: group.id,
+        title: group.title,
+        description: group.description,
+        subject: group.subject,
+        users: group.users?.map(mapShortUser) ?? [],
+        tutorId: group.tutor_id,
+        tgChatId: group.tg_chat_id,
+        tgGroupLink: group.tg_group_link,
+    }
+}
 
 const groupSlice = createSlice({
     name: 'group',
@@ -31,26 +55,7 @@ const groupSlice = createSlice({
         builder.addCase(getUserGroups.fulfilled, (state, action) => {
             state.isLoading = false
             state.error = ''
-            state.data = action.payload.map(g => {
-                return {
-                    id: g.id,
-                    title: g.title,
-                    description: g.description,
-                    subject: g.subject,
-                    users: g.users?.map(gu => {
-                        return {
-                            id: gu.id,
-                            name: gu.name,
-                            surname: gu.surname,
-                            patronymic: gu.patronymic,
-                            tgUsername: gu.tg_username,
-                        }
-                    }),
-                    tutorId: g.tutor_id,
-                    tgChatId: g.tg_chat_id,
-                    tgGroupLink: g.tg_group_link,
-                }
-            })
+            state.data = action.payload.map(mapGroupResponse)
         })
         builder.addCase(getGroupsByTutorId.pending, (state) => {
             state.isLoading = true
@@ -63,26 +68,7 @@ const groupSlice = createSlice({
         builder.addCase(getGroupsByTutorId.fulfilled, (state, action) => {
             state.isLoading = false
             state.error = ''
-            state.data = action.payload.map(g => {
-                return {
-                    id: g.id,
-                    title: g.title,
-                    description: g.description,
-                    subject: g.subject,
-                    users: g.users?.map(gu => {
-                        return {
-                            id: gu.id,
-                            name: gu.name,
-                            surname: gu.surname,
-                            patronymic: gu.patronymic,
-                            tgUsername: gu.tg_username,
-                        }
-                    }),
-                    tutorId: g.tutor_id,
-                    tgChatId: g.tg_chat_id,
-                    tgGroupLink: g.tg_group_link,
-                }
-            })
+            state.data = action.payload.map(mapGroupResponse)
         })
         builder.addCase(createGroup.pending, (state) => {
             state.isLoading = true
@@ -95,15 +81,10 @@ const groupSlice = createSlice({
         builder.addCase(createGroup.fulfilled, (state, action) => {
             state.isLoading = false
             state.error = ''
-            state.data?.push({
-                id: action.payload.id,
-                title: action.payload.title,
-                description: action.payload.description,
-                users: action.payload.users,
-                subject: action.payload.subject,
-                tutorId: action.payload.tutor_id,
-                tgGroupLink: action.payload.tg_group_link
-            })
+            if (!state.data) {
+                state.data = []
+            }
+            state.data.push(mapGroupResponse(action.payload))
         })
         builder.addCase(deleteGroup.pending, (state) => {
             state.isLoading = true
@@ -140,6 +121,30 @@ const groupSlice = createSlice({
                 );
             }
         })
+        builder.addCase(addUsersToGroup.pending, (state) => {
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(addUsersToGroup.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(addUsersToGroup.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.error = ''
+
+            const group = state.data?.find(
+                g => g.id === action.meta.arg.groupID
+            )
+            if (!group) return
+
+            const existingIDs = new Set(group.users?.map((user) => user.id))
+            const addedUsers = action.meta.arg.users
+                .filter((user) => !existingIDs.has(user.id))
+                .map(mapShortUser)
+
+            group.users = [...(group.users ?? []), ...addedUsers]
+        })
         builder.addCase(updateGroup.pending, (state) => {
             state.isLoading = true
             state.error = ''
@@ -154,13 +159,12 @@ const groupSlice = createSlice({
 
             const group = state.data?.find(g => g.id === action.meta.arg.groupID);
 
-            console.log(action.payload)
-
             if (group) {
                 group.title = action.payload.title;
                 group.description = action.payload.description;
                 group.tutorId = action.payload.tutor_id;
                 group.tgGroupLink = action.payload.tg_group_link;
+                group.tgChatId = action.payload.tg_chat_id;
             }
         });
     }

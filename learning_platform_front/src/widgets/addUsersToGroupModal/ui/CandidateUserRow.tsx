@@ -1,10 +1,10 @@
-import type { CandidateUserMock } from "@/shared/mocks"
+import type { ShortUserInfo } from "@/entities/group"
 import { cn } from "@/shared/lib/utils"
 import { Avatar, AvatarFallback } from "@/shared/ui/Avatar"
 import { Checkbox } from "@/shared/ui/Checkbox"
 
 type CandidateUserRowProps = {
-    user: CandidateUserMock
+    user: ShortUserInfo
     isSelected: boolean
     onToggle: () => void
 }
@@ -25,7 +25,7 @@ export function CandidateUserRow({
             <div className="flex items-center gap-3">
                 <Avatar>
                     <AvatarFallback>
-                        {user.name[0] + user.surname[0]}
+                        {user.name[0]}{user.surname[0]}
                     </AvatarFallback>
                 </Avatar>
 
@@ -34,9 +34,11 @@ export function CandidateUserRow({
                         {`${user.name} ${user.surname}`}
                     </p>
 
-                    <p className="text-sm text-muted-foreground">
-                        {user.tgUsername}
-                    </p>
+                    {user.tg_username && (
+                        <p className="text-sm text-muted-foreground">
+                            {user.tg_username}
+                        </p>
+                    )}
                 </div>
             </div>
 

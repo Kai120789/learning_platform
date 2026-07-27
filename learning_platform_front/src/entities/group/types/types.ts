@@ -1,4 +1,4 @@
-import type { SubjectTypeEnum } from "@/entities/subject/types/types";
+import type { SubjectTypeEnum } from "@/entities/subject";
 
 export interface GroupSchema {
     data: GroupData[] | null;

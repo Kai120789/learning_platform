@@ -5,7 +5,7 @@ import { useTheme } from '@teispace/next-themes/client';
 
 import { Switch } from "@/shared/ui/Switch";
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
-import { updateUserTheme } from "@/entities/user/api/updateUserTheme";
+import { updateUserTheme } from "@/entities/user";
 import { UserThemeEnum } from "@/shared/enums/user";
 import { notificationActions } from "@/features/notifications";
 
