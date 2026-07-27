@@ -128,3 +128,88 @@ func (u *UserBaseStorage) ChangeEmail(userID int64, newEmail string) error {
 
 	return nil
 }
+
+func (u *UserBaseStorage) GetUsersWithPagination(request dto.GetWithPagination) ([]dto.UserShortInfo, error) {
+	var users []dto.UserShortInfo
+	query := `
+		SELECT
+			u.id,
+			ui.name,
+			ui.surname,
+			ui.patronymic,
+			ui.tg_username
+		FROM users u
+		JOIN user_info ui ON ui.user_id = u.id
+		WHERE
+			u.role = $4
+			AND (
+				$1 = ''
+				OR ui.name ILIKE '%' || $1 || '%'
+				OR ui.surname ILIKE '%' || $1 || '%'
+				OR ui.tg_username ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.name, ui.surname) ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.surname, ui.name) ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.name, ui.surname, ui.patronymic) ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.surname, ui.name, ui.patronymic) ILIKE '%' || $1 || '%'
+			)
+		ORDER BY
+			ui.surname,
+			ui.name
+		LIMIT $2
+		OFFSET $3;
+	`
+
+	offset := (request.Page - 1) * request.Limit
+	rows, err := u.conn.Query(context.Background(), query, request.Search, request.Limit, offset, request.Role)
+	defer rows.Close()
+	if err != nil {
+		return nil, fmt.Errorf("get users with pagination: %w", err)
+	}
+
+	for rows.Next() {
+		var user dto.UserShortInfo
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Surname,
+			&user.Patronymic,
+			&user.TgUsername,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("scan one user short info: %w", err)
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (u *UserBaseStorage) GetUsersCountByRole(search string, role enum.UserRole) (int64, error) {
+	var usersCount int64
+	query := `
+		SELECT COUNT(*)
+		FROM users u
+		JOIN user_info ui ON ui.user_id = u.id
+		WHERE
+			u.role = $2
+			AND (
+				$1 = ''
+				OR ui.name ILIKE '%' || $1 || '%'
+				OR ui.surname ILIKE '%' || $1 || '%'
+				OR ui.tg_username ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.name, ui.surname) ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.surname, ui.name) ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.name, ui.surname, ui.patronymic) ILIKE '%' || $1 || '%'
+				OR concat_ws(' ', ui.surname, ui.name, ui.patronymic) ILIKE '%' || $1 || '%'
+			);
+	`
+
+	err := u.conn.QueryRow(context.Background(), query, search, role).Scan(&usersCount)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get users count: %w", err)
+	}
+
+	return usersCount, nil
+}

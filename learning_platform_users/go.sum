@@ -28,6 +28,14 @@ github.com/Kai120789/learning_platform_proto v0.5.26 h1:ncgMP6Yiu/6zzoBM+hvsYi4t
 github.com/Kai120789/learning_platform_proto v0.5.26/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/Kai120789/learning_platform_proto v0.5.27 h1:KfNPfH1hNpClkRgJLSoJLPLrJoHaCdE8Qfc8Gkftxe8=
 github.com/Kai120789/learning_platform_proto v0.5.27/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.5.30 h1:V/nYMqtE1N2eWEd/x5a3m28MP6NO+vKmCSXS19ANk7Q=
+github.com/Kai120789/learning_platform_proto v0.5.30/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.5.31 h1:jSUGYQWL2Yl6mXprrQNAETsyth2tMIN/yEifSXpFOh8=
+github.com/Kai120789/learning_platform_proto v0.5.31/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.5.32 h1:2DC8zirDcqvKX9SbjtY0Z9ITWV6IMtrhQcC+U57cJ1E=
+github.com/Kai120789/learning_platform_proto v0.5.32/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
+github.com/Kai120789/learning_platform_proto v0.5.33 h1:ARNnNX7DCbBe7QHoKNdqX/EqOpJxuI8GOuqxA2ojhZs=
+github.com/Kai120789/learning_platform_proto v0.5.33/go.mod h1:MQ6pJVCXIebG/CAzrzbY/zMKMqOCzBsur6hX9R1TJbU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

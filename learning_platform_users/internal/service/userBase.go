@@ -21,6 +21,8 @@ type UserBaseStorage interface {
 	GetUserByEmail(email string) (*models.User, error)
 	ChangePassword(userID int64, newPasswordHash string) error
 	ChangeEmail(userID int64, newEmail string) error
+	GetUsersWithPagination(request dto.GetWithPagination) ([]dto.UserShortInfo, error)
+	GetUsersCountByRole(search string, role enum.UserRole) (int64, error)
 }
 
 type UserInfo interface {
@@ -113,6 +115,23 @@ func (u *UserBaseService) ChangeEmail(userID int64, newEmail string) error {
 		return fmt.Errorf("change email: %w", err)
 	}
 	return nil
+}
+
+func (u *UserBaseService) GetUsersWithPagination(request dto.GetWithPagination) (*dto.UsersWithCount, error) {
+	users, err := u.storage.GetUsersWithPagination(request)
+	if err != nil {
+		return nil, fmt.Errorf("get users with pagination (get users): %w", err)
+	}
+
+	count, err := u.storage.GetUsersCountByRole(request.Search, request.Role)
+	if err != nil {
+		return nil, fmt.Errorf("get users with pagination (get count): %w", err)
+	}
+
+	return &dto.UsersWithCount{
+		Users: users,
+		Count: count,
+	}, nil
 }
 
 func formUserDto(

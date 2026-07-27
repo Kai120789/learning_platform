@@ -19,6 +19,7 @@ type UserBaseService interface {
 	ChangePassword(userID int64, newPasswordHash string) error
 	ChangeEmail(userID int64, newEmail string) error
 	GetUserData(userID int64) (*dto.UserData, error)
+	GetUsersWithPagination(request dto.GetWithPagination) (*dto.UsersWithCount, error)
 }
 
 func (u *UserGRPCServer) CreateUser(
@@ -176,6 +177,40 @@ func (u *UserGRPCServer) ChangeEmail(
 		return nil, status.Error(codes.Internal, "failed to change user email")
 	}
 	return &userGRPC.ChangeEmailResponse{}, nil
+}
+
+func (u *UserGRPCServer) GetUsersWithPagination(
+	ctx context.Context,
+	in *userGRPC.GetUsersWithPaginationRequest,
+) (*userGRPC.GetUsersWithPaginationResponse, error) {
+	request := dto.GetWithPagination{
+		Search: in.GetSearch(),
+		Page:   in.GetPage(),
+		Limit:  in.GetLimit(),
+		Role:   protoToEnumRole(in.GetRole()),
+	}
+
+	res, err := u.UserBaseService.GetUsersWithPagination(request)
+	if err != nil {
+		u.logger.Error("failed to get users with pagination", zap.Error(err))
+		return nil, status.Error(codes.Internal, "failed to get users with pagination")
+	}
+
+	var users []*userGRPC.UserShortInfo
+	for _, oneUser := range res.Users {
+		users = append(users, &userGRPC.UserShortInfo{
+			Id:         oneUser.ID,
+			Name:       oneUser.Name,
+			Surname:    oneUser.Surname,
+			Patronymic: oneUser.Patronymic,
+			TgUsername: oneUser.TgUsername,
+		})
+	}
+
+	return &userGRPC.GetUsersWithPaginationResponse{
+		Users: users,
+		Count: res.Count,
+	}, nil
 }
 
 func protoToEnumRole(role userGRPC.UserRole) enum.UserRole {
