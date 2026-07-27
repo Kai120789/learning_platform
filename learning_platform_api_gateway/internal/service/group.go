@@ -126,33 +126,14 @@ func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
 }
 
 func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupFullResponse, error) {
-	var resGroups []groupDto.GroupFullResponse
 	res, err := g.client.GetUserGroups(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	subjects, err := g.subjectService.GetAllSubjects()
+	resGroups, err := g.mapGroupsWithSubjectAndUsersDTO(res)
 	if err != nil {
 		return nil, err
-	}
-
-	subjectByID := make(map[int64]subjectDto.Subject)
-
-	for _, oneSubject := range subjects {
-		subjectByID[oneSubject.ID] = oneSubject
-	}
-
-	for _, oneGroup := range res {
-		resGroups = append(resGroups, groupDto.GroupFullResponse{
-			ID:          oneGroup.ID,
-			Title:       oneGroup.Title,
-			Description: oneGroup.Description,
-			Subject:     subjectByID[oneGroup.SubjectID],
-			TutorID:     oneGroup.TutorID,
-			TgGroupLink: oneGroup.TgGroupLink,
-			TgChatID:    oneGroup.TgChatID,
-		})
 	}
 
 	return resGroups, nil
