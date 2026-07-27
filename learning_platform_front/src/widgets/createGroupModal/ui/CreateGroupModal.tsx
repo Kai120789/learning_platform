@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
-import { createGroup } from "@/entities/group/api/createGroup"
-import { getSubjects } from "@/entities/subject/selectors/selectors"
+import { createGroup } from "@/entities/group"
+import { getSubjects } from "@/entities/subject"
 import { notificationActions } from "@/features/notifications"
 import { Button } from "@/shared/ui/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Dialog"
@@ -9,6 +9,7 @@ import { Input } from "@/shared/ui/Input"
 import { Separator } from "@/shared/ui/Separator"
 import { Textarea } from "@/shared/ui/Textarea"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 type CreateGroupModalProps = {
     isOpen: boolean
@@ -19,6 +20,7 @@ export function CreateGroupModal({
     isOpen,
     setIsOpen
 }: CreateGroupModalProps) {
+    const { t } = useTranslation()
     const dispatch = useAppDispatch()
 
     const subjects = useAppSelector(getSubjects)
@@ -36,7 +38,7 @@ export function CreateGroupModal({
         }))
         if (response.meta.requestStatus == "fulfilled") {
             dispatch(notificationActions.addNotification({
-                message: "Группа успешно создана",
+                message: t("groups.createSuccess"),
                 type: "success"
             }))
             setIsOpen(false)
@@ -45,20 +47,18 @@ export function CreateGroupModal({
             setSubjectId(1)
         } else {
             dispatch(notificationActions.addNotification({
-                message: "Не удалось создать группу",
+                message: t("groups.createError"),
                 type: "error"
             }))
         }
     }
 
-
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent>
-
                 <DialogHeader>
                     <DialogTitle className="text-xl text-left line-clamp-2 pr-10">
-                        Создание группы
+                        {t("groups.createTitle")}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -66,7 +66,7 @@ export function CreateGroupModal({
                 <form className="p-6 md:p-8" onSubmit={onSubmit}>
                     <FieldGroup>
                         <Field>
-                            <FieldLabel>Название</FieldLabel>
+                            <FieldLabel>{t("groups.name")}</FieldLabel>
                             <Input
                                 required
                                 value={title}
@@ -74,7 +74,7 @@ export function CreateGroupModal({
                             />
                         </Field>
                         <Field>
-                            <FieldLabel>Описание</FieldLabel>
+                            <FieldLabel>{t("groups.description")}</FieldLabel>
                             <Textarea
                                 required
                                 value={description}
@@ -83,7 +83,7 @@ export function CreateGroupModal({
                             />
                         </Field>
                         <Field>
-                            <FieldLabel>Предмет</FieldLabel>
+                            <FieldLabel>{t("groups.subject")}</FieldLabel>
                             <select
                                 className="border border-input rounded-lg p-2"
                                 value={subjectId}
@@ -97,7 +97,7 @@ export function CreateGroupModal({
                             </select>
                         </Field>
                         <Field>
-                            <Button size="lg" type="submit">Создать</Button>
+                            <Button size="lg" type="submit">{t("common.create")}</Button>
                         </Field>
                     </FieldGroup>
                 </form>

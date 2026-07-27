@@ -1,5 +1,6 @@
 import { Field, FieldLabel } from "@/shared/ui/Field"
 import { Input } from "@/shared/ui/Input"
+import { useTranslation } from "react-i18next"
 
 type AuthDataStepProps = {
     email: string
@@ -18,10 +19,12 @@ export function AuthDataStep({
     confirmPassword,
     setConfirmPassword,
 }: AuthDataStepProps) {
+    const { t } = useTranslation()
+
     return (
         <>
             <Field>
-                <FieldLabel htmlFor="email">Почта</FieldLabel>
+                <FieldLabel htmlFor="email">{t("auth.register.steps.email")}</FieldLabel>
                 <Input
                     id="email"
                     type="email"
@@ -32,7 +35,7 @@ export function AuthDataStep({
                 />
             </Field>
             <Field>
-                <FieldLabel htmlFor="password">Пароль</FieldLabel>
+                <FieldLabel htmlFor="password">{t("auth.register.steps.password")}</FieldLabel>
                 <Input
                     id="password"
                     type="password"
@@ -42,7 +45,7 @@ export function AuthDataStep({
             </Field>
             <Field>
                 <FieldLabel htmlFor="confirmPassword">
-                    Повторите пароль
+                    {t("auth.register.steps.repeatPassword")}
                 </FieldLabel>
                 <Input
                     id="confirmPassword"

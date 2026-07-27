@@ -13,6 +13,7 @@ import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { logout } from "../api/logout";
 import { notificationActions } from "@/features/notifications";
 import { useTranslation } from "react-i18next";
+import { userActions } from "@/entities/user";
 
 type DropdownMenuIconsProps = {
     trigger: ReactElement
@@ -28,7 +29,7 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
         const response = await dispatch(logout())
 
         if (response.meta.requestStatus == "fulfilled") {
-            localStorage.removeItem("isAuth")
+            dispatch(userActions.setIsAuth(false))
             navigate(getRouteWelcome())
         } else {
             dispatch(notificationActions.addNotification({
@@ -42,20 +43,20 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
         <DropdownMenu>
             <DropdownMenuTrigger render={trigger} />
             <DropdownMenuContent className="bg-background min-w-50 py-2 px-3 space-y-1 font-medium">
-                <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2">
+                <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2 cursor-pointer">
                     <FiUser className="size-5" />
                     {t("rightMenu.profile")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2">
+                <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2 cursor-pointer">
                     <FiSettings className="size-5" />
                     {t("rightMenu.settings")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(getRouteGroups())} className="text-md gap-2">
+                <DropdownMenuItem onClick={() => navigate(getRouteGroups())} className="text-md gap-2 cursor-pointer">
                     <FiUsers className="size-5" />
                     {t("rightMenu.groups")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2">
+                <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2 cursor-pointer">
                     <FiLogOut className="size-5" />
                     {t("rightMenu.logout")}
                 </DropdownMenuItem>

@@ -20,7 +20,7 @@ import { CoursesPage } from "@/pages/courses";
 import { TutorsPage } from "@/pages/tutors";
 import { SettingsPage } from '@/pages/settings'
 import { AuthLayout, GuestLayout, MainLayout } from '../layouts'
-import RegisterPage from '@/pages/registration/ui/RegisterPage'
+import { RegisterPage } from '@/pages/registration'
 import { GroupsPage } from '@/pages/groups';
 
 export const routeConfig: Record<AppRoutes, AppRoutesProps> = {

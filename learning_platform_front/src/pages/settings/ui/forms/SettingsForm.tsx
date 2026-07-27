@@ -1,8 +1,8 @@
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
-import { updateUserSettings } from "@/entities/user/api/updateUserSettings";
-import type { UserSettingsRequest } from "@/entities/user/types/types";
+import { updateUserSettings } from "@/entities/user";
+import type { UserSettingsRequest } from "@/entities/user";
 import { notificationActions } from "@/features/notifications";
-import { enumToStringLanguage } from "@/features/registerForm/utils/utils";
+import { languageToTranslationKey } from "@/features/registerForm/utils/utils";
 import { UserLanguageEnum } from "@/shared/enums/user";
 import { Field } from "@/shared/ui/Field";
 import { Switch } from "@/shared/ui/Switch";
@@ -22,7 +22,7 @@ export function SettingsForm({
     userIsNotificationEnabled,
     userLanguage
 }: SettingsFormProps) {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [is2FaEnabled, setIs2FaEnabled] = useState<boolean>(userIs2FaEnabled)
     const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(userIsNotificationEnabled)
     const [language, setLanguage] = useState<UserLanguageEnum>(userLanguage)
@@ -38,12 +38,12 @@ export function SettingsForm({
         const response = await dispatch(updateUserSettings(request))
         if (response.meta.requestStatus === "fulfilled") {
             dispatch(notificationActions.addNotification({
-                message: 'Настройки обновлены',
+                message: t("settings.updateSuccess"),
                 type: 'success',
             }))
         } else {
             dispatch(notificationActions.addNotification({
-                message: 'Не удалось обновить насйтроки',
+                message: t("settings.updateError"),
                 type: 'error',
             }))
         }
@@ -55,7 +55,7 @@ export function SettingsForm({
                 <div className="flex items-center justify-between rounded-lg border p-4">
                     <div>
                         <h3 className="font-medium flex flex-row gap-2 items-center">
-                            Язык<FaLanguage className="size-5 lg:size-8" />
+                            {t("settings.language")}<FaLanguage className="size-5 lg:size-8" />
                         </h3>
                     </div>
                     <select
@@ -68,7 +68,7 @@ export function SettingsForm({
                     >
                         {Object.values(UserLanguageEnum).map((language) => (
                             <option key={language} value={language}>
-                                {enumToStringLanguage(language)}
+                                {t(languageToTranslationKey(language))}
                             </option>
                         ))}
                     </select>
@@ -78,11 +78,11 @@ export function SettingsForm({
                 <div className="flex items-center justify-between rounded-lg border p-4">
                     <div>
                         <h3 className="font-medium">
-                            Двухфакторная аутентификация
+                            {t("settings.twoFa")}
                         </h3>
 
                         <p className="text-sm text-muted-foreground">
-                            Запрашивать дополнительный код при входе.
+                            {t("settings.twoFaHint")}
                         </p>
                     </div>
                     <Switch
@@ -95,11 +95,11 @@ export function SettingsForm({
                 <div className="flex items-center justify-between rounded-lg border p-4">
                     <div>
                         <h3 className="font-medium">
-                            Уведомления
+                            {t("settings.notifications")}
                         </h3>
 
                         <p className="text-sm text-muted-foreground">
-                            Присылать уведомления о событиях
+                            {t("settings.notificationsHint")}
                         </p>
                     </div>
                     <Switch

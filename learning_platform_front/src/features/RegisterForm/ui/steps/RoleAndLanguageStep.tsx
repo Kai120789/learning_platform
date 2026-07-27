@@ -1,10 +1,11 @@
 import { UserLanguageEnum } from "@/shared/enums/user";
 import { cn } from "@/shared/lib/utils";
 import { Field, FieldLabel } from "@/shared/ui/Field";
+import { useTranslation } from "react-i18next";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import { PiChalkboardTeacher, PiStudent } from "react-icons/pi";
 import { RegisterRoleEnum } from "../../types/types";
-import { enumToStringLanguage } from "../../utils/utils";
+import { languageToTranslationKey } from "../../utils/utils";
 
 type RoleAndLanguageStepProps = {
     language: UserLanguageEnum
@@ -19,10 +20,12 @@ export function RoleAndLanguageStep({
     role,
     setRole
 }: RoleAndLanguageStepProps) {
+    const { t } = useTranslation()
+
     return (
         <>
             <Field>
-                <FieldLabel>Кто вы?</FieldLabel>
+                <FieldLabel>{t("auth.register.steps.whoAreYou")}</FieldLabel>
 
                 <div className="grid grid-cols-2 gap-4">
                     <button
@@ -42,11 +45,11 @@ export function RoleAndLanguageStep({
                         <PiStudent className="mb-4 h-10 w-10 text-primary" />
 
                         <span className="font-semibold">
-                            Ученик
+                            {t("auth.register.steps.student")}
                         </span>
 
                         <span className="mt-2 text-sm text-muted-foreground">
-                            Проходить курсы, выполнять задания и отслеживать прогресс.
+                            {t("auth.register.steps.studentHint")}
                         </span>
                     </button>
 
@@ -67,17 +70,17 @@ export function RoleAndLanguageStep({
                         <PiChalkboardTeacher className="mb-4 h-10 w-10 text-primary" />
 
                         <span className="font-semibold">
-                            Преподаватель
+                            {t("auth.register.steps.tutor")}
                         </span>
 
                         <span className="mt-2 text-sm text-muted-foreground">
-                            Создавать курсы, публиковать материалы и проверять задания.
+                            {t("auth.register.steps.tutorHint")}
                         </span>
                     </button>
                 </div>
             </Field>
             <Field>
-                <FieldLabel htmlFor="language">Язык</FieldLabel>
+                <FieldLabel htmlFor="language">{t("auth.register.steps.language")}</FieldLabel>
                 <select
                     className="border border-input rounded-lg p-2"
                     value={language}
@@ -85,7 +88,7 @@ export function RoleAndLanguageStep({
                 >
                     {Object.values(UserLanguageEnum).map((language) => (
                         <option key={language} value={language}>
-                            {enumToStringLanguage(language)}
+                            {t(languageToTranslationKey(language))}
                         </option>
                     ))}
                 </select>

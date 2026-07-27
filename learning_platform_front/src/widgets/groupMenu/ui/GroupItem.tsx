@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { GroupData } from "@/entities/group/types/types"
+import type { GroupData } from "@/entities/group"
 
 import {
     Card,
@@ -13,7 +13,7 @@ import { Badge } from "@/shared/ui/Badge"
 import { RiTelegramFill } from "react-icons/ri"
 import { Users } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/Tooltip"
-import { GroupModal } from "@/widgets/groupModal/ui/GroupModal"
+import { GroupModal } from "@/widgets/groupModal"
 
 type GroupItemProps = {
     group: GroupData

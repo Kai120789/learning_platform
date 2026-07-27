@@ -15,12 +15,14 @@ import type { LoginRequestDTO } from "../types/types"
 import { login } from "../api/login"
 import { notificationActions } from "@/features/notifications"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { getUserData } from "@/entities/user"
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const { t } = useTranslation()
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
 
@@ -35,10 +37,10 @@ export function LoginForm({
             password: password,
         }
         const response = await dispatch(login(request))
+
         if (response.meta.requestStatus == "fulfilled") {
-            localStorage.setItem("isAuth", "true")
             dispatch(notificationActions.addNotification({
-                message: 'Успешный вход!',
+                message: t("auth.login.success"),
                 type: 'success',
             }))
             navigate(getRouteMain())
@@ -46,13 +48,13 @@ export function LoginForm({
             const userRes = await dispatch(getUserData())
             if (userRes.meta.requestStatus != "fulfilled") {
                 dispatch(notificationActions.addNotification({
-                    message: 'Не удалось получить данные пользователя!',
+                    message: t("auth.login.userDataError"),
                     type: 'error',
                 }))
             }
         } else {
             dispatch(notificationActions.addNotification({
-                message: 'Не удалось войти!',
+                message: t("auth.login.error"),
                 type: 'error',
             }))
         }
@@ -65,13 +67,13 @@ export function LoginForm({
                     <form className="p-6 md:p-8" onSubmit={onSubmit}>
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
-                                <h1 className="text-2xl font-bold">Добро пожаловать</h1>
+                                <h1 className="text-2xl font-bold">{t("auth.login.title")}</h1>
                                 <p className="text-balance text-muted-foreground">
-                                    Войдите в аккаунт, чтобы продолжить
+                                    {t("auth.login.subtitle")}
                                 </p>
                             </div>
                             <Field>
-                                <FieldLabel htmlFor="email">Почта</FieldLabel>
+                                <FieldLabel htmlFor="email">{t("auth.login.email")}</FieldLabel>
                                 <Input
                                     id="email"
                                     type="email"
@@ -83,12 +85,12 @@ export function LoginForm({
                             </Field>
                             <Field>
                                 <div className="flex items-center">
-                                    <FieldLabel htmlFor="password">Пароль</FieldLabel>
+                                    <FieldLabel htmlFor="password">{t("auth.login.password")}</FieldLabel>
                                     <a
                                         href="#"
                                         className="ml-auto text-sm underline-offset-2 hover:underline"
                                     >
-                                        Забыли пароль?
+                                        {t("auth.login.forgotPassword")}
                                     </a>
                                 </div>
                                 <Input
@@ -99,10 +101,10 @@ export function LoginForm({
                                 />
                             </Field>
                             <Field>
-                                <Button type="submit">Войти</Button>
+                                <Button type="submit">{t("auth.login.submit")}</Button>
                             </Field>
                             <FieldDescription className="text-center">
-                                Нет аккаунта? <a className="cursor-pointer" onClick={() => navigate(getRouteRegister())}>Зарегистрироваться</a>
+                                {t("auth.login.noAccount")} <a className="cursor-pointer" onClick={() => navigate(getRouteRegister())}>{t("auth.login.registerLink")}</a>
                             </FieldDescription>
                         </FieldGroup>
                     </form>
@@ -116,8 +118,8 @@ export function LoginForm({
                 </CardContent>
             </Card>
             <FieldDescription className="px-6 text-center">
-                Нажимая продолжить вы соглашаетесь с <a href="#">Terms of Service</a>{" "}
-                и <a href="#">Privacy Policy</a>.
+                {t("auth.terms.prefix")} <a href="#">Terms of Service</a>{" "}
+                {t("auth.terms.and")} <a href="#">Privacy Policy</a>.
             </FieldDescription>
         </div>
     )

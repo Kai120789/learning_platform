@@ -1,22 +1,32 @@
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
+import { getRouteLogin } from "@/app/router/routePaths"
 import { getAllSubjects } from "@/entities/subject/api/getAllSubjects"
-import { getUserData } from "@/entities/user"
+import { getIsAuth, getUserData } from "@/entities/user"
 import { cn } from "@/shared/lib/utils"
 import { LeftMenu } from "@/widgets/leftMenu"
 import { TopMenu } from "@/widgets/topMenu"
 import { useTheme } from "@teispace/next-themes/client"
 import { useEffect, useState } from "react"
-import { Outlet } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { Outlet, useNavigate } from "react-router-dom"
 
 export function MainLayout() {
     const { theme } = useTheme()
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
+    const dispatch = useAppDispatch()
+    const isAuth = useSelector(getIsAuth);
+    const navigate = useNavigate();
+
     const onClick = () => {
         setIsOpen(!isOpen)
     }
 
-    const dispatch = useAppDispatch()
+    useEffect(() => {
+        if (!isAuth) {
+            navigate(getRouteLogin(), { replace: true });
+        }
+    }, [isAuth, navigate]);
 
     useEffect(() => {
         dispatch(getAllSubjects())

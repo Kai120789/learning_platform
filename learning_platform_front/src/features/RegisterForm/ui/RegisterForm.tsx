@@ -6,15 +6,14 @@ import {
     Field,
     FieldDescription,
     FieldGroup,
-    FieldLabel,
 } from "@/shared/ui/Field"
-import { Input } from "@/shared/ui/Input"
 import { Stepper, type Step } from "@/shared/ui/Stepper"
 import { useState, type ReactNode } from "react"
 import { CgProfile } from "react-icons/cg"
 import { MdLockOutline } from "react-icons/md";
 
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { RegisterRoleEnum, type RegisterRequestDTO } from "../types/types"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
 import { register } from "../api/register"
@@ -32,6 +31,7 @@ export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const { t } = useTranslation()
     const navigate = useNavigate()
 
     const [email, setEmail] = useState<string>("");
@@ -81,9 +81,8 @@ export function RegisterForm({
         }
         const response = await dispatch(register(request))
         if (response.meta.requestStatus == "fulfilled") {
-            localStorage.setItem("isAuth", "true")
             dispatch(notificationActions.addNotification({
-                message: 'Успешная регистрация!',
+                message: t("auth.register.success"),
                 type: 'success',
             }))
             navigate(getRouteMain())
@@ -91,13 +90,13 @@ export function RegisterForm({
             const userRes = await dispatch(getUserData())
             if (userRes.meta.requestStatus != "fulfilled") {
                 dispatch(notificationActions.addNotification({
-                    message: 'Не удалось получить данные пользователя!',
+                    message: t("auth.login.userDataError"),
                     type: 'error',
                 }))
             }
         } else {
             dispatch(notificationActions.addNotification({
-                message: 'Не удалось зарегистрировать пользователя!',
+                message: t("auth.register.error"),
                 type: 'error',
             }))
         }
@@ -127,15 +126,6 @@ export function RegisterForm({
 
     const renderFormByStep = (): ReactNode => {
         switch (currentStep) {
-            case 1:
-                return (
-                    <RoleAndLanguageStep
-                        language={language}
-                        setLanguage={setLanguage}
-                        role={role}
-                        setRole={setRole}
-                    />
-                )
             case 2:
                 return (
                     <UserDataStep
@@ -178,40 +168,12 @@ export function RegisterForm({
                 )
             default:
                 return (
-                    <>
-                        <Field>
-                            <FieldLabel htmlFor="email">Почта</FieldLabel>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </Field>
-                        <Field>
-                            <FieldLabel htmlFor="password">Пароль</FieldLabel>
-                            <Input
-                                id="password"
-                                type="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)} />
-                        </Field>
-                        <Field>
-                            <FieldLabel htmlFor="confirmPassword">
-                                Повторите пароль
-                            </FieldLabel>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                required
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </Field>
-                    </>
+                    <RoleAndLanguageStep
+                        language={language}
+                        setLanguage={setLanguage}
+                        role={role}
+                        setRole={setRole}
+                    />
                 )
         }
     }
@@ -230,9 +192,9 @@ export function RegisterForm({
                     <form className="p-6 md:p-8" onSubmit={onSubmit}>
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
-                                <h1 className="text-2xl font-bold">Регистрация</h1>
+                                <h1 className="text-2xl font-bold">{t("auth.register.title")}</h1>
                                 <p className="text-sm text-balance text-muted-foreground">
-                                    Чтобы продолжить необходимо создать аккаут
+                                    {t("auth.register.subtitle")}
                                 </p>
                             </div>
                             <Stepper
@@ -249,7 +211,7 @@ export function RegisterForm({
                                         variant="secondary"
                                         disabled={currentStep === 1}
                                     >
-                                        Назад
+                                        {t("auth.register.back")}
                                     </Button>
                                 </Field>
                                 <Field>
@@ -260,7 +222,7 @@ export function RegisterForm({
                                                     type="submit"
                                                     disabled={checkNextStepDisabled()}
                                                 >
-                                                    Зарегистрироваться
+                                                    {t("auth.register.submit")}
                                                 </Button>
                                             </Field>
                                         )
@@ -269,22 +231,22 @@ export function RegisterForm({
                                                 onClick={nextStep}
                                                 disabled={checkNextStepDisabled()}
                                             >
-                                                Далее
+                                                {t("auth.register.next")}
                                             </Button>
                                         )
                                     }
                                 </Field>
                             </Field>
                             <FieldDescription className="text-center">
-                                Уже есть аккаунт? <a className="cursor-pointer" onClick={() => navigate(getRouteLogin())}>Войти</a>
+                                {t("auth.register.haveAccount")} <a className="cursor-pointer" onClick={() => navigate(getRouteLogin())}>{t("auth.register.loginLink")}</a>
                             </FieldDescription>
                         </FieldGroup>
                     </form>
                 </CardContent>
             </Card>
             <FieldDescription className="px-6 text-center">
-                Нажимая продолжить вы соглашаетесь с <a href="#">Terms of Service</a>{" "}
-                и <a href="#">Privacy Policy</a>.
+                {t("auth.terms.prefix")} <a href="#">Terms of Service</a>{" "}
+                {t("auth.terms.and")} <a href="#">Privacy Policy</a>.
             </FieldDescription>
         </div>
     )

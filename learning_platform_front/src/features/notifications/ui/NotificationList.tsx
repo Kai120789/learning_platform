@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/app/providers/storeProvider/hooks/hooks';
 import { getNotifications } from '../selectors/notificationSelectors';
 import { notificationActions } from '../slice/notificationSlice';
 
-export const NotificationList = () => {
+export function NotificationList() {
     const notifications = useSelector(getNotifications);
     const dispatch = useAppDispatch();
 

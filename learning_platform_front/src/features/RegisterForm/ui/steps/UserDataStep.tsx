@@ -8,8 +8,9 @@ import { PopoverTrigger, PopoverContent, Popover } from "@/shared/ui/Popover"
 import { RadioGroup, RadioGroupItem } from "@/shared/ui/RadioGroup"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { ru } from "date-fns/locale"
+import { enUS, ru } from "date-fns/locale"
 
 type UserDataStepProps = {
     name: string
@@ -36,10 +37,13 @@ export function UserDataStep({
     birthDate,
     setBirthDate,
 }: UserDataStepProps) {
+    const { t, i18n } = useTranslation()
+    const dateLocale = i18n.language === "ru" ? ru : enUS
+
     return (
         <>
             <Field>
-                <FieldLabel htmlFor="surname">Фамилия</FieldLabel>
+                <FieldLabel htmlFor="surname">{t("auth.register.steps.surname")}</FieldLabel>
                 <Input
                     id="surname"
                     type="surname"
@@ -49,7 +53,7 @@ export function UserDataStep({
                 />
             </Field>
             <Field>
-                <FieldLabel htmlFor="name">Имя</FieldLabel>
+                <FieldLabel htmlFor="name">{t("auth.register.steps.name")}</FieldLabel>
                 <Input
                     id="name"
                     type="name"
@@ -59,7 +63,7 @@ export function UserDataStep({
                 />
             </Field>
             <Field>
-                <FieldLabel className="text-primary/60" htmlFor="patronymic">Отчество (не обязательно)</FieldLabel>
+                <FieldLabel className="text-primary/60" htmlFor="patronymic">{t("auth.register.steps.patronymic")}</FieldLabel>
                 <Input
                     id="patronymic"
                     type="patronymic"
@@ -68,7 +72,7 @@ export function UserDataStep({
                 />
             </Field>
             <Field>
-                <FieldLabel>Дата рождения</FieldLabel>
+                <FieldLabel>{t("auth.register.steps.birthDate")}</FieldLabel>
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
@@ -80,8 +84,8 @@ export function UserDataStep({
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {birthDate
-                                ? format(birthDate, "dd MMMM yyyy", { locale: ru })
-                                : "Выберите дату"}
+                                ? format(birthDate, "dd MMMM yyyy", { locale: dateLocale })
+                                : t("auth.register.steps.pickDate")}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -98,7 +102,7 @@ export function UserDataStep({
                 </Popover>
             </Field>
             <Field>
-                <FieldLabel>Пол</FieldLabel>
+                <FieldLabel>{t("auth.register.steps.gender")}</FieldLabel>
                 <RadioGroup
                     value={gender}
                     onValueChange={(value) =>
@@ -111,14 +115,14 @@ export function UserDataStep({
                             value={UserGenderEnum.MALE}
                             id="male"
                         />
-                        <label htmlFor="male">Мужской</label>
+                        <label htmlFor="male">{t("genders.MALE")}</label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem
                             value={UserGenderEnum.FEMALE}
                             id="female"
                         />
-                        <label htmlFor="female">Женский</label>
+                        <label htmlFor="female">{t("genders.FEMALE")}</label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem
@@ -126,7 +130,7 @@ export function UserDataStep({
                             id="unknown"
                         />
                         <label htmlFor="unknown">
-                            Не указывать
+                            {t("genders.UNKNOWN")}
                         </label>
                     </div>
                 </RadioGroup>

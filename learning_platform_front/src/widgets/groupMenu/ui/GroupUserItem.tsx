@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback } from "@/shared/ui/Avatar"
 import { RiTelegramFill } from "react-icons/ri"
 import { MdDelete } from "react-icons/md";
-import type { GroupUser } from "@/entities/group/types/types";
+import type { GroupUser } from "@/entities/group";
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
-import { removeUserFromGroup } from "@/entities/group/api/removeUserFromGroup";
+import { removeUserFromGroup } from "@/entities/group";
 import { notificationActions } from "@/features/notifications";
-
+import { useTranslation } from "react-i18next";
 
 type GroupUserItemProps = {
     user: GroupUser
@@ -16,18 +16,19 @@ export function GroupUserItem({
     user,
     groupID
 }: GroupUserItemProps) {
+    const { t } = useTranslation()
     const dispatch = useAppDispatch()
 
     const onClickRemoveUser = async () => {
         const response = await dispatch(removeUserFromGroup({ groupID: groupID, userID: user.id }))
         if (response.meta.requestStatus == "fulfilled") {
             dispatch(notificationActions.addNotification({
-                message: "Пользователь успешно удален из группы",
+                message: t("groups.removeUserSuccess"),
                 type: "success"
             }))
         } else {
             dispatch(notificationActions.addNotification({
-                message: "Не удалось удалить пользователя из группы",
+                message: t("groups.removeUserError"),
                 type: "error"
             }))
         }

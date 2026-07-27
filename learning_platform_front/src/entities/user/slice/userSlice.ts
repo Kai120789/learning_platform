@@ -1,9 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { UserSchema } from "../types/types";
 import { getUserData } from "@/entities/user";
+import { login } from "@/features/loginForm";
+import { register } from "@/features/registerForm/api/register";
+import { logout } from "@/widgets/dropdownMenu/api/logout";
 
 const initialState: UserSchema = {
     data: null,
+    isAuth: false,
     isLoading: false,
     error: undefined
 };
@@ -12,7 +16,9 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-
+        setIsAuth: (state, action: PayloadAction<boolean>) => {
+            state.isAuth = action.payload
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getUserData.pending, (state) => {
@@ -26,6 +32,7 @@ const userSlice = createSlice({
         builder.addCase(getUserData.fulfilled, (state, action) => {
             state.isLoading = false
             state.error = ''
+            state.isAuth = true
             state.data = {
                 user: {
                     userID: action.payload.user_id,
@@ -53,6 +60,51 @@ const userSlice = createSlice({
                     theme: action.payload.user_settings.theme
                 }
             }
+        })
+        builder.addCase(login.pending, (state) => {
+            state.isAuth = false
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(login.rejected, (state, action) => {
+            state.isAuth = false
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(login.fulfilled, (state) => {
+            state.isAuth = true
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(register.pending, (state) => {
+            state.isAuth = false
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(register.rejected, (state, action) => {
+            state.isAuth = false
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(register.fulfilled, (state) => {
+            state.isAuth = true
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(logout.pending, (state) => {
+            state.isAuth = false
+            state.isLoading = true
+            state.error = ''
+        })
+        builder.addCase(logout.rejected, (state, action) => {
+            state.isAuth = false
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(logout.fulfilled, (state) => {
+            state.isAuth = false
+            state.isLoading = true
+            state.error = ''
         })
     }
 });

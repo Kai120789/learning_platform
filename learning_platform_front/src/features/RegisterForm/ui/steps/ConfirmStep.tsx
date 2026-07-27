@@ -6,8 +6,9 @@ import {
     FieldLabel,
 } from "@/shared/ui/Field"
 import { format } from "date-fns"
-import { ru } from "date-fns/locale"
-import { enumToStringGender, enumToStringLanguage } from "../../utils/utils"
+import { enUS, ru } from "date-fns/locale"
+import { useTranslation } from "react-i18next"
+import { genderToTranslationKey, languageToTranslationKey } from "../../utils/utils"
 import { InfoRow } from "@/shared/ui/InfoRow"
 
 type ConfirmStepProps = {
@@ -34,23 +35,26 @@ export function ConfirmStep({
     language,
     email,
 }: ConfirmStepProps) {
+    const { t, i18n } = useTranslation()
+    const dateLocale = i18n.language === "ru" ? ru : enUS
+
     return (
         <Field className="gap-6">
             <div className="rounded-xl border bg-card p-5">
                 <h3 className="mb-4 text-lg font-semibold">
-                    Проверьте введённые данные
+                    {t("auth.register.steps.checkData")}
                 </h3>
 
                 <div className="space-y-4">
-                    <InfoRow label="Фамилия" value={surname} />
-                    <InfoRow label="Имя" value={name} />
-                    <InfoRow label="Отчество" value={patronymic} />
-                    <InfoRow label="Дата рождения" value={birthDate
-                        ? format(birthDate, "dd MMMM yyyy", { locale: ru })
-                        : "Не выбрано"} />
-                    <InfoRow label="Пол" value={enumToStringGender(gender)} />
-                    <InfoRow label="Язык" value={enumToStringLanguage(language)} />
-                    <InfoRow label="Почта" value={email} />
+                    <InfoRow label={t("auth.register.steps.surname")} value={surname} />
+                    <InfoRow label={t("auth.register.steps.name")} value={name} />
+                    <InfoRow label={t("auth.register.steps.patronymic")} value={patronymic} />
+                    <InfoRow label={t("auth.register.steps.birthDate")} value={birthDate
+                        ? format(birthDate, "dd MMMM yyyy", { locale: dateLocale })
+                        : t("auth.register.steps.notChosen")} />
+                    <InfoRow label={t("auth.register.steps.gender")} value={t(genderToTranslationKey(gender))} />
+                    <InfoRow label={t("auth.register.steps.language")} value={t(languageToTranslationKey(language))} />
+                    <InfoRow label={t("auth.register.steps.email")} value={email} />
                 </div>
             </div>
 
@@ -68,12 +72,11 @@ export function ConfirmStep({
                         htmlFor="confirm"
                         className="cursor-pointer"
                     >
-                        Подтверждаю корректность данных
+                        {t("auth.register.steps.confirmCorrect")}
                     </FieldLabel>
 
                     <FieldDescription>
-                        Я подтверждаю, что вся указанная информация является
-                        достоверной.
+                        {t("auth.register.steps.confirmHint")}
                     </FieldDescription>
                 </div>
             </div>

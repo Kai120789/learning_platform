@@ -6,6 +6,7 @@ import { $api } from "./api";
 import { userReducer } from "@/entities/user/slice/userSlice";
 import { groupReducer } from "@/entities/group/slice/groupSlice";
 import { subjectReducer } from "@/entities/subject/slice/slice";
+import { interceptor } from "@/shared/api/interceptor.ts";
 
 export function createReduxStore(
     initialState: StateSchema,
@@ -39,7 +40,10 @@ export function createReduxStore(
 
     store.reducerManager = reducerManager;
 
+    interceptor($api, store)
+
     return store;
 }
 
 export type AppDispatch = ReturnType<typeof createReduxStore>['dispatch']
+export type AppStore = ReturnType<typeof createReduxStore>

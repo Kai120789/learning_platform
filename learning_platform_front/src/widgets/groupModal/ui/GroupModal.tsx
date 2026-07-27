@@ -1,7 +1,6 @@
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
-import { deleteGroup } from "@/entities/group/api/deleteGroup"
-import { updateGroup } from "@/entities/group/api/updateGroup"
-import type { GroupData } from "@/entities/group/types/types"
+import { deleteGroup, updateGroup } from "@/entities/group"
+import type { GroupData } from "@/entities/group"
 import { notificationActions } from "@/features/notifications"
 import { Badge } from "@/shared/ui/Badge"
 import { Button } from "@/shared/ui/Button"
@@ -9,8 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Di
 import { Input } from "@/shared/ui/Input"
 import { Separator } from "@/shared/ui/Separator"
 import { Textarea } from "@/shared/ui/Textarea"
+import { AddUsersToGroupModal } from "@/widgets/addUsersToGroupModal"
 import { GroupUserItem } from "@/widgets/groupMenu"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 type GroupModalProps = {
     isOpen: boolean
@@ -23,8 +24,10 @@ export function GroupModal({
     setIsOpen,
     group
 }: GroupModalProps) {
+    const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const [isEditMode, setIsEditMode] = useState<boolean>(false)
+    const [isAddUsersOpen, setIsAddUsersOpen] = useState<boolean>(false)
     const [title, setTitle] = useState<string>(group.title)
     const [description, setDescription] = useState<string>(group.description)
 
@@ -32,19 +35,19 @@ export function GroupModal({
         const response = await dispatch(deleteGroup(group.id))
         if (response.meta.requestStatus == "fulfilled") {
             dispatch(notificationActions.addNotification({
-                message: "Группа успешно удалена",
+                message: t("groups.deleteSuccess"),
                 type: "success"
             }))
             setIsOpen(false)
         } else {
             dispatch(notificationActions.addNotification({
-                message: "Не удалось удалить группу",
+                message: t("groups.deleteError"),
                 type: "error"
             }))
         }
     }
 
-    const onCLickUpdate = async () => {
+    const onClickUpdate = async () => {
         const request = {
             title: title,
             description: description,
@@ -56,13 +59,13 @@ export function GroupModal({
         }))
         if (response.meta.requestStatus == "fulfilled") {
             dispatch(notificationActions.addNotification({
-                message: "Группа успешно обновлена",
+                message: t("groups.updateSuccess"),
                 type: "success"
             }))
             setIsEditMode(false)
         } else {
             dispatch(notificationActions.addNotification({
-                message: "Не удалось обновить группу",
+                message: t("groups.updateError"),
                 type: "error"
             }))
         }
@@ -71,7 +74,6 @@ export function GroupModal({
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent>
-
                 <DialogHeader>
                     <DialogTitle className="text-xl text-left line-clamp-2 pr-10">
                         {isEditMode
@@ -86,7 +88,6 @@ export function GroupModal({
                                     {title}
                                 </>
                             )
-
                         }
                     </DialogTitle>
                 </DialogHeader>
@@ -107,7 +108,6 @@ export function GroupModal({
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-
                 </div>
                 {!isEditMode && (
                     <>
@@ -115,10 +115,10 @@ export function GroupModal({
 
                         <div className="flex flex-row items-center justify-between">
                             <div className="font-medium">
-                                Пользователи
+                                {t("groups.users")}
                             </div>
-                            <Button size="xs">
-                                Добавить
+                            <Button size="xs" onClick={() => setIsAddUsersOpen(true)}>
+                                {t("groups.addUser")}
                             </Button>
                         </div>
 
@@ -127,13 +127,12 @@ export function GroupModal({
                                 ? group.users.map((user) => (
                                     <GroupUserItem key={user.id} user={user} groupID={group.id} />
                                 ))
-                                : <div className="text-muted-foreground">Добавьте первых учеников в группу</div>
+                                : <div className="text-muted-foreground">{t("groups.emptyUsers")}</div>
                             }
                         </div>
                     </>
                 )}
                 <Separator className="my-1" />
-
 
                 {isEditMode
                     ? (
@@ -142,16 +141,15 @@ export function GroupModal({
                                 variant="outline"
                                 onClick={() => setIsEditMode(false)}
                             >
-                                Отменить
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
-                                onClick={onCLickUpdate}
+                                onClick={onClickUpdate}
                             >
-                                Сохранить
+                                {t("common.save")}
                             </Button>
                         </div>
-
                     )
                     : (
                         <div className="flex w-full justify-between gap-2">
@@ -159,19 +157,26 @@ export function GroupModal({
                                 variant="outline"
                                 onClick={() => setIsEditMode(true)}
                             >
-                                Редактировать
+                                {t("common.edit")}
                             </Button>
                             <Button
                                 variant="destructive"
                                 className="border border-destructive"
                                 onClick={onClickDelete}
                             >
-                                Удалить
+                                {t("common.delete")}
                             </Button>
                         </div>
                     )
                 }
+
+                <AddUsersToGroupModal
+                    isOpen={isAddUsersOpen}
+                    setIsOpen={setIsAddUsersOpen}
+                    groupID={group.id}
+                    existingUsers={group.users}
+                />
             </DialogContent>
-        </Dialog >
+        </Dialog>
     )
 }

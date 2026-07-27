@@ -1,4 +1,4 @@
-import type { GroupData } from "@/entities/group/types/types"
+import type { GroupData } from "@/entities/group"
 import { GroupItem } from "./GroupItem"
 
 type GroupsMenuProps = {

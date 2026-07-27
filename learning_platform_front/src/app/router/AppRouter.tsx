@@ -44,6 +44,7 @@ export function AppRouter() {
         <>
             <NotificationList />
             <ToastContainer
+                className="min-h-[100px]"
                 position="top-right"
                 autoClose={5000}
                 hideProgressBar={false}
@@ -54,9 +55,6 @@ export function AppRouter() {
                 draggable
                 pauseOnHover
                 theme={theme}
-                style={{
-                    minHeight: "100px"
-                }}
             />
             <Routes>
                 <Route>

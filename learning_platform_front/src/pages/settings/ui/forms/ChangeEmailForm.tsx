@@ -2,6 +2,7 @@ import { Field, FieldLabel } from "@/shared/ui/Field"
 import { Input } from "@/shared/ui/Input"
 import { ConfirmButton } from "@/widgets/confirmButton"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 type ChangeEmailFormProps = {
     userEmail: string
@@ -10,13 +11,14 @@ type ChangeEmailFormProps = {
 export function ChangeEmaildForm({
     userEmail
 }: ChangeEmailFormProps) {
+    const { t } = useTranslation()
     const [email, setEmail] = useState<string>(userEmail);
 
     return (
         <div className="flex flex-col border border-border bg-background p-5 lg:p-10 pb-5 rounded-lg space-y-5">
             <div className="flex flex-row gap-4 justify-end">
                 <Field>
-                    <FieldLabel htmlFor="email">Почта</FieldLabel>
+                    <FieldLabel htmlFor="email">{t("settings.email")}</FieldLabel>
                     <Input
                         id="email"
                         type="email"

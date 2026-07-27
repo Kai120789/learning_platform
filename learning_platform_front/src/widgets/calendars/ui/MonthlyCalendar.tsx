@@ -12,9 +12,9 @@ import {
 } from "date-fns"
 import { ru } from "date-fns/locale"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
-
-type CalendarEvent = {
+export type CalendarEvent = {
     id: number
     title: string
     group?: string
@@ -27,11 +27,21 @@ type MonthlyCalendarProps = {
     events: CalendarEvent[]
 }
 
-
 export default function MonthlyCalendar({
     events,
 }: MonthlyCalendarProps) {
+    const { t } = useTranslation()
     const [month, setMonth] = useState(new Date())
+
+    const weekdays = [
+        t("common.weekdays.mon"),
+        t("common.weekdays.tue"),
+        t("common.weekdays.wed"),
+        t("common.weekdays.thu"),
+        t("common.weekdays.fri"),
+        t("common.weekdays.sat"),
+        t("common.weekdays.sun"),
+    ]
 
     const days = eachDayOfInterval({
         start: startOfWeek(startOfMonth(month), {
@@ -70,14 +80,13 @@ export default function MonthlyCalendar({
                 </div>
 
                 <div className="grid grid-cols-7 overflow-hidden rounded-lg">
-                    {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map(day => (
+                    {weekdays.map(day => (
                         <div
                             key={day}
                             className="border-b p-2 text-center text-sm text-muted-foreground"
                         >
                             {day}
                         </div>
-
                     ))}
                     {days.map(day => {
                         const dayEvents = events.filter(
@@ -89,13 +98,13 @@ export default function MonthlyCalendar({
                         return (
                             <div
                                 key={day.toString()}
-                                className={`min-h-32 border p-2
+                                className={`min-h-28 border p-2
                                 ${!isSameMonth(day, month)
                                         ? "bg-muted text-muted-foreground"
                                         : ""
                                     }
                                 ${isToday(day)
-                                        ? "border-8 border-primary font-semibold"
+                                        ? "border-4 border-primary font-semibold"
                                         : ""
                                     }
                             `}

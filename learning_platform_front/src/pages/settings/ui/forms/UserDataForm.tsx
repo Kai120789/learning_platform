@@ -1,6 +1,6 @@
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
-import { updateUserInfo } from "@/entities/user/api/updateUserInfo"
-import type { UserFullData, UserInfoRequest } from "@/entities/user/types/types"
+import { updateUserInfo } from "@/entities/user"
+import type { UserFullData, UserInfoRequest } from "@/entities/user"
 import { notificationActions } from "@/features/notifications"
 import { UserGenderEnum } from "@/shared/enums/user"
 import { cn } from "@/shared/lib/utils"
@@ -16,6 +16,7 @@ import { format } from "date-fns"
 import { ru } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { CiEdit, CiUser } from "react-icons/ci"
 
 type UserDataFormProps = {
@@ -25,6 +26,7 @@ type UserDataFormProps = {
 export function UserDataForm({
     userData
 }: UserDataFormProps) {
+    const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const [about, setAbout] = useState<string>(userData?.userInfo.about || "");
     const [name, setName] = useState<string>(userData?.userInfo.name || "");
@@ -46,12 +48,12 @@ export function UserDataForm({
         const response = await dispatch(updateUserInfo(request))
         if (response.meta.requestStatus === "fulfilled") {
             dispatch(notificationActions.addNotification({
-                message: 'Данные пользователя обновлены',
+                message: t("settings.userUpdateSuccess"),
                 type: 'success',
             }))
         } else {
             dispatch(notificationActions.addNotification({
-                message: 'Не удалось обновить данные пользователя',
+                message: t("settings.userUpdateError"),
                 type: 'error',
             }))
         }
@@ -85,7 +87,7 @@ export function UserDataForm({
             <div className="flex flex-col space-y-6">
                 <div className="flex flex-col lg:flex-row gap-4">
                     <Field>
-                        <FieldLabel htmlFor="surname">Фамилия</FieldLabel>
+                        <FieldLabel htmlFor="surname">{t("settings.surname")}</FieldLabel>
                         <Input
                             id="surname"
                             type="surname"
@@ -95,7 +97,7 @@ export function UserDataForm({
                         />
                     </Field>
                     <Field>
-                        <FieldLabel htmlFor="name">Имя</FieldLabel>
+                        <FieldLabel htmlFor="name">{t("settings.name")}</FieldLabel>
                         <Input
                             id="name"
                             type="name"
@@ -105,7 +107,7 @@ export function UserDataForm({
                         />
                     </Field>
                     <Field>
-                        <FieldLabel className="text-primary/60" htmlFor="patronymic">Отчество</FieldLabel>
+                        <FieldLabel className="text-primary/60" htmlFor="patronymic">{t("settings.patronymic")}</FieldLabel>
                         <Input
                             id="patronymic"
                             type="patronymic"
@@ -115,7 +117,7 @@ export function UserDataForm({
                     </Field>
                 </div>
                 <Field>
-                    <FieldLabel>Дата рождения</FieldLabel>
+                    <FieldLabel>{t("settings.birthDate")}</FieldLabel>
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
@@ -129,7 +131,7 @@ export function UserDataForm({
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {birthDate
                                     ? format(birthDate, "dd MMMM yyyy", { locale: ru })
-                                    : "Выберите дату"}
+                                    : t("settings.pickDate")}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -146,7 +148,7 @@ export function UserDataForm({
                     </Popover>
                 </Field>
                 <Field>
-                    <FieldLabel>Пол</FieldLabel>
+                    <FieldLabel>{t("settings.gender")}</FieldLabel>
                     <RadioGroup
                         value={gender}
                         onValueChange={(value) =>

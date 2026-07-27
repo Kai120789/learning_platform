@@ -1,7 +1,7 @@
-import { getRouteCourses, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
+import { getRouteCourses, getRouteLessons, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
 import { LeftMenuTabs } from "./leftMenuTabs"
 import { AiOutlineHome, AiOutlineCalendar } from "react-icons/ai";
-import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool } from "react-icons/fi";
+import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool, FiVideo } from "react-icons/fi";
 import { PiStudent } from "react-icons/pi";
 import type { IconType } from "react-icons/lib";
 import { useTranslation } from "react-i18next";
@@ -14,7 +14,7 @@ export interface LeftMenuItemTab {
     childrens?: LeftMenuItemTab[]
 }
 
-export const LeftMenuItemsType = (): LeftMenuItemTab[] => {
+export function LeftMenuItemsType(): LeftMenuItemTab[] {
     const { t } = useTranslation()
 
     return [
@@ -62,6 +62,12 @@ export const LeftMenuItemsType = (): LeftMenuItemTab[] => {
             text: t("tabs.studying"),
             field: LeftMenuTabs.STUDYING,
             childrens: [
+                {
+                    icon: FiVideo,
+                    path: getRouteLessons(),
+                    text: t("tabs.lessons"),
+                    field: LeftMenuTabs.LESSONS
+                },
                 {
                     icon: FiUsers,
                     path: getRouteCourses(),

@@ -1,5 +1,6 @@
 {
     "theme": "Theme",
+    "unauthorized": "Session expired. Please log in again",
     "tabs": {
         "main": "Main",
         "schedules": "Schedules",
@@ -8,6 +9,7 @@
         "items": "Items",
         "orders": "Orders",
         "studying": "Studying",
+        "lessons": "Lessons",
         "courses": "Courses",
         "practices": "Practices",
         "materials": "Materials"
@@ -21,5 +23,300 @@
     "guest": {
         "register": "Create account",
         "login": "Log In"
+    },
+    "languages": {
+        "RU": "Russian",
+        "EN": "English"
+    },
+    "genders": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "UNKNOWN": "Prefer not to say"
+    },
+    "auth": {
+        "terms": {
+            "prefix": "By clicking continue, you agree to our",
+            "and": "and"
+        },
+        "login": {
+            "title": "Welcome back",
+            "subtitle": "Sign in to your account to continue",
+            "email": "Email",
+            "password": "Password",
+            "forgotPassword": "Forgot password?",
+            "submit": "Log in",
+            "noAccount": "Don't have an account?",
+            "registerLink": "Sign up",
+            "success": "Logged in successfully!",
+            "error": "Failed to log in!",
+            "userDataError": "Failed to load user data!"
+        },
+        "register": {
+            "title": "Create account",
+            "subtitle": "Create an account to continue",
+            "back": "Back",
+            "next": "Next",
+            "submit": "Sign up",
+            "haveAccount": "Already have an account?",
+            "loginLink": "Log in",
+            "success": "Registered successfully!",
+            "error": "Failed to register!",
+            "steps": {
+                "whoAreYou": "Who are you?",
+                "student": "Student",
+                "studentHint": "Take courses, complete assignments and track progress.",
+                "tutor": "Tutor",
+                "tutorHint": "Create courses, publish materials and review assignments.",
+                "language": "Language",
+                "surname": "Surname",
+                "name": "Name",
+                "patronymic": "Patronymic (optional)",
+                "birthDate": "Birth date",
+                "pickDate": "Pick a date",
+                "gender": "Gender",
+                "email": "Email",
+                "password": "Password",
+                "repeatPassword": "Repeat password",
+                "checkData": "Review your details",
+                "notChosen": "Not chosen",
+                "confirmCorrect": "I confirm the data is correct",
+                "confirmHint": "I confirm that all provided information is accurate."
+            }
+        }
+    },
+    "common": {
+        "create": "Create",
+        "save": "Save",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "add": "Add",
+        "open": "Open",
+        "status": "Status",
+        "duration": "Duration",
+        "minutes": "{{count}} min",
+        "students": "Students",
+        "subject": "Subject",
+        "group": "Group",
+        "tutor": "Tutor",
+        "empty": "Nothing here yet",
+        "weekdays": {
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun"
+        }
+    },
+    "lessonStatus": {
+        "SCHEDULED": "Scheduled",
+        "IN_PROCESS": "In progress",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+    },
+    "practiceStatus": {
+        "opened": "Open",
+        "completed": "Completed",
+        "closed": "Closed",
+        "pending": "Needs review"
+    },
+    "mediaType": {
+        "VIDEO": "Video",
+        "IMAGE": "Image",
+        "DOCUMENT": "Document",
+        "LINK": "Link"
+    },
+    "main": {
+        "title": "Home",
+        "subtitle": "Overview of upcoming lessons, groups and assignments",
+        "upcoming": "Upcoming lessons",
+        "stats": {
+            "lessons": "Lessons",
+            "groups": "Groups",
+            "practices": "Assignments",
+            "materials": "Materials"
+        },
+        "quickActions": "Quick actions",
+        "goSchedule": "Open schedule",
+        "goGroups": "My groups",
+        "goPractices": "Assignments",
+        "weekSchedule": "This week",
+        "homework": "Homework",
+        "groups": "Groups",
+        "prevSlot": "Previous slot",
+        "nextSlot": "Next slot"
+    },
+    "schedule": {
+        "title": "Schedules",
+        "subtitle": "Track planned lessons and homework",
+        "week": "Week",
+        "month": "Month",
+        "createLesson": "Create lesson",
+        "mockEvents": {
+            "math": "Mathematics",
+            "physics": "Physics",
+            "groupA": "Group A",
+            "groupB": "Group B"
+        }
+    },
+    "createLesson": {
+        "title": "Create lesson",
+        "meetLink": "Meet link",
+        "startTime": "Start time",
+        "duration": "Duration (minutes)",
+        "group": "Group",
+        "success": "Lesson created (mock)",
+        "error": "Failed to create lesson"
+    },
+    "lessons": {
+        "title": "Lessons",
+        "subtitle": "Online lessons and webinars with materials and meet links",
+        "meet": "Join meeting",
+        "board": "Open board",
+        "media": "Materials",
+        "participants": "Participants"
+    },
+    "courses": {
+        "title": "Courses",
+        "subtitle": "Learning programs assembled from materials and lessons",
+        "progress": "Progress",
+        "modules": "{{count}} modules",
+        "enrolled": "{{count}} students"
+    },
+    "materials": {
+        "title": "Materials",
+        "subtitle": "Theory, videos and files attached to lessons",
+        "lesson": "Lesson #{{id}}",
+        "open": "Open",
+        "viewList": "List",
+        "viewGrid": "Icons",
+        "root": "All materials",
+        "folders": "Folders",
+        "files": "Files",
+        "items": "{{count}} items",
+        "name": "Name",
+        "modified": "Modified",
+        "size": "Size",
+        "type": "Type",
+        "emptyFolder": "This folder is empty",
+        "back": "Back"
+    },
+    "practices": {
+        "title": "Assignments",
+        "subtitle": "Tests and homework assigned to groups and students",
+        "deadline": "Deadline",
+        "exercises": "{{count}} exercises",
+        "score": "Score: {{score}}%"
+    },
+    "tutors": {
+        "title": "Tutors",
+        "subtitle": "Find a tutor by subject and experience",
+        "subjects": "Subjects",
+        "experience": "{{years}} years experience",
+        "rating": "Rating"
+    },
+    "profile": {
+        "title": "Profile",
+        "subtitle": "Your public information and learning stats",
+        "about": "About",
+        "city": "City",
+        "role": "Role",
+        "email": "Email",
+        "stats": "Statistics",
+        "edit": "Edit profile",
+        "memberSince": "On the platform since {{date}}",
+        "subjects": "Subjects",
+        "statLessons": "Lessons held",
+        "statStudents": "Students",
+        "statGroups": "Groups",
+        "statMaterials": "Materials",
+        "statChange": "+{{count}} this month",
+        "activity": "Recent activity",
+        "activityLessonCompleted": "Lesson completed",
+        "activityPracticeChecked": "Assignment checked",
+        "activityMaterialAdded": "Material uploaded",
+        "upcoming": "Upcoming lessons",
+        "noUpcoming": "No lessons scheduled"
+    },
+    "welcome": {
+        "title": "Learning platform",
+        "subtitle": "Lessons, schedules, groups and practice in one place",
+        "ctaRegister": "Get started",
+        "ctaLogin": "I already have an account",
+        "features": {
+            "schedule": {
+                "title": "Schedules",
+                "text": "Plan lessons and track upcoming webinars"
+            },
+            "groups": {
+                "title": "Groups",
+                "text": "Organize students by subjects and courses"
+            },
+            "practice": {
+                "title": "Practice",
+                "text": "Assign tests and review homework"
+            }
+        }
+    },
+    "groups": {
+        "title": "Groups",
+        "subtitle": "Your groups and their members",
+        "create": "Create group",
+        "createTitle": "Create group",
+        "name": "Title",
+        "description": "Description",
+        "subject": "Subject",
+        "users": "Users",
+        "addUser": "Add",
+        "emptyUsers": "Add the first students to the group",
+        "createSuccess": "Group created successfully",
+        "createError": "Failed to create group",
+        "updateSuccess": "Group updated successfully",
+        "updateError": "Failed to update group",
+        "deleteSuccess": "Group deleted successfully",
+        "deleteError": "Failed to delete group",
+        "removeUserSuccess": "User removed from group",
+        "removeUserError": "Failed to remove user from group",
+        "addUsersTitle": "Add students",
+        "searchUsers": "Search by name or telegram",
+        "noUsersFound": "No users found",
+        "selectedCount": "Selected: {{count}}",
+        "addUsersSuccess": "Students added to the group",
+        "addUsersError": "Failed to add students"
+    },
+    "settings": {
+        "title": "Edit profile",
+        "subtitle": "Manage your personal data and preferences",
+        "tabs": {
+            "profile": "Personal data",
+            "account": "Account",
+            "settings": "Settings"
+        },
+        "surname": "Surname",
+        "name": "Name",
+        "patronymic": "Patronymic",
+        "birthDate": "Birth date",
+        "pickDate": "Pick a date",
+        "gender": "Gender",
+        "email": "Email",
+        "password": "Password",
+        "repeatPassword": "Repeat password",
+        "telegram": "Telegram",
+        "language": "Language",
+        "twoFa": "Two-factor authentication",
+        "twoFaHint": "Ask for an extra code on login.",
+        "notifications": "Notifications",
+        "notificationsHint": "Send notifications about events",
+        "updateSuccess": "Settings updated",
+        "updateError": "Failed to update settings",
+        "userUpdateSuccess": "User data updated",
+        "userUpdateError": "Failed to update user data"
+    },
+    "roles": {
+        "STUDENT": "Student",
+        "TUTOR": "Tutor",
+        "ADMIN": "Admin"
     }
 }

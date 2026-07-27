@@ -1,4 +1,5 @@
 import { Button } from "@/shared/ui/Button";
+import { useTranslation } from "react-i18next";
 
 type ConfirmButtonProps = {
     confirmText?: string
@@ -8,11 +9,13 @@ type ConfirmButtonProps = {
 }
 
 export function ConfirmButton({
-    confirmText = "Сохранить изменения",
+    confirmText,
     onClickConfirm,
-    cancelText = "Сбросить",
+    cancelText,
     onClickCancel,
 }: ConfirmButtonProps) {
+    const { t } = useTranslation()
+
     return (
         <div className="flex flex-col lg:flex-row gap-2 justify-end pt-2">
             <Button
@@ -20,14 +23,14 @@ export function ConfirmButton({
                 variant="default"
                 size="lg"
             >
-                {confirmText}
+                {confirmText ?? t("common.save")}
             </Button>
             <Button
                 onClick={onClickCancel}
                 variant="outline"
                 size="lg"
             >
-                {cancelText}
+                {cancelText ?? t("common.cancel")}
             </Button>
         </div>
     )
