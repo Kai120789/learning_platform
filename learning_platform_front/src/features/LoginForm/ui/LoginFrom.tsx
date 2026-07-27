@@ -9,7 +9,7 @@ import {
     FieldLabel,
 } from "@/shared/ui/Field"
 import { Input } from "@/shared/ui/Input"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
 import type { LoginRequestDTO } from "../types/types"
 import { login } from "../api/login"
@@ -24,6 +24,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
     const { t } = useTranslation()
     const navigate = useNavigate()
+    const location = useLocation()
     const dispatch = useAppDispatch()
 
     const [email, setEmail] = useState("");
@@ -43,7 +44,8 @@ export function LoginForm({
                 message: t("auth.login.success"),
                 type: 'success',
             }))
-            navigate(getRouteMain())
+            const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname
+            navigate(from || getRouteMain(), { replace: true })
 
             const userRes = await dispatch(getUserData())
             if (userRes.meta.requestStatus != "fulfilled") {
