@@ -18,6 +18,7 @@ type UserHandler interface {
 	UpdateUserTgUsername(w http.ResponseWriter, r *http.Request)
 	ChangeUserEmail(w http.ResponseWriter, r *http.Request)
 	ChangeUserPassword(w http.ResponseWriter, r *http.Request)
+	GetUsersWithPagination(w http.ResponseWriter, r *http.Request)
 }
 
 func NewUserRouter() *UserRouter {
@@ -40,5 +41,6 @@ func (u *UserRouter) UserRoutes(
 		r.Patch("/email", h.ChangeUserEmail)
 		r.Patch("/password", h.ChangeUserPassword)
 		r.Post("/", h.CreateUser)
+		r.Get("/", h.GetUsersWithPagination)
 	})
 }

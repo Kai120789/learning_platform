@@ -28,18 +28,18 @@ func JWT(secretKey []byte, refreshTokenTTL int64, authService AuthService) func(
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cookie, err := r.Cookie("session_id")
 			if err != nil {
-				http.Error(w, "session cookie not found", http.StatusNotFound)
+				http.Error(w, "session cookie not found", http.StatusUnauthorized)
 				return
 			}
 
 			if cookie.Value == "" {
-				http.Error(w, "incorrect cookie value", http.StatusBadRequest)
+				http.Error(w, "incorrect cookie value", http.StatusUnauthorized)
 				return
 			}
 
 			redisTokens, err := authService.GetTokens(cookie.Value)
 			if err != nil {
-				http.Error(w, "tokens not found from redis", http.StatusNotFound)
+				http.Error(w, "tokens not found from redis", http.StatusUnauthorized)
 				http.SetCookie(w, utils.DeleteCookie("session_id"))
 				return
 			}

@@ -20,6 +20,7 @@ type UserClient interface {
 	UpdateUserTheme(userID int64, theme enum.UserTheme) error
 	UpdateUserAvatar(userID int64, avatar string) error
 	GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo, error)
+	GetUsersWithPagination(request userDto.GetWithPagination) (*userDto.UsersWithCount, error)
 }
 
 func NewUserService(client UserClient) *UserService {
@@ -102,6 +103,15 @@ func (u *UserService) UpdateUserAvatar(userID int64, avatar string) error {
 
 func (u *UserService) GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo, error) {
 	res, err := u.client.GetUsersShortInfo(userIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (u *UserService) GetUsersWithPagination(request userDto.GetWithPagination) (*userDto.UsersWithCount, error) {
+	res, err := u.client.GetUsersWithPagination(request)
 	if err != nil {
 		return nil, err
 	}

@@ -265,6 +265,37 @@ func (u *UserClient) GetUsersShortInfo(userIDs []int64) ([]userDto.UserShortInfo
 	return resUsers, nil
 }
 
+func (u *UserClient) GetUsersWithPagination(request userDto.GetWithPagination) (*userDto.UsersWithCount, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := u.client.GetUsersWithPagination(ctx, &userGRPC.GetUsersWithPaginationRequest{
+		Search: request.Search,
+		Page:   request.Page,
+		Limit:  request.Limit,
+		Role:   enumToProtoRole(request.Role),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var resUsers []userDto.UserShortInfo
+	for _, oneUser := range res.GetUsers() {
+		resUsers = append(resUsers, userDto.UserShortInfo{
+			ID:         oneUser.GetId(),
+			Name:       oneUser.GetName(),
+			Surname:    oneUser.GetSurname(),
+			Patronymic: oneUser.Patronymic,
+			TgUsername: oneUser.TgUsername,
+		})
+	}
+
+	return &userDto.UsersWithCount{
+		Users: resUsers,
+		Count: res.GetCount(),
+	}, nil
+}
+
 func protoToEnumRole(role userGRPC.UserRole) enum.UserRole {
 	switch role {
 	case userGRPC.UserRole_TUTOR:

@@ -24,6 +24,7 @@ type UserService interface {
 	UpdateUserSettings(userID int64, userSettings userDto.UserSettingsRequest) (*userDto.UserSettingsResponse, error)
 	UpdateUserTheme(userID int64, theme enum.UserTheme) error
 	UpdateUserAvatar(userID int64, avatar string) error
+	GetUsersWithPagination(request userDto.GetWithPagination) (*userDto.UsersWithCount, error)
 }
 
 func NewUserHandler(service UserService, logger *zap.Logger) *UserHandler {
@@ -241,6 +242,44 @@ func (u *UserHandler) UpdateUserAvatar(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+}
+
+func (u *UserHandler) GetUsersWithPagination(w http.ResponseWriter, r *http.Request) {
+	search := r.URL.Query().Get("search")
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+	role := r.URL.Query().Get("role")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		u.logger.Error(
+			"invalid param page",
+			zap.Error(err),
+		)
+		http.Error(w, "invalid param page", http.StatusBadRequest)
+		return
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		u.logger.Error(
+			"invalid param limit",
+			zap.Error(err),
+		)
+		http.Error(w, "invalid param limit", http.StatusBadRequest)
+		return
+	}
+
+	res, err := u.service.GetUsersWithPagination(userDto.GetWithPagination{
+		Search: search,
+		Page:   int64(page),
+		Limit:  int64(limit),
+		Role:   enum.UserRole(role),
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(res)
 }
 
 func (u *UserHandler) UpdateUserTgUsername(w http.ResponseWriter, r *http.Request) {}
