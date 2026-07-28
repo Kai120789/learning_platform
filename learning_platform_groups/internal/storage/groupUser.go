@@ -44,7 +44,7 @@ func (g *GroupUserStorage) RemoveUserFromGroup(userID int64, groupID int64) erro
 	return nil
 }
 
-func (g *GroupUserStorage) GetUserGroups(userID int64) ([]models.Group, error) {
+func (g *GroupUserStorage) GetGroupsByStudentID(userID int64) ([]models.Group, error) {
 	var groups []models.Group
 
 	query := `
@@ -79,7 +79,7 @@ func (g *GroupUserStorage) GetUserGroups(userID int64) ([]models.Group, error) {
 	return groups, nil
 }
 
-func (g *GroupUserStorage) GetGroupsByTutorId(tutorID int64) ([]models.Group, error) {
+func (g *GroupUserStorage) GetGroupsByTutorID(tutorID int64) ([]models.Group, error) {
 	var groups []models.Group
 
 	query := `

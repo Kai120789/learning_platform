@@ -13,8 +13,8 @@ type GroupUserService struct {
 type GroupUserStorage interface {
 	AddUsersToGroup(userIDs []int64, groupID int64) error
 	RemoveUserFromGroup(userID int64, groupID int64) error
-	GetUserGroups(userID int64) ([]models.Group, error)
-	GetGroupsByTutorId(tutorId int64) ([]models.Group, error)
+	GetGroupsByStudentID(userID int64) ([]models.Group, error)
+	GetGroupsByTutorID(tutorID int64) ([]models.Group, error)
 	GetGroupUsers(groupID int64) ([]int64, error)
 }
 
@@ -60,8 +60,8 @@ func (g *GroupUserService) RemoveUserFromGroup(userID int64, groupID int64) erro
 	return nil
 }
 
-func (g *GroupUserService) GetUserGroups(userID int64) ([]models.Group, error) {
-	res, err := g.storage.GetUserGroups(userID)
+func (g *GroupUserService) GetGroupsByStudentID(userID int64) ([]models.Group, error) {
+	res, err := g.storage.GetGroupsByStudentID(userID)
 	if err != nil {
 		return nil, fmt.Errorf("get user groups: %w", err)
 	}
@@ -69,8 +69,8 @@ func (g *GroupUserService) GetUserGroups(userID int64) ([]models.Group, error) {
 	return res, nil
 }
 
-func (g *GroupUserService) GetGroupsByTutorId(tutorId int64) ([]models.Group, error) {
-	res, err := g.storage.GetGroupsByTutorId(tutorId)
+func (g *GroupUserService) GetGroupsByTutorID(tutorID int64) ([]models.Group, error) {
+	res, err := g.storage.GetGroupsByTutorID(tutorID)
 	if err != nil {
 		return nil, fmt.Errorf("get tutor groups: %w", err)
 	}

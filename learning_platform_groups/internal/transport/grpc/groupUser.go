@@ -10,9 +10,9 @@ import (
 )
 
 type GroupUserService interface {
-	RemoveUserFromGroup(userId int64, groupId int64) error
-	GetUserGroups(userId int64) ([]models.Group, error)
-	GetGroupsByTutorId(tutorId int64) ([]models.Group, error)
+	RemoveUserFromGroup(userID int64, groupID int64) error
+	GetGroupsByStudentID(userID int64) ([]models.Group, error)
+	GetGroupsByTutorID(tutorID int64) ([]models.Group, error)
 	AddUsersToGroup(userIDs []int64, groupID int64) ([]int64, error)
 	GetGroupUsers(groupID int64) ([]int64, error)
 }
@@ -62,11 +62,11 @@ func (g *GroupGRPCServer) RemoveUserFromGroup(
 	return &groupGRPC.RemoveUserFromGroupResponse{}, nil
 }
 
-func (g *GroupGRPCServer) GetUserGroups(
+func (g *GroupGRPCServer) GetGroupsByStudentId(
 	ctx context.Context,
-	in *groupGRPC.GetUserGroupsRequest,
-) (*groupGRPC.GetUserGroupsResponse, error) {
-	groups, err := g.service.GroupUserService.GetUserGroups(in.GetUserId())
+	in *groupGRPC.GetGroupsByStudentIdRequest,
+) (*groupGRPC.GetGroupsByStudentIdResponse, error) {
+	groups, err := g.service.GroupUserService.GetGroupsByStudentID(in.GetUserId())
 	if err != nil {
 		g.logger.Error(
 			"failed get user groups",
@@ -81,7 +81,7 @@ func (g *GroupGRPCServer) GetUserGroups(
 		resGroups = append(resGroups, mapGroupToGrpc(&oneGroup))
 	}
 
-	return &groupGRPC.GetUserGroupsResponse{
+	return &groupGRPC.GetGroupsByStudentIdResponse{
 		Groups: resGroups,
 	}, nil
 }
@@ -90,7 +90,7 @@ func (g *GroupGRPCServer) GetGroupsByTutorId(
 	ctx context.Context,
 	in *groupGRPC.GetGroupsByTutorIdRequest,
 ) (*groupGRPC.GetGroupsByTutorIdResponse, error) {
-	groups, err := g.service.GroupUserService.GetGroupsByTutorId(in.GetTutorId())
+	groups, err := g.service.GroupUserService.GetGroupsByTutorID(in.GetTutorId())
 	if err != nil {
 		g.logger.Error(
 			"failed get tutor groups",
