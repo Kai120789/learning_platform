@@ -5,7 +5,6 @@ import { Loader } from 'lucide-react';
 import { AuthProvider } from '@/app/providers';
 import { NotificationList } from '@/features/notifications';
 import { ToastContainer } from 'react-toastify';
-import { useTheme } from '@teispace/next-themes/client';
 
 
 export type AppRoutesProps = RouteProps & {
@@ -14,8 +13,6 @@ export type AppRoutesProps = RouteProps & {
 };
 
 export function AppRouter() {
-    const { theme, } = useTheme();
-
     const render = (route: AppRoutesProps) => {
         const element = (
             <Suspense fallback={<Loader />}>
@@ -54,7 +51,7 @@ export function AppRouter() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme={theme}
+                theme="colored"
             />
             <Routes>
                 <Route>

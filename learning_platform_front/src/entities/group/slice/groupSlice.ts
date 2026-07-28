@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { GroupData, GroupResponse, GroupSchema, GroupUser, ShortUserInfo } from "../types/types";
-import { getUserGroups } from "@/entities/group";
+import { getGroupsByStudentId } from "@/entities/group";
 import { getGroupsByTutorId } from "@/entities/group";
 import { createGroup } from "@/entities/group";
 import { deleteGroup } from "@/entities/group";
@@ -44,15 +44,15 @@ const groupSlice = createSlice({
 
     },
     extraReducers: (builder) => {
-        builder.addCase(getUserGroups.pending, (state) => {
+        builder.addCase(getGroupsByStudentId.pending, (state) => {
             state.isLoading = true
             state.error = ''
         })
-        builder.addCase(getUserGroups.rejected, (state, action) => {
+        builder.addCase(getGroupsByStudentId.rejected, (state, action) => {
             state.isLoading = false
             state.error = action.payload as string
         })
-        builder.addCase(getUserGroups.fulfilled, (state, action) => {
+        builder.addCase(getGroupsByStudentId.fulfilled, (state, action) => {
             state.isLoading = false
             state.error = ''
             state.data = action.payload.map(mapGroupResponse)

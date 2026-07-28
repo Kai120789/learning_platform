@@ -1,6 +1,6 @@
 import { UserRoleEnum } from "@/shared/enums/user"
 import { getGroupsByTutorId } from "@/entities/group"
-import { getUserGroups } from "@/entities/group"
+import { getGroupsByStudentId } from "@/entities/group"
 
 export function loadGroupsByRole(role?: UserRoleEnum) {
     if (!role) return null
@@ -9,5 +9,5 @@ export function loadGroupsByRole(role?: UserRoleEnum) {
         return getGroupsByTutorId()
     }
 
-    return getUserGroups()
+    return getGroupsByStudentId()
 }

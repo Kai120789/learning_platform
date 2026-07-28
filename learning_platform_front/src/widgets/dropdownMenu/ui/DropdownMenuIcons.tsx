@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { getRouteGroups, getRouteProfile, getRouteSettings, getRouteWelcome } from "@/app/router/routePaths";
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { logout } from "../api/logout";
-import { notificationActions } from "@/features/notifications";
 import { useTranslation } from "react-i18next";
 import { userActions } from "@/entities/user";
 
@@ -31,11 +30,6 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
         if (response.meta.requestStatus == "fulfilled") {
             dispatch(userActions.setIsAuth(false))
             navigate(getRouteWelcome())
-        } else {
-            dispatch(notificationActions.addNotification({
-                message: 'Ошибка',
-                type: 'error',
-            }))
         }
     }
 
