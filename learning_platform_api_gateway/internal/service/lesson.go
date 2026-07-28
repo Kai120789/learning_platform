@@ -11,11 +11,11 @@ type LessonService struct {
 
 type LessonClient interface {
 	GetOneLesson(lessonID int64) (*lessonDto.LessonResponse, error)
-	GetLessonsByUserId(userID int64) ([]lessonDto.LessonResponse, error)
+	GetLessonsByUserID(userID int64) ([]lessonDto.LessonResponse, error)
 	CreateLesson(lesson lessonDto.CreateLesson) (*lessonDto.LessonResponse, error)
 	UpdateLesson(lesson lessonDto.UpdateLesson) (*lessonDto.LessonResponse, error)
 	UpdateLessonStatus(lessonID int64, status enum.LessonStatus) error
-	GetLessonsByTutorId(tutorID int64) ([]lessonDto.LessonResponse, error)
+	GetLessonsByTutorID(tutorID int64) ([]lessonDto.LessonResponse, error)
 }
 
 func NewLessonService(client LessonClient) *LessonService {
@@ -33,8 +33,8 @@ func (l *LessonService) GetOneLesson(lessonID int64) (*lessonDto.LessonResponse,
 	return res, nil
 }
 
-func (l *LessonService) GetLessonsByUserId(userID int64) ([]lessonDto.LessonResponse, error) {
-	res, err := l.client.GetLessonsByUserId(userID)
+func (l *LessonService) GetLessonsByUserID(userID int64) ([]lessonDto.LessonResponse, error) {
+	res, err := l.client.GetLessonsByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ func (l *LessonService) UpdateLessonStatus(lessonID int64, status enum.LessonSta
 	return nil
 }
 
-func (l *LessonService) GetLessonsByTutorId(tutorID int64) ([]lessonDto.LessonResponse, error) {
-	res, err := l.client.GetLessonsByTutorId(tutorID)
+func (l *LessonService) GetLessonsByTutorID(tutorID int64) ([]lessonDto.LessonResponse, error) {
+	res, err := l.client.GetLessonsByTutorID(tutorID)
 	if err != nil {
 		return nil, err
 	}

@@ -52,12 +52,12 @@ func (g *GroupClient) CreateGroup(group groupDto.CreateGroupRequest, tutorID int
 	return mapGroupGrpcToDTO(resGroup.GetGroup()), nil
 }
 
-func (g *GroupClient) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error) {
+func (g *GroupClient) UpdateGroup(groupID int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	reqBody := &groupGRPC.UpdateGroupRequest{
-		Id:          groupId,
+		Id:          groupID,
 		Title:       newGroup.Title,
 		Description: newGroup.Description,
 		TgGroupLink: newGroup.TgGroupLink,
@@ -72,11 +72,13 @@ func (g *GroupClient) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRe
 	return mapGroupGrpcToDTO(resGroup.GetGroup()), nil
 }
 
-func (g *GroupClient) RemoveGroup(groupId int64) error {
+func (g *GroupClient) RemoveGroup(groupID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := g.client.RemoveGroup(ctx, &groupGRPC.RemoveGroupRequest{Id: groupId})
+	_, err := g.client.RemoveGroup(ctx, &groupGRPC.RemoveGroupRequest{
+		Id: groupID,
+	})
 	if err != nil {
 		return err
 	}
@@ -84,11 +86,11 @@ func (g *GroupClient) RemoveGroup(groupId int64) error {
 	return nil
 }
 
-func (g *GroupClient) GetGroupById(groupId int64) (*groupDto.GroupResponse, error) {
+func (g *GroupClient) GetGroupByID(groupID int64) (*groupDto.GroupResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resGroup, err := g.client.GetGroupById(ctx, &groupGRPC.GetGroupByIdRequest{Id: groupId})
+	resGroup, err := g.client.GetGroupById(ctx, &groupGRPC.GetGroupByIdRequest{Id: groupID})
 	if err != nil {
 		return nil, err
 	}
@@ -113,13 +115,13 @@ func (g *GroupClient) GetGroups() ([]groupDto.GroupResponse, error) {
 	return groups, nil
 }
 
-func (g *GroupClient) AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error) {
+func (g *GroupClient) AddUsersToGroup(groupID int64, userIDs []int64) ([]int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	resUsers, err := g.client.AddUsersToGroup(ctx, &groupGRPC.AddUsersToGroupRequest{
-		GroupId: groupId,
-		UserIds: userIds,
+		GroupId: groupID,
+		UserIds: userIDs,
 	})
 	if err != nil {
 		return nil, err
@@ -128,13 +130,13 @@ func (g *GroupClient) AddUsersToGroup(groupId int64, userIds []int64) ([]int64, 
 	return resUsers.GetUserIds(), nil
 }
 
-func (g *GroupClient) RemoveUserFromGroup(userId int64, groupId int64) error {
+func (g *GroupClient) RemoveUserFromGroup(userID int64, groupID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	_, err := g.client.RemoveUserFromGroup(ctx, &groupGRPC.RemoveUserFromGroupRequest{
-		UserId:  userId,
-		GroupId: groupId,
+		UserId:  userID,
+		GroupId: groupID,
 	})
 	if err != nil {
 		return err
@@ -143,11 +145,13 @@ func (g *GroupClient) RemoveUserFromGroup(userId int64, groupId int64) error {
 	return nil
 }
 
-func (g *GroupClient) GetUserGroups(userId int64) ([]groupDto.GroupResponse, error) {
+func (g *GroupClient) GetGroupsByStudentID(userID int64) ([]groupDto.GroupResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resGroups, err := g.client.GetUserGroups(ctx, &groupGRPC.GetUserGroupsRequest{UserId: userId})
+	resGroups, err := g.client.GetGroupsByStudentId(ctx, &groupGRPC.GetGroupsByStudentIdRequest{
+		UserId: userID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -160,11 +164,13 @@ func (g *GroupClient) GetUserGroups(userId int64) ([]groupDto.GroupResponse, err
 	return groups, nil
 }
 
-func (g *GroupClient) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error) {
+func (g *GroupClient) GetGroupsByTutorID(tutorID int64) ([]groupDto.GroupResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resGroups, err := g.client.GetGroupsByTutorId(ctx, &groupGRPC.GetGroupsByTutorIdRequest{TutorId: tutorId})
+	resGroups, err := g.client.GetGroupsByTutorId(ctx, &groupGRPC.GetGroupsByTutorIdRequest{
+		TutorId: tutorID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -177,11 +183,13 @@ func (g *GroupClient) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupRespons
 	return groups, nil
 }
 
-func (g *GroupClient) GetGroupUsers(groupId int64) ([]int64, error) {
+func (g *GroupClient) GetGroupUsers(groupID int64) ([]int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	resUsers, err := g.client.GetGroupUsers(ctx, &groupGRPC.GetGroupUsersRequest{GroupId: groupId})
+	resUsers, err := g.client.GetGroupUsers(ctx, &groupGRPC.GetGroupUsersRequest{
+		GroupId: groupID,
+	})
 	if err != nil {
 		return nil, err
 	}

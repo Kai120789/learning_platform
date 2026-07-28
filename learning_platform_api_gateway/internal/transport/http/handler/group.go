@@ -16,15 +16,15 @@ type GroupHandler struct {
 
 type GroupService interface {
 	CreateGroup(group groupDto.CreateGroupRequest, tutorID int64) (*groupDto.GroupFullResponse, error)
-	UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error)
-	RemoveGroup(groupId int64) error
-	GetGroupById(groupId int64) (*groupDto.GroupResponse, error)
+	UpdateGroup(groupID int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error)
+	RemoveGroup(groupID int64) error
+	GetGroupByID(groupID int64) (*groupDto.GroupResponse, error)
 	GetGroups() ([]groupDto.GroupResponse, error)
-	AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error)
-	RemoveUserFromGroup(userId int64, groupId int64) error
-	GetUserGroups(userId int64) ([]groupDto.GroupFullResponse, error)
-	GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupFullResponse, error)
-	GetGroupUsers(groupId int64) ([]int64, error)
+	AddUsersToGroup(groupID int64, userIDs []int64) ([]int64, error)
+	RemoveUserFromGroup(userID int64, groupID int64) error
+	GetGroupsByStudentID(userID int64) ([]groupDto.GroupFullResponse, error)
+	GetGroupsByTutorID(tutorID int64) ([]groupDto.GroupFullResponse, error)
+	GetGroupUsers(groupID int64) ([]int64, error)
 }
 
 func NewGroupHandler(service GroupService, logger *zap.Logger) *GroupHandler {
@@ -67,9 +67,9 @@ func (g *GroupHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g *GroupHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
-	strGroupId := chi.URLParam(r, "groupId")
+	strGroupID := chi.URLParam(r, "groupID")
 
-	groupId, err := strconv.Atoi(strGroupId)
+	groupID, err := strconv.Atoi(strGroupID)
 	if err != nil {
 		g.logger.Error("invalid param group id", zap.Error(err))
 		http.Error(w, "invalid param group id", http.StatusBadRequest)
@@ -85,7 +85,7 @@ func (g *GroupHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resGroup, err := g.service.UpdateGroup(int64(groupId), newGroup)
+	resGroup, err := g.service.UpdateGroup(int64(groupID), newGroup)
 	if err != nil {
 		g.logger.Error("failed to update group", zap.Error(err))
 		http.Error(w, "failed to update group", http.StatusInternalServerError)
@@ -98,16 +98,16 @@ func (g *GroupHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g *GroupHandler) RemoveGroup(w http.ResponseWriter, r *http.Request) {
-	strGroupId := chi.URLParam(r, "groupId")
+	strGroupID := chi.URLParam(r, "groupID")
 
-	groupId, err := strconv.Atoi(strGroupId)
+	groupID, err := strconv.Atoi(strGroupID)
 	if err != nil {
 		g.logger.Error("invalid param group id", zap.Error(err))
 		http.Error(w, "invalid param group id", http.StatusBadRequest)
 		return
 	}
 
-	err = g.service.RemoveGroup(int64(groupId))
+	err = g.service.RemoveGroup(int64(groupID))
 	if err != nil {
 		g.logger.Error("failed to delete group", zap.Error(err))
 		http.Error(w, "failed to delete group", http.StatusInternalServerError)
@@ -117,17 +117,17 @@ func (g *GroupHandler) RemoveGroup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (g *GroupHandler) GetGroupById(w http.ResponseWriter, r *http.Request) {
-	strGroupId := chi.URLParam(r, "groupId")
+func (g *GroupHandler) GetGroupByID(w http.ResponseWriter, r *http.Request) {
+	strGroupID := chi.URLParam(r, "groupID")
 
-	groupId, err := strconv.Atoi(strGroupId)
+	groupID, err := strconv.Atoi(strGroupID)
 	if err != nil {
 		g.logger.Error("invalid param group id", zap.Error(err))
 		http.Error(w, "invalid param group id", http.StatusBadRequest)
 		return
 	}
 
-	group, err := g.service.GetGroupById(int64(groupId))
+	group, err := g.service.GetGroupByID(int64(groupID))
 	if err != nil {
 		g.logger.Error("failed to get one group", zap.Error(err))
 		http.Error(w, "failed to get one group", http.StatusInternalServerError)
@@ -153,25 +153,25 @@ func (g *GroupHandler) GetGroups(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g *GroupHandler) AddUsersToGroup(w http.ResponseWriter, r *http.Request) {
-	strGroupId := chi.URLParam(r, "groupId")
+	strGroupID := chi.URLParam(r, "groupID")
 
-	groupId, err := strconv.Atoi(strGroupId)
+	groupID, err := strconv.Atoi(strGroupID)
 	if err != nil {
 		g.logger.Error("invalid param group id", zap.Error(err))
 		http.Error(w, "invalid param group id", http.StatusBadRequest)
 		return
 	}
 
-	var userIds []int64
+	var userIDs []int64
 
-	err = json.NewDecoder(r.Body).Decode(&userIds)
+	err = json.NewDecoder(r.Body).Decode(&userIDs)
 	if err != nil {
 		g.logger.Error("invalid user ids", zap.Error(err))
 		http.Error(w, "invalid user ids", http.StatusBadRequest)
 		return
 	}
 
-	users, err := g.service.AddUsersToGroup(int64(groupId), userIds)
+	users, err := g.service.AddUsersToGroup(int64(groupID), userIDs)
 	if err != nil {
 		g.logger.Error("failed to add users to group", zap.Error(err))
 		http.Error(w, "failed to add users to group", http.StatusInternalServerError)
@@ -184,25 +184,25 @@ func (g *GroupHandler) AddUsersToGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g *GroupHandler) RemoveUserFromGroup(w http.ResponseWriter, r *http.Request) {
-	strGroupId := chi.URLParam(r, "groupId")
+	strGroupID := chi.URLParam(r, "groupID")
 
-	groupId, err := strconv.Atoi(strGroupId)
+	groupID, err := strconv.Atoi(strGroupID)
 	if err != nil {
 		g.logger.Error("invalid param group id", zap.Error(err))
 		http.Error(w, "invalid param group id", http.StatusBadRequest)
 		return
 	}
 
-	strUserId := chi.URLParam(r, "userId")
+	strUserID := chi.URLParam(r, "userID")
 
-	userId, err := strconv.Atoi(strUserId)
+	userID, err := strconv.Atoi(strUserID)
 	if err != nil {
 		g.logger.Error("invalid param user id", zap.Error(err))
 		http.Error(w, "invalid param user id", http.StatusBadRequest)
 		return
 	}
 
-	err = g.service.RemoveUserFromGroup(int64(userId), int64(groupId))
+	err = g.service.RemoveUserFromGroup(int64(userID), int64(groupID))
 	if err != nil {
 		g.logger.Error("failed to remove users from group", zap.Error(err))
 		http.Error(w, "failed to remove users from group", http.StatusInternalServerError)
@@ -212,7 +212,7 @@ func (g *GroupHandler) RemoveUserFromGroup(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 }
 
-func (g *GroupHandler) GetUserGroups(w http.ResponseWriter, r *http.Request) {
+func (g *GroupHandler) GetGroupsByStudentID(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(int64)
 	if !ok {
 		g.logger.Error(
@@ -223,7 +223,7 @@ func (g *GroupHandler) GetUserGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	groups, err := g.service.GetUserGroups(userID)
+	groups, err := g.service.GetGroupsByStudentID(userID)
 	if err != nil {
 		g.logger.Error("failed to get user groups", zap.Error(err))
 		http.Error(w, "failed to get user groups", http.StatusInternalServerError)
@@ -235,7 +235,7 @@ func (g *GroupHandler) GetUserGroups(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(groups)
 }
 
-func (g *GroupHandler) GetGroupsByTutorId(w http.ResponseWriter, r *http.Request) {
+func (g *GroupHandler) GetGroupsByTutorID(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(int64)
 	if !ok {
 		g.logger.Error(
@@ -246,7 +246,7 @@ func (g *GroupHandler) GetGroupsByTutorId(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	groups, err := g.service.GetGroupsByTutorId(userID)
+	groups, err := g.service.GetGroupsByTutorID(userID)
 	if err != nil {
 		g.logger.Error("failed to get tutor groups", zap.Error(err))
 		http.Error(w, "failed to get tutor groups", http.StatusInternalServerError)
@@ -259,16 +259,16 @@ func (g *GroupHandler) GetGroupsByTutorId(w http.ResponseWriter, r *http.Request
 }
 
 func (g *GroupHandler) GetGroupUsers(w http.ResponseWriter, r *http.Request) {
-	strGroupId := chi.URLParam(r, "groupId")
+	strGroupID := chi.URLParam(r, "groupID")
 
-	groupId, err := strconv.Atoi(strGroupId)
+	groupID, err := strconv.Atoi(strGroupID)
 	if err != nil {
 		g.logger.Error("invalid param user id", zap.Error(err))
 		http.Error(w, "invalid param user id", http.StatusBadRequest)
 		return
 	}
 
-	users, err := g.service.GetGroupUsers(int64(groupId))
+	users, err := g.service.GetGroupUsers(int64(groupID))
 	if err != nil {
 		g.logger.Error("failed to get group users", zap.Error(err))
 		http.Error(w, "failed to get group users", http.StatusInternalServerError)

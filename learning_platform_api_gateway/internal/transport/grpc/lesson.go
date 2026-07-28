@@ -45,7 +45,7 @@ func (l *LessonClient) GetOneLesson(lessonID int64) (*lessonDto.LessonResponse, 
 	return grpcLessonResponseToDTO(lesson), nil
 }
 
-func (l *LessonClient) GetLessonsByUserId(userID int64) ([]lessonDto.LessonResponse, error) {
+func (l *LessonClient) GetLessonsByUserID(userID int64) ([]lessonDto.LessonResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -137,7 +137,7 @@ func (l *LessonClient) UpdateLessonStatus(lessonID int64, status enum.LessonStat
 	return nil
 }
 
-func (l *LessonClient) GetLessonsByTutorId(tutorID int64) ([]lessonDto.LessonResponse, error) {
+func (l *LessonClient) GetLessonsByTutorID(tutorID int64) ([]lessonDto.LessonResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

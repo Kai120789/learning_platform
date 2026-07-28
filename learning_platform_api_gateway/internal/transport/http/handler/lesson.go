@@ -17,11 +17,11 @@ type LessonHandler struct {
 
 type LessonService interface {
 	GetOneLesson(lessonID int64) (*lessonDto.LessonResponse, error)
-	GetLessonsByUserId(userID int64) ([]lessonDto.LessonResponse, error)
+	GetLessonsByUserID(userID int64) ([]lessonDto.LessonResponse, error)
 	CreateLesson(lesson lessonDto.CreateLesson) (*lessonDto.LessonResponse, error)
 	UpdateLesson(lesson lessonDto.UpdateLesson) (*lessonDto.LessonResponse, error)
 	UpdateLessonStatus(lessonID int64, status enum.LessonStatus) error
-	GetLessonsByTutorId(tutorID int64) ([]lessonDto.LessonResponse, error)
+	GetLessonsByTutorID(tutorID int64) ([]lessonDto.LessonResponse, error)
 }
 
 func NewLessonHandler(service LessonService, logger *zap.Logger) *LessonHandler {
@@ -32,7 +32,7 @@ func NewLessonHandler(service LessonService, logger *zap.Logger) *LessonHandler 
 }
 
 func (l *LessonHandler) GetOneLesson(w http.ResponseWriter, r *http.Request) {
-	strLessonID := chi.URLParam(r, "lessonId")
+	strLessonID := chi.URLParam(r, "lessonID")
 	lessonID, err := strconv.Atoi(strLessonID)
 	if err != nil {
 		l.logger.Error("invalid param lesson id", zap.Error(err))
@@ -52,7 +52,7 @@ func (l *LessonHandler) GetOneLesson(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func (l *LessonHandler) GetLessonsByUserId(w http.ResponseWriter, r *http.Request) {
+func (l *LessonHandler) GetLessonsByUserID(w http.ResponseWriter, r *http.Request) {
 	strUserID := chi.URLParam(r, "userID")
 	userID, err := strconv.Atoi(strUserID)
 	if err != nil {
@@ -61,7 +61,7 @@ func (l *LessonHandler) GetLessonsByUserId(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	res, err := l.service.GetLessonsByUserId(int64(userID))
+	res, err := l.service.GetLessonsByUserID(int64(userID))
 	if err != nil {
 		l.logger.Error("failed to get lessons by user id", zap.Int("userID", userID), zap.Error(err))
 		http.Error(w, "failed to get lessons by user id", http.StatusInternalServerError)
@@ -116,7 +116,7 @@ func (l *LessonHandler) UpdateLesson(w http.ResponseWriter, r *http.Request) {
 }
 
 func (l *LessonHandler) UpdateLessonStatus(w http.ResponseWriter, r *http.Request) {
-	strLessonID := chi.URLParam(r, "lessonId")
+	strLessonID := chi.URLParam(r, "lessonID")
 	lessonID, err := strconv.Atoi(strLessonID)
 	if err != nil {
 		l.logger.Error("invalid param lesson id", zap.Error(err))
@@ -142,7 +142,7 @@ func (l *LessonHandler) UpdateLessonStatus(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 }
 
-func (l *LessonHandler) GetLessonsByTutorId(w http.ResponseWriter, r *http.Request) {
+func (l *LessonHandler) GetLessonsByTutorID(w http.ResponseWriter, r *http.Request) {
 	strTutorID := chi.URLParam(r, "tutorID")
 	tutorID, err := strconv.Atoi(strTutorID)
 	if err != nil {
@@ -151,7 +151,7 @@ func (l *LessonHandler) GetLessonsByTutorId(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	res, err := l.service.GetLessonsByTutorId(int64(tutorID))
+	res, err := l.service.GetLessonsByTutorID(int64(tutorID))
 	if err != nil {
 		l.logger.Error("failed to get lessons by tutor id", zap.Int("tutorID", tutorID), zap.Error(err))
 		http.Error(w, "failed to get lessons by tutor id", http.StatusInternalServerError)

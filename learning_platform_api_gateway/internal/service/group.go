@@ -14,15 +14,15 @@ type GroupService struct {
 
 type GroupClient interface {
 	CreateGroup(group groupDto.CreateGroupRequest, tutorID int64) (*groupDto.GroupResponse, error)
-	UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error)
-	RemoveGroup(groupId int64) error
-	GetGroupById(groupId int64) (*groupDto.GroupResponse, error)
+	UpdateGroup(groupID int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error)
+	RemoveGroup(groupID int64) error
+	GetGroupByID(groupID int64) (*groupDto.GroupResponse, error)
 	GetGroups() ([]groupDto.GroupResponse, error)
-	AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error)
-	RemoveUserFromGroup(userId int64, groupId int64) error
-	GetUserGroups(userId int64) ([]groupDto.GroupResponse, error)
-	GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupResponse, error)
-	GetGroupUsers(groupId int64) ([]int64, error)
+	AddUsersToGroup(groupID int64, userIDs []int64) ([]int64, error)
+	RemoveUserFromGroup(userID int64, groupID int64) error
+	GetGroupsByStudentID(userID int64) ([]groupDto.GroupResponse, error)
+	GetGroupsByTutorID(tutorID int64) ([]groupDto.GroupResponse, error)
+	GetGroupUsers(groupID int64) ([]int64, error)
 }
 
 type GroupUserService interface {
@@ -71,8 +71,8 @@ func (g *GroupService) CreateGroup(group groupDto.CreateGroupRequest, tutorID in
 	return resGroup, nil
 }
 
-func (g *GroupService) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error) {
-	res, err := g.client.UpdateGroup(groupId, newGroup)
+func (g *GroupService) UpdateGroup(groupID int64, newGroup groupDto.UpdateGroupRequest) (*groupDto.GroupResponse, error) {
+	res, err := g.client.UpdateGroup(groupID, newGroup)
 	if err != nil {
 		return nil, err
 	}
@@ -80,8 +80,8 @@ func (g *GroupService) UpdateGroup(groupId int64, newGroup groupDto.UpdateGroupR
 	return res, nil
 }
 
-func (g *GroupService) RemoveGroup(groupId int64) error {
-	err := g.client.RemoveGroup(groupId)
+func (g *GroupService) RemoveGroup(groupID int64) error {
+	err := g.client.RemoveGroup(groupID)
 	if err != nil {
 		return err
 	}
@@ -89,8 +89,8 @@ func (g *GroupService) RemoveGroup(groupId int64) error {
 	return nil
 }
 
-func (g *GroupService) GetGroupById(groupId int64) (*groupDto.GroupResponse, error) {
-	res, err := g.client.GetGroupById(groupId)
+func (g *GroupService) GetGroupByID(groupID int64) (*groupDto.GroupResponse, error) {
+	res, err := g.client.GetGroupByID(groupID)
 	if err != nil {
 		return nil, err
 	}
@@ -107,8 +107,8 @@ func (g *GroupService) GetGroups() ([]groupDto.GroupResponse, error) {
 	return res, nil
 }
 
-func (g *GroupService) AddUsersToGroup(groupId int64, userIds []int64) ([]int64, error) {
-	res, err := g.client.AddUsersToGroup(groupId, userIds)
+func (g *GroupService) AddUsersToGroup(groupID int64, userIDs []int64) ([]int64, error) {
+	res, err := g.client.AddUsersToGroup(groupID, userIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -116,8 +116,8 @@ func (g *GroupService) AddUsersToGroup(groupId int64, userIds []int64) ([]int64,
 	return res, nil
 }
 
-func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
-	err := g.client.RemoveUserFromGroup(userId, groupId)
+func (g *GroupService) RemoveUserFromGroup(userID int64, groupID int64) error {
+	err := g.client.RemoveUserFromGroup(userID, groupID)
 	if err != nil {
 		return err
 	}
@@ -125,8 +125,8 @@ func (g *GroupService) RemoveUserFromGroup(userId int64, groupId int64) error {
 	return nil
 }
 
-func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupFullResponse, error) {
-	res, err := g.client.GetUserGroups(userId)
+func (g *GroupService) GetGroupsByStudentID(userID int64) ([]groupDto.GroupFullResponse, error) {
+	res, err := g.client.GetGroupsByStudentID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -139,8 +139,8 @@ func (g *GroupService) GetUserGroups(userId int64) ([]groupDto.GroupFullResponse
 	return resGroups, nil
 }
 
-func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupFullResponse, error) {
-	res, err := g.client.GetGroupsByTutorId(tutorId)
+func (g *GroupService) GetGroupsByTutorID(tutorID int64) ([]groupDto.GroupFullResponse, error) {
+	res, err := g.client.GetGroupsByTutorID(tutorID)
 	if err != nil {
 		return nil, err
 	}
@@ -153,8 +153,8 @@ func (g *GroupService) GetGroupsByTutorId(tutorId int64) ([]groupDto.GroupFullRe
 	return resGroups, nil
 }
 
-func (g *GroupService) GetGroupUsers(groupId int64) ([]int64, error) {
-	res, err := g.client.GetGroupUsers(groupId)
+func (g *GroupService) GetGroupUsers(groupID int64) ([]int64, error) {
+	res, err := g.client.GetGroupUsers(groupID)
 	if err != nil {
 		return nil, err
 	}
