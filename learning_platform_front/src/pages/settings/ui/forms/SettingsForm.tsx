@@ -4,8 +4,8 @@ import type { UserSettingsRequest } from "@/entities/user";
 import { notificationActions } from "@/features/notifications";
 import { languageToTranslationKey } from "@/features/registerForm/utils/utils";
 import { UserLanguageEnum } from "@/shared/enums/user";
-import { Field } from "@/shared/ui/Field";
 import { Switch } from "@/shared/ui/Switch";
+import { NativeSelect } from "@/shared/ui/NativeSelect";
 import { ConfirmButton } from "@/widgets/confirmButton";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -50,38 +50,38 @@ export function SettingsForm({
     }
 
     return (
-        <div className="flex flex-col border border-border bg-background p-5 lg:p-10 pb-5 rounded-lg space-y-5">
-            <Field className="flex flex-row">
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                    <div>
-                        <h3 className="font-medium flex flex-row gap-2 items-center">
-                            {t("settings.language")}<FaLanguage className="size-5 lg:size-8" />
+        <div className="flex flex-col border border-border bg-background rounded-lg overflow-hidden">
+            <div className="divide-y divide-border">
+                <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+                    <div className="min-w-0 space-y-0.5">
+                        <h3 className="text-sm font-medium flex items-center gap-1.5">
+                            {t("settings.language")}
+                            <FaLanguage className="size-4 text-muted-foreground" />
                         </h3>
                     </div>
-                    <select
-                        className="border border-input rounded-lg p-2"
+                    <NativeSelect
+                        containerClassName="w-auto shrink-0"
+                        className="h-auto w-auto min-w-28 py-1.5"
                         value={language}
                         onChange={(e) => {
                             i18n.changeLanguage((e.target.value as UserLanguageEnum).toLowerCase())
                             setLanguage(e.target.value as UserLanguageEnum)
                         }}
                     >
-                        {Object.values(UserLanguageEnum).map((language) => (
-                            <option key={language} value={language}>
-                                {t(languageToTranslationKey(language))}
+                        {Object.values(UserLanguageEnum).map((item) => (
+                            <option key={item} value={item}>
+                                {t(languageToTranslationKey(item))}
                             </option>
                         ))}
-                    </select>
+                    </NativeSelect>
                 </div>
-            </Field>
-            <Field className="flex flex-row">
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                    <div>
-                        <h3 className="font-medium">
+
+                <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+                    <div className="min-w-0 space-y-0.5">
+                        <h3 className="text-sm font-medium">
                             {t("settings.twoFa")}
                         </h3>
-
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                             {t("settings.twoFaHint")}
                         </p>
                     </div>
@@ -90,15 +90,13 @@ export function SettingsForm({
                         onCheckedChange={() => setIs2FaEnabled(!is2FaEnabled)}
                     />
                 </div>
-            </Field>
-            <Field className="flex flex-row">
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                    <div>
-                        <h3 className="font-medium">
+
+                <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+                    <div className="min-w-0 space-y-0.5">
+                        <h3 className="text-sm font-medium">
                             {t("settings.notifications")}
                         </h3>
-
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                             {t("settings.notificationsHint")}
                         </p>
                     </div>
@@ -107,11 +105,14 @@ export function SettingsForm({
                         onCheckedChange={() => setIsNotificationEnabled(!isNotificationEnabled)}
                     />
                 </div>
-            </Field>
-            <ConfirmButton
-                onClickConfirm={onClickConfirm}
-                onClickCancel={() => null}
-            />
+            </div>
+
+            <div className="border-t border-border px-4 py-3">
+                <ConfirmButton
+                    onClickConfirm={onClickConfirm}
+                    onClickCancel={() => null}
+                />
+            </div>
         </div>
     )
 }

@@ -7,6 +7,7 @@ import { Button } from "@/shared/ui/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Dialog"
 import { Field, FieldGroup, FieldLabel } from "@/shared/ui/Field"
 import { Input } from "@/shared/ui/Input"
+import { NativeSelect } from "@/shared/ui/NativeSelect"
 import { Separator } from "@/shared/ui/Separator"
 
 type CreateLessonModalProps = {
@@ -51,37 +52,40 @@ export function CreateLessonModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md p-5">
                 <DialogHeader>
-                    <DialogTitle className="text-xl text-left line-clamp-2 pr-10">
+                    <DialogTitle className="text-base text-left line-clamp-2 pr-10">
                         {t("createLesson.title")}
                     </DialogTitle>
                 </DialogHeader>
 
                 <Separator className="my-1" />
-                <form className="p-6 md:p-8" onSubmit={onSubmit}>
-                    <FieldGroup>
-                        <Field>
+                <form className="w-full" onSubmit={onSubmit}>
+                    <FieldGroup className="w-full gap-3">
+                        <Field className="w-full">
                             <FieldLabel>{t("createLesson.meetLink")}</FieldLabel>
                             <Input
+                                className="w-full"
                                 type="url"
                                 value={meetLink}
                                 onChange={(e) => setMeetLink(e.target.value)}
                                 placeholder="https://"
                             />
                         </Field>
-                        <Field>
+                        <Field className="w-full">
                             <FieldLabel>{t("createLesson.startTime")}</FieldLabel>
                             <Input
+                                className="w-full"
                                 required
                                 type="datetime-local"
                                 value={startTime}
                                 onChange={(e) => setStartTime(e.target.value)}
                             />
                         </Field>
-                        <Field>
+                        <Field className="w-full">
                             <FieldLabel>{t("createLesson.duration")}</FieldLabel>
                             <Input
+                                className="w-full"
                                 required
                                 type="number"
                                 min={15}
@@ -90,10 +94,9 @@ export function CreateLessonModal({
                                 onChange={(e) => setDuration(Number(e.target.value))}
                             />
                         </Field>
-                        <Field>
+                        <Field className="w-full">
                             <FieldLabel>{t("createLesson.group")}</FieldLabel>
-                            <select
-                                className="border border-input rounded-lg p-2"
+                            <NativeSelect
                                 value={groupId}
                                 onChange={(e) => setGroupId(Number(e.target.value))}
                             >
@@ -102,10 +105,10 @@ export function CreateLessonModal({
                                         {group.title}
                                     </option>
                                 ))}
-                            </select>
+                            </NativeSelect>
                         </Field>
                         <Field>
-                            <Button size="lg" type="submit">
+                            <Button type="submit" className="w-full">
                                 {t("common.create")}
                             </Button>
                         </Field>

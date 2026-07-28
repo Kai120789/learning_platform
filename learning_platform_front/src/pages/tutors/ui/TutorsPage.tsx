@@ -16,52 +16,52 @@ export default function TutorsPage() {
     const { t } = useTranslation()
 
     return (
-        <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
             <div className="space-y-1">
-                <Label className="text-2xl lg:text-4xl">
+                <Label className="text-xl lg:text-2xl">
                     {t("tutors.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("tutors.subtitle")}
                 </Label>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {mockTutors.map((tutor) => (
-                    <Card key={tutor.id}>
-                        <CardHeader className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <Avatar size="lg">
+                    <Card key={tutor.id} size="sm" className="h-full">
+                        <CardHeader className="space-y-2">
+                            <div className="flex items-center gap-2.5">
+                                <Avatar size="sm">
                                     <AvatarFallback>
                                         {tutor.name[0]}{tutor.surname[0]}
                                     </AvatarFallback>
                                 </Avatar>
-                                <div>
-                                    <CardTitle className="text-lg">
+                                <div className="min-w-0">
+                                    <CardTitle className="text-sm font-medium truncate">
                                         {tutor.name} {tutor.surname}
                                     </CardTitle>
-                                    {tutor.city && (
-                                        <CardDescription>{tutor.city}</CardDescription>
-                                    )}
+                                    <CardDescription className="text-xs truncate min-h-4">
+                                        {tutor.city || "\u00A0"}
+                                    </CardDescription>
                                 </div>
                             </div>
-                            {tutor.about && (
-                                <CardDescription>{tutor.about}</CardDescription>
-                            )}
+                            <CardDescription className="text-xs line-clamp-2 min-h-8">
+                                {tutor.about || "\u00A0"}
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="flex flex-wrap gap-2">
+                        <CardContent className="mt-auto space-y-2">
+                            <div className="flex min-h-6 flex-wrap gap-1 content-start">
                                 {tutor.subjects.map((subject) => (
-                                    <Badge key={subject} variant="outline">
+                                    <Badge key={subject} variant="outline" className="text-[10px]">
                                         {subject}
                                     </Badge>
                                 ))}
                             </div>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-xs text-muted-foreground">
                                 {t("tutors.experience", { years: tutor.experienceYears })}
                             </div>
-                            <div className="flex items-center gap-1 text-sm">
-                                <Star className="size-4 fill-current" />
+                            <div className="flex items-center gap-1 text-xs">
+                                <Star className="size-3.5 fill-current" />
                                 {t("tutors.rating")}: {tutor.rating}
                             </div>
                         </CardContent>

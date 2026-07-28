@@ -31,7 +31,7 @@ export function WeeklyScheduleStrip() {
             </CardHeader>
             <CardContent>
                 <div className="overflow-x-auto">
-                    <div className="grid min-w-[720px] grid-cols-7 overflow-hidden rounded-xl border h-72">
+                    <div className="grid min-w-[640px] grid-cols-7 overflow-hidden rounded-xl border h-72 lg:h-80">
                         {weekDays.map((day) => {
                             const slots = mockWeekSlots
                                 .filter((slot) => slot.weekday === day.weekday)

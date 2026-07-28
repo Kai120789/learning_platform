@@ -22,26 +22,26 @@ export function LeftMenuItem({ item, onClick }: LeftMenuItemProps) {
 
     return (
         <div className="flex flex-col items-start">
-            <div className="flex flex-row items-center mb-2">
+            <div className="flex flex-row items-center">
                 <Button
                     variant="link"
                     onClick={onClickItem}
-                    className="flex items-center gap-2 text-lg cursor-pointer"
+                    className="flex items-center gap-2 text-sm cursor-pointer"
                 >
-                    <item.icon className="size-6" />
+                    <item.icon className="size-4" />
                     {item.text}
                 </Button>
                 {hasChildren &&
                     (isOpen ? (
-                        <FaCaretUp onClick={() => setIsOpen((prev) => !prev)} className="size-5 cursor-pointer" />
+                        <FaCaretUp onClick={() => setIsOpen((prev) => !prev)} className="size-4 cursor-pointer" />
                     ) : (
-                        <FaCaretDown onClick={() => setIsOpen((prev) => !prev)} className="size-5 cursor-pointer" />
+                        <FaCaretDown onClick={() => setIsOpen((prev) => !prev)} className="size-4 cursor-pointer" />
                     ))
                 }
             </div>
             {isOpen &&
                 item.childrens?.map((child) => (
-                    <div key={child.path} className="ml-10">
+                    <div key={child.path} className="ml-8">
                         <LeftMenuItem onClick={onClick} item={child} />
                     </div>
                 ))

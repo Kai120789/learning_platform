@@ -6,6 +6,7 @@ import { Button } from "@/shared/ui/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Dialog"
 import { Field, FieldGroup, FieldLabel } from "@/shared/ui/Field"
 import { Input } from "@/shared/ui/Input"
+import { NativeSelect } from "@/shared/ui/NativeSelect"
 import { Separator } from "@/shared/ui/Separator"
 import { Textarea } from "@/shared/ui/Textarea"
 import { useState } from "react"
@@ -55,37 +56,37 @@ export function CreateGroupModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md p-5">
                 <DialogHeader>
-                    <DialogTitle className="text-xl text-left line-clamp-2 pr-10">
+                    <DialogTitle className="text-base text-left line-clamp-2 pr-10">
                         {t("groups.createTitle")}
                     </DialogTitle>
                 </DialogHeader>
 
                 <Separator className="my-1" />
-                <form className="p-6 md:p-8" onSubmit={onSubmit}>
-                    <FieldGroup>
-                        <Field>
+                <form className="w-full" onSubmit={onSubmit}>
+                    <FieldGroup className="w-full gap-3">
+                        <Field className="w-full">
                             <FieldLabel>{t("groups.name")}</FieldLabel>
                             <Input
+                                className="w-full"
                                 required
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                             />
                         </Field>
-                        <Field>
+                        <Field className="w-full">
                             <FieldLabel>{t("groups.description")}</FieldLabel>
                             <Textarea
                                 required
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="w-full break-words min-h-50"
+                                className="w-full break-words min-h-24 max-h-32"
                             />
                         </Field>
-                        <Field>
+                        <Field className="w-full">
                             <FieldLabel>{t("groups.subject")}</FieldLabel>
-                            <select
-                                className="border border-input rounded-lg p-2"
+                            <NativeSelect
                                 value={subjectId}
                                 onChange={(e) => setSubjectId(Number(e.target.value))}
                             >
@@ -94,10 +95,10 @@ export function CreateGroupModal({
                                         {subject.title + " " + subject.type}
                                     </option>
                                 ))}
-                            </select>
+                            </NativeSelect>
                         </Field>
                         <Field>
-                            <Button size="lg" type="submit">{t("common.create")}</Button>
+                            <Button type="submit" className="w-full">{t("common.create")}</Button>
                         </Field>
                     </FieldGroup>
                 </form>

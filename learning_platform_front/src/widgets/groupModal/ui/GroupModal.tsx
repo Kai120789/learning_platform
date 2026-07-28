@@ -90,9 +90,9 @@ export function GroupModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent>
+            <DialogContent className="p-5">
                 <DialogHeader>
-                    <DialogTitle className="text-xl text-left line-clamp-2 pr-10">
+                    <DialogTitle className="text-base text-left line-clamp-2 pr-10">
                         {isEditMode
                             ? (
                                 <Input
@@ -121,7 +121,7 @@ export function GroupModal({
                 <div className="mt-1">
                     <Textarea
                         disabled={!isEditMode}
-                        className="w-full break-words min-h-50"
+                        className="w-full break-words min-h-40 max-h-60"
                         value={description}
                         onChange={(e) => setDraftDescription(e.target.value)}
                     />
@@ -131,7 +131,7 @@ export function GroupModal({
                         <Separator className="my-1" />
 
                         <div className="flex flex-row items-center justify-between">
-                            <div className="font-medium">
+                            <div className="text-sm font-medium">
                                 {t("groups.users")}
                             </div>
                             {isCanEdit && <Button size="xs" onClick={() => setIsAddUsersOpen(true)}>
@@ -139,12 +139,12 @@ export function GroupModal({
                             </Button>}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="max-h-52 space-y-2 overflow-y-auto pr-1">
                             {group.users?.length
                                 ? group.users.map((user) => (
                                     <GroupUserItem key={user.id} user={user} groupID={group.id} />
                                 ))
-                                : <div className="text-muted-foreground">{t("groups.emptyUsers")}</div>
+                                : <div className="text-sm text-muted-foreground">{t("groups.emptyUsers")}</div>
                             }
                         </div>
                     </>

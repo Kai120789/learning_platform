@@ -37,28 +37,28 @@ export function GroupUserItem({
     }
 
     return (
-        <div className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50">
-            <div className="flex items-center gap-3">
-                <Avatar>
+        <div className="flex items-center justify-between rounded-lg border px-2.5 py-2 transition-colors hover:bg-muted/50">
+            <div className="flex items-center gap-2.5">
+                <Avatar size="sm">
                     <AvatarFallback>
                         {user.name[0] + user.surname[0]}
                     </AvatarFallback>
                 </Avatar>
 
                 <div>
-                    <p className="font-medium leading-none">
+                    <p className="text-sm font-medium leading-none">
                         {`${user.name} ${user.surname}`}
                     </p>
 
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                         {user.tgUsername}
                     </p>
                 </div>
             </div>
 
             <div className="flex flex-row gap-1">
-                <RiTelegramFill className="cursor-pointer" size={25} />
-                {isCanEdit && <MdDelete onClick={onClickRemoveUser} className="cursor-pointer text-destructive/70" size={25} />}
+                <RiTelegramFill className="cursor-pointer" size={20} />
+                {isCanEdit && <MdDelete onClick={onClickRemoveUser} className="cursor-pointer text-destructive/70" size={20} />}
             </div>
         </div>
     )

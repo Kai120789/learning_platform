@@ -45,7 +45,7 @@ export default function SettingsPage() {
                 )
             case SectionTabs.ACCOUNT:
                 return (
-                    <>
+                    <div className="space-y-3">
                         <ChangeTgLink
                             userTgLink={userData?.userInfo.tgLink}
                         />
@@ -53,7 +53,7 @@ export default function SettingsPage() {
                             userEmail={userData?.user.email}
                         />
                         <ChangePasswordForm />
-                    </>
+                    </div>
                 )
             case SectionTabs.SETTINGS:
                 return (
@@ -73,42 +73,41 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="flex flex-col py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="flex flex-col py-8 lg:py-10 px-6 lg:px-20 space-y-5">
             <div className="space-y-1">
-                <Label className="text-2xl lg:text-4xl">
+                <Label className="text-xl lg:text-2xl">
                     {t("settings.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("settings.subtitle")}
                 </Label>
             </div>
-            <div className="flex flex-col lg:flex-row gap-5 lg:gap-10">
-                <div>
-                    <div className="w-full lg:w-50 shrink-0">
-                        <div className="flex flex-row lg:flex-col border border-border lg:border-none rounded-xl">
-                            {sections.map((section) => {
-                                const Icon = section.icon;
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
+                <aside className="w-full lg:w-44 shrink-0">
+                    <nav className="flex flex-row lg:flex-col gap-1 border border-border lg:border-none rounded-lg lg:sticky lg:top-20">
+                        {sections.map((section) => {
+                            const Icon = section.icon;
 
-                                return (
-                                    <button
-                                        key={section.id}
-                                        onClick={() => setActive(section.id)}
-                                        className={cn(
-                                            "flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors justify-center lg:justify-start hover:border hover:border-border",
-                                            active === section.id
-                                                ? "bg-black text-white"
-                                                : "hover:bg-muted"
-                                        )}
-                                    >
-                                        <Icon size={18} />
-                                        <span className="hidden lg:flex">{t(section.titleKey)}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col space-y-5 w-full">
+                            return (
+                                <button
+                                    key={section.id}
+                                    type="button"
+                                    onClick={() => setActive(section.id)}
+                                    className={cn(
+                                        "flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-left transition-colors justify-center lg:justify-start",
+                                        active === section.id
+                                            ? "bg-primary text-primary-foreground"
+                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    )}
+                                >
+                                    <Icon size={15} />
+                                    <span className="hidden lg:flex">{t(section.titleKey)}</span>
+                                </button>
+                            );
+                        })}
+                    </nav>
+                </aside>
+                <div className="min-w-0 flex-1 space-y-3">
                     {renderFormByTab()}
                 </div>
             </div>

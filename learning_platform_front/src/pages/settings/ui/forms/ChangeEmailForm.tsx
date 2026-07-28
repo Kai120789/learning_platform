@@ -15,20 +15,18 @@ export function ChangeEmaildForm({
     const [email, setEmail] = useState<string>(userEmail);
 
     return (
-        <div className="flex flex-col border border-border bg-background p-5 lg:p-10 pb-5 rounded-lg space-y-5">
-            <div className="flex flex-row gap-4 justify-end">
-                <Field>
-                    <FieldLabel htmlFor="email">{t("settings.email")}</FieldLabel>
-                    <Input
-                        id="email"
-                        type="email"
-                        placeholder="m@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </Field>
-            </div>
+        <div className="flex flex-col border border-border bg-background p-4 lg:p-5 rounded-lg space-y-3">
+            <Field>
+                <FieldLabel htmlFor="email">{t("settings.email")}</FieldLabel>
+                <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+            </Field>
             <ConfirmButton
                 onClickConfirm={() => null}
                 onClickCancel={() => null}

@@ -45,17 +45,17 @@ export function ProfileStatsGrid() {
     ]
 
     return (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => (
-                <Card key={stat.key}>
+                <Card key={stat.key} className="h-full">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             {t(`profile.${stat.key}`)}
                         </CardTitle>
                         <stat.icon className="size-4 text-muted-foreground" />
                     </CardHeader>
-                    <CardContent className="space-y-1">
-                        <div className="text-2xl font-bold">{stat.value}</div>
+                    <CardContent className="mt-auto space-y-1">
+                        <div className="text-xl font-bold">{stat.value}</div>
                         <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
                             <TrendingUp className="size-3" />
                             {t("profile.statChange", { count: stat.change })}

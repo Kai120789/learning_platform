@@ -9,12 +9,10 @@ export function GroupsMenu({ groups }: GroupsMenuProps) {
     if (!groups?.length) return null
 
     return (
-        <div>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {groups.map((group) => (
-                    <GroupItem key={group.id} group={group} />
-                ))}
-            </div>
+        <div className="grid auto-rows-fr gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {groups.map((group) => (
+                <GroupItem key={group.id} group={group} />
+            ))}
         </div>
     )
 }

@@ -154,6 +154,9 @@
         "week": "Week",
         "month": "Month",
         "createLesson": "Create lesson",
+        "dayDetails": "Selected day",
+        "upcoming": "Upcoming",
+        "noEvents": "No lessons on this day",
         "mockEvents": {
             "math": "Mathematics",
             "physics": "Physics",

@@ -44,29 +44,31 @@ export function MaterialsBrowser() {
                     currentFolderId={currentFolderId}
                     onNavigate={goToBreadcrumb}
                 />
-                <div className="flex flex-row sm:gap-2 border border-border sm:border-none rounded-xl">
+                <div className="flex rounded-lg border border-border p-0.5 bg-secondary/60">
                     <button
+                        type="button"
                         onClick={() => setViewMode("list")}
                         className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-left transition-colors justify-center sm:justify-start",
+                            "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
                             viewMode === "list"
-                                ? "bg-primary text-card"
-                                : "sm:bg-card sm:border sm:border-border hover:bg-muted"
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-secondary-foreground hover:bg-muted"
                         )}
                     >
-                        <List className="size-4" />
+                        <List className="size-3.5" />
                         {t("materials.viewList")}
                     </button>
                     <button
+                        type="button"
                         onClick={() => setViewMode("grid")}
                         className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-left transition-colors justify-center sm:justify-start",
+                            "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
                             viewMode === "grid"
-                                ? "bg-primary text-card"
-                                : "sm:bg-card sm:border sm:border-border hover:bg-muted"
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-secondary-foreground hover:bg-muted"
                         )}
                     >
-                        <LayoutGrid className="size-4" />
+                        <LayoutGrid className="size-3.5" />
                         {t("materials.viewGrid")}
                     </button>
                 </div>

@@ -60,11 +60,11 @@ export function UserDataForm({
     }
 
     return (
-        <form className="border border-border bg-background p-5 lg:p-10 pb-5 rounded-lg space-y-5">
-            <div className="flex items-center gap-6 pb-8 border-b">
-                <div className="group relative h-20 w-20 lg:h-36 lg:w-36 cursor-pointer overflow-hidden rounded-full border-2">
+        <form className="border border-border bg-background p-4 lg:p-5 rounded-lg space-y-4">
+            <div className="flex items-center gap-4 pb-4 border-b">
+                <div className="group relative h-16 w-16 lg:h-20 lg:w-20 cursor-pointer overflow-hidden rounded-full border">
                     <div className="flex h-full w-full items-center justify-center bg-background">
-                        <CiUser className="size-15 lg:size-25" />
+                        <CiUser className="size-8 lg:size-10" />
                     </div>
                     <div
                         className="
@@ -72,21 +72,21 @@ export function UserDataForm({
                             bg-black/30 opacity-0 transition-opacity duration-200 group-hover:opacity-100
                         "
                     >
-                        <CiEdit className="text-white" size={42} />
+                        <CiEdit className="text-white" size={22} />
                     </div>
                 </div>
-                <div className="space-y-1">
-                    <h2 className="text-lg lg:text-2xl font-semibold">
+                <div className="space-y-0.5">
+                    <h2 className="text-sm lg:text-base font-semibold">
                         {name} {surname}
                     </h2>
-                    <p className="text-xs lg:text-md text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                         {userData.user.email}
                     </p>
                 </div>
             </div>
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
                 <div className="flex flex-col lg:flex-row gap-4">
-                    <Field>
+                    <Field className="flex-1">
                         <FieldLabel htmlFor="surname">{t("settings.surname")}</FieldLabel>
                         <Input
                             id="surname"
@@ -96,7 +96,7 @@ export function UserDataForm({
                             onChange={(e) => setSurname(e.target.value)}
                         />
                     </Field>
-                    <Field>
+                    <Field className="flex-1">
                         <FieldLabel htmlFor="name">{t("settings.name")}</FieldLabel>
                         <Input
                             id="name"
@@ -106,7 +106,7 @@ export function UserDataForm({
                             onChange={(e) => setName(e.target.value)}
                         />
                     </Field>
-                    <Field>
+                    <Field className="flex-1">
                         <FieldLabel className="text-primary/60" htmlFor="patronymic">{t("settings.patronymic")}</FieldLabel>
                         <Input
                             id="patronymic"
@@ -121,10 +121,9 @@ export function UserDataForm({
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
-                                size="lg"
                                 variant="outline"
                                 className={cn(
-                                    "justify-start text-left font-normal",
+                                    "justify-start text-left font-normal w-full",
                                     !birthDate && "text-muted-foreground"
                                 )}
                             >
@@ -187,7 +186,7 @@ export function UserDataForm({
                         placeholder="Расскажите о себе..."
                         value={about}
                         onChange={(e) => setAbout(e.target.value)}
-                        className="w-full break-words min-h-50"
+                        className="w-full break-words min-h-28 text-sm"
                     />
                 </Field>
             </div>

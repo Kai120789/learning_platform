@@ -40,21 +40,21 @@ export function ProfileHeaderCard({
     })
 
     return (
-        <Card className="p-0 gap-5">
-            <div className="h-28 bg-primary/25 lg:h-36" />
+        <Card className="p-0 gap-4">
+            <div className="h-20 bg-primary/25 lg:h-24" />
 
-            <div className="px-6 pb-6">
+            <div className="px-5 pb-5">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div className="flex items-end gap-4">
-                        <Avatar className="-mt-12 size-24 ring-4 ring-background lg:-mt-14 lg:size-28">
+                        <Avatar className="-mt-10 size-20 ring-4 ring-background lg:-mt-12 lg:size-24">
                             {avatar && <AvatarImage src={avatar} alt={name} />}
-                            <AvatarFallback className="text-2xl">
+                            <AvatarFallback className="text-xl">
                                 {name[0]}{surname[0]}
                             </AvatarFallback>
                         </Avatar>
                         <div className="space-y-1 pb-1">
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-xl font-semibold lg:text-2xl">
+                                <span className="text-lg font-semibold lg:text-xl">
                                     {name} {surname}
                                 </span>
                                 <Badge>{t(`roles.${role}`)}</Badge>

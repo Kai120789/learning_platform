@@ -154,6 +154,9 @@
         "week": "Неделя",
         "month": "Месяц",
         "createLesson": "Создать урок",
+        "dayDetails": "Выбранный день",
+        "upcoming": "Ближайшие",
+        "noEvents": "В этот день уроков нет",
         "mockEvents": {
             "math": "Математика",
             "physics": "Физика",

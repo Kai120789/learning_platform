@@ -36,22 +36,22 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger render={trigger} />
-            <DropdownMenuContent className="bg-background min-w-50 py-2 px-3 space-y-1 font-medium">
-                <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-md gap-2 cursor-pointer">
-                    <FiUser className="size-5" />
+            <DropdownMenuContent className="bg-background min-w-44 py-1.5 px-2 space-y-0.5 text-sm font-medium">
+                <DropdownMenuItem onClick={() => navigate(getRouteProfile())} className="text-sm gap-2 cursor-pointer">
+                    <FiUser className="size-4" />
                     {t("rightMenu.profile")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-md gap-2 cursor-pointer">
-                    <FiSettings className="size-5" />
+                <DropdownMenuItem onClick={() => navigate(getRouteSettings())} className="text-sm gap-2 cursor-pointer">
+                    <FiSettings className="size-4" />
                     {t("rightMenu.settings")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(getRouteGroups())} className="text-md gap-2 cursor-pointer">
-                    <FiUsers className="size-5" />
+                <DropdownMenuItem onClick={() => navigate(getRouteGroups())} className="text-sm gap-2 cursor-pointer">
+                    <FiUsers className="size-4" />
                     {t("rightMenu.groups")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-md gap-2 cursor-pointer">
-                    <FiLogOut className="size-5" />
+                <DropdownMenuItem onClick={onClickExit} variant="destructive" className="text-sm gap-2 cursor-pointer">
+                    <FiLogOut className="size-4" />
                     {t("rightMenu.logout")}
                 </DropdownMenuItem>
             </DropdownMenuContent>

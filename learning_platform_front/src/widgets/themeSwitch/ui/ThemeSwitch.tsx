@@ -30,14 +30,14 @@ export function ThemeSwitch() {
     };
 
     return (
-        <div className="flex gap-3">
-            <FiSun />
+        <div className="flex items-center gap-2">
+            <FiSun className="size-3.5" />
             <Switch
-                className="border border-ring"
+                className="border border-ring scale-90"
                 checked={theme == 'dark'}
                 onCheckedChange={toggleTheme}
             />
-            <IoMoonOutline size={17} />
+            <IoMoonOutline className="size-3.5" />
         </div>
     )
 }

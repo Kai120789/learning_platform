@@ -14,45 +14,47 @@ export default function PracticesPage() {
     const { t } = useTranslation()
 
     return (
-        <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
             <div className="space-y-1">
-                <Label className="text-2xl lg:text-4xl">
+                <Label className="text-xl lg:text-2xl">
                     {t("practices.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("practices.subtitle")}
                 </Label>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {mockPractices.map((practice) => {
                     const score = practice.correctAnswersCount != null
                         ? Math.round((practice.correctAnswersCount / practice.exercisesCount) * 100)
                         : null
 
                     return (
-                        <Card key={practice.id}>
-                            <CardHeader className="space-y-3">
-                                <div className="flex items-start justify-between gap-3">
-                                    <CardTitle className="text-lg">{practice.title}</CardTitle>
-                                    <Badge variant="secondary">
+                        <Card key={practice.id} size="sm" className="h-full">
+                            <CardHeader className="space-y-2">
+                                <div className="flex items-start justify-between gap-2">
+                                    <CardTitle className="text-sm font-medium line-clamp-2 min-h-10">
+                                        {practice.title}
+                                    </CardTitle>
+                                    <Badge variant="secondary" className="shrink-0 text-[10px]">
                                         {t(`practiceStatus.${practice.status}`)}
                                     </Badge>
                                 </div>
-                                <CardDescription>
+                                <CardDescription className="text-xs line-clamp-1">
                                     {practice.subjectTitle} · {practice.groupTitle}
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-2 text-sm">
+                            <CardContent className="mt-auto space-y-1 text-xs">
                                 <div>
                                     {t("practices.deadline")}: {new Date(practice.endTime).toLocaleDateString()}
                                 </div>
                                 <div>
                                     {t("practices.exercises", { count: practice.exercisesCount })}
                                 </div>
-                                {score != null && (
-                                    <div>{t("practices.score", { score })}</div>
-                                )}
+                                <div className="min-h-4">
+                                    {score != null ? t("practices.score", { score }) : "\u00A0"}
+                                </div>
                             </CardContent>
                         </Card>
                     )

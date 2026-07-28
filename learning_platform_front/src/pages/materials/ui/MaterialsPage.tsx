@@ -6,12 +6,12 @@ export default function MaterialsPage() {
     const { t } = useTranslation()
 
     return (
-        <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
             <div className="space-y-1">
-                <Label className="text-2xl lg:text-4xl">
+                <Label className="text-xl lg:text-2xl">
                     {t("materials.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("materials.subtitle")}
                 </Label>
             </div>

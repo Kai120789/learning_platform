@@ -1,152 +1,119 @@
-import { useState } from "react"
 import {
     addDays,
     format,
+    isSameDay,
     startOfWeek,
 } from "date-fns"
-import { ru } from "date-fns/locale"
+import { enUS, ru } from "date-fns/locale"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
-
-type CalendarEvent = {
-    id: number
-    title: string
-    group?: string
-    date: string
-    start: number
-    end: number
-}
+import { useTranslation } from "react-i18next"
+import { cn } from "@/shared/lib/utils"
+import type { CalendarEvent } from "./MonthlyCalendar"
 
 type WeeklyScheduleProps = {
     events: CalendarEvent[]
+    selectedDate: Date
+    onSelectDate: (date: Date) => void
 }
 
-
-const hours = Array.from(
-    { length: 19 },
-    (_, i) => i + 6
-)
-
+const hours = Array.from({ length: 19 }, (_, i) => i + 6)
 
 export default function WeeklySchedule({
     events,
+    selectedDate,
+    onSelectDate,
 }: WeeklyScheduleProps) {
-    const [week, setWeek] = useState(new Date())
-    const [day, setDay] = useState(new Date())
+    const { i18n } = useTranslation()
+    const dateLocale = i18n.language === "ru" ? ru : enUS
 
-    const weekDays = Array.from(
-        { length: 7 },
-        (_, i) =>
-            addDays(
-                startOfWeek(week, {
-                    weekStartsOn: 1,
-                }),
-                i
-            )
-    )
+    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 })
+    const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 
     const dayEvents = events.filter(
-        event =>
-            event.date === format(day, "yyyy-MM-dd")
+        (event) => event.date === format(selectedDate, "yyyy-MM-dd"),
     )
 
+    const shiftWeek = (delta: number) => {
+        onSelectDate(addDays(selectedDate, delta * 7))
+    }
+
     return (
-        <div className="px-6">
-            <div className="rounded-lg border overflow-hidden">
-                <div className="flex items-center justify-between border-b p-4">
-                    <FaArrowLeft
-                        size={25}
-                        className="hover:text-primary/50"
-                        onClick={() =>
-                            setWeek(
-                                addDays(week, -7)
-                            )
-                        }
-                    />
+        <div className="rounded-lg border overflow-hidden">
+            <div className="flex items-center justify-between border-b px-3 py-2">
+                <FaArrowLeft
+                    size={16}
+                    className="cursor-pointer hover:text-primary/50"
+                    onClick={() => shiftWeek(-1)}
+                />
 
-                    <div className="font-semibold text-lg">
-                        {format(day, "LLLL yyyy", {
-                            locale: ru,
-                        })}
-                    </div>
-
-                    <FaArrowRight
-                        size={25}
-                        className="hover:text-primary/50"
-                        onClick={() =>
-                            setWeek(
-                                addDays(week, 7)
-                            )
-                        }
-                    />
+                <div className="text-sm font-semibold capitalize">
+                    {format(selectedDate, "LLLL yyyy", { locale: dateLocale })}
                 </div>
 
-                <div className="grid grid-cols-7 border-b">
-                    {weekDays.map(date => (
-                        <button
-                            key={date.toString()}
-                            onClick={() => setDay(date)}
-                            className={` border-r p-3 text-sm hover:bg-muted
-                            ${format(date, "yyyy-MM-dd") ===
-                                    format(day, "yyyy-MM-dd")
-                                    ? "bg-primary/10"
-                                    : ""
-                                }
-                        `}
+                <FaArrowRight
+                    size={16}
+                    className="cursor-pointer hover:text-primary/50"
+                    onClick={() => shiftWeek(1)}
+                />
+            </div>
+
+            <div className="grid grid-cols-7 border-b">
+                {weekDays.map((date) => (
+                    <button
+                        type="button"
+                        key={date.toString()}
+                        onClick={() => onSelectDate(date)}
+                        className={cn(
+                            "border-r p-2 text-xs last:border-r-0 hover:bg-muted",
+                            isSameDay(date, selectedDate) && "bg-primary/10",
+                        )}
+                    >
+                        <div className="text-muted-foreground">
+                            {format(date, "EEE", { locale: dateLocale })}
+                        </div>
+                        <div className="font-semibold text-sm">
+                            {format(date, "d")}
+                        </div>
+                    </button>
+                ))}
+            </div>
+
+            <div className="max-h-[420px] overflow-y-auto">
+                {hours.map((hour) => {
+                    const hourEvents = dayEvents.filter((event) => event.start === hour)
+
+                    return (
+                        <div
+                            key={hour}
+                            className="flex min-h-12 border-b last:border-b-0"
                         >
-                            <div className="text-muted-foreground">
-                                {format(date, "EEE", {
-                                    locale: ru,
-                                })}
+                            <div className="w-14 shrink-0 border-r px-2 py-1.5 text-xs text-muted-foreground">
+                                {hour}:00
                             </div>
-                            <div className="font-semibold text-lg">
-                                {format(date, "d")}
-                            </div>
-                        </button>
-                    ))}
-                </div>
 
-                <div className="border-t">
-                    {hours.map(hour => {
-                        const hourEvents =
-                            dayEvents.filter(
-                                event =>
-                                    event.start === hour
-                            )
-                        return (
-                            <div
-                                key={hour}
-                                className="flex min-h-24 border-b last:border-b-0"
-                            >
-                                <div className="w-20 shrink-0 border-r p-3 text-sm text-muted-foreground">
-                                    {hour}:00
-                                </div>
-
-                                <div className="flex-1 p-2 space-y-2">
-                                    {hourEvents.map(event => (
-                                        <div
-                                            key={event.id}
-                                            className="rounded-lg border bg-primary/10 p-3"
-                                        >
-                                            <div className="font-medium">
-                                                {event.title}
-                                            </div>
-
-                                            {event.group && (
-                                                <div className="text-sm text-muted-foreground">
-                                                    {event.group}
-                                                </div>
-                                            )}
-
-                                            <div className="mt-1 text-xs text-muted-foreground">
-                                                {event.start}:00 - {event.end}:00
-                                            </div>
+                            <div className="flex-1 space-y-1 p-1.5">
+                                {hourEvents.map((event) => (
+                                    <div
+                                        key={event.id}
+                                        className="rounded-md border bg-primary/10 px-2 py-1.5"
+                                    >
+                                        <div className="text-sm font-medium">
+                                            {event.title}
                                         </div>
-                                    ))}
-                                </div>
+                                        {event.group && (
+                                            <div className="text-xs text-muted-foreground">
+                                                {event.group}
+                                            </div>
+                                        )}
+                                        <div className="text-[11px] text-muted-foreground">
+                                            {event.start}:00 – {event.end}:00
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        )
-                    })}
-                </div>
+                        </div>
+                    )
+                })}
             </div>
         </div>
     )

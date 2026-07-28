@@ -17,18 +17,18 @@ export function ConfirmButton({
     const { t } = useTranslation()
 
     return (
-        <div className="flex flex-col lg:flex-row gap-2 justify-end pt-2">
+        <div className="flex flex-col sm:flex-row gap-2 justify-end pt-1">
             <Button
                 onClick={onClickConfirm}
                 variant="default"
-                size="lg"
+                size="sm"
             >
                 {confirmText ?? t("common.save")}
             </Button>
             <Button
                 onClick={onClickCancel}
                 variant="outline"
-                size="lg"
+                size="sm"
             >
                 {cancelText ?? t("common.cancel")}
             </Button>

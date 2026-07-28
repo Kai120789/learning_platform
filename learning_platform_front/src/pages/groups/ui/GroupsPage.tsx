@@ -26,18 +26,18 @@ export default function GroupsPage() {
     }, [dispatch, role])
 
     return (
-        <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
             <div className="space-y-1">
                 <div className="flex justify-between items-center">
-                    <Label className="text-2xl lg:text-4xl">
+                    <Label className="text-xl lg:text-2xl">
                         {t("groups.title")}
                     </Label>
-                    {isCanEdit && <Button onClick={() => setIsOpen(true)} size="lg" className="rounded-full">
+                    {isCanEdit && <Button onClick={() => setIsOpen(true)} className="rounded-full">
                         <FaPlus className="size-3" />
                         {t("groups.create")}
                     </Button>}
                 </div>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("groups.subtitle")}
                 </Label>
             </div>

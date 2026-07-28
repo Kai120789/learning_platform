@@ -35,12 +35,12 @@ export default function WelcomePage() {
     ]
 
     return (
-        <div className="flex flex-col py-10 lg:py-15 px-10 lg:px-40 space-y-10">
+        <div className="flex flex-col py-8 lg:py-10 px-6 lg:px-20 space-y-8">
             <div className="space-y-4 max-w-3xl">
-                <Label className="text-3xl lg:text-5xl">
+                <Label className="text-2xl lg:text-3xl">
                     {t("welcome.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("welcome.subtitle")}
                 </Label>
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -53,16 +53,18 @@ export default function WelcomePage() {
                 </div>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid auto-rows-fr gap-5 md:grid-cols-3">
                 {features.map((feature) => {
                     const Icon = feature.icon
 
                     return (
-                        <Card key={feature.title}>
+                        <Card key={feature.title} className="h-full">
                             <CardHeader className="space-y-3">
                                 <Icon className="size-6" />
                                 <CardTitle>{feature.title}</CardTitle>
-                                <CardDescription>{feature.text}</CardDescription>
+                                <CardDescription className="line-clamp-3">
+                                    {feature.text}
+                                </CardDescription>
                             </CardHeader>
                         </Card>
                     )

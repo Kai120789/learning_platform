@@ -14,42 +14,42 @@ export default function CoursesPage() {
     const { t } = useTranslation()
 
     return (
-        <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
             <div className="space-y-1">
-                <Label className="text-2xl lg:text-4xl">
+                <Label className="text-xl lg:text-2xl">
                     {t("courses.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("courses.subtitle")}
                 </Label>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {mockCourses.map((course) => (
-                    <Card key={course.id}>
-                        <CardHeader className="space-y-3">
-                            <div className="flex items-start justify-between gap-3">
-                                <CardTitle className="text-lg">{course.title}</CardTitle>
-                                <Badge variant="outline">{course.subjectTitle}</Badge>
+                    <Card key={course.id} size="sm" className="h-full">
+                        <CardHeader className="space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                                <CardTitle className="text-sm font-medium line-clamp-2 min-h-10">
+                                    {course.title}
+                                </CardTitle>
+                                <Badge variant="outline" className="shrink-0 text-[10px]">
+                                    {course.subjectTitle}
+                                </Badge>
                             </div>
-                            <CardDescription>{course.description}</CardDescription>
+                            <CardDescription className="text-xs line-clamp-2 min-h-8">
+                                {course.description}
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="text-sm text-muted-foreground">
-                                {course.tutorName}
-                            </div>
-                            <div className="text-sm">
-                                {t("courses.modules", { count: course.modulesCount })}
-                            </div>
-                            <div className="text-sm">
-                                {t("courses.enrolled", { count: course.enrolledCount })}
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
+                        <CardContent className="mt-auto space-y-2 text-xs">
+                            <div className="truncate text-muted-foreground">{course.tutorName}</div>
+                            <div>{t("courses.modules", { count: course.modulesCount })}</div>
+                            <div>{t("courses.enrolled", { count: course.enrolledCount })}</div>
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between">
                                     <span>{t("courses.progress")}</span>
                                     <span>{course.progress}%</span>
                                 </div>
-                                <div className="h-2 rounded-full bg-muted overflow-hidden">
+                                <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                                     <div
                                         className="h-full bg-primary"
                                         style={{ width: `${course.progress}%` }}

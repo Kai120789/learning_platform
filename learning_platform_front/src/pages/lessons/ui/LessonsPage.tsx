@@ -17,61 +17,59 @@ export default function LessonsPage() {
     const { t } = useTranslation()
 
     return (
-        <div className="py-10 lg:py-15 px-10 lg:px-40 space-y-8">
+        <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
             <div className="space-y-1">
-                <Label className="text-2xl lg:text-4xl">
+                <Label className="text-xl lg:text-2xl">
                     {t("lessons.title")}
                 </Label>
-                <Label className="text-md lg:text-xl font-normal text-primary/50">
+                <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("lessons.subtitle")}
                 </Label>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {mockLessons.map((lesson) => (
-                    <Card key={lesson.id}>
-                        <CardHeader className="space-y-3">
-                            <div className="flex items-start justify-between gap-3">
-                                <CardTitle className="text-lg">
+                    <Card key={lesson.id} size="sm" className="h-full">
+                        <CardHeader className="space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                                <CardTitle className="text-sm font-medium line-clamp-2 min-h-10">
                                     {lesson.subjectTitle}
                                 </CardTitle>
-                                <Badge variant="secondary">
+                                <Badge variant="secondary" className="shrink-0 text-[10px]">
                                     {t(`lessonStatus.${lesson.status}`)}
                                 </Badge>
                             </div>
-                            <CardDescription>
+                            <CardDescription className="text-xs line-clamp-1">
                                 {lesson.groupTitle} · {lesson.tutorName}
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="text-sm text-muted-foreground">
-                                {new Date(lesson.startTime).toLocaleString()}
-                            </div>
-                            <div className="text-sm">
+                        <CardContent className="flex-1 space-y-1.5 text-xs text-muted-foreground">
+                            <div>{new Date(lesson.startTime).toLocaleString()}</div>
+                            <div>
                                 {t("common.duration")}: {t("common.minutes", { count: lesson.duration })}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Users className="size-4" />
+                            <div className="flex items-center gap-1.5">
+                                <Users className="size-3.5" />
                                 {t("lessons.participants")}: {lesson.userIds.length}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Video className="size-4" />
+                            <div className="flex items-center gap-1.5">
+                                <Video className="size-3.5" />
                                 {t("lessons.media")}: {lesson.mediaItems.length}
                             </div>
                         </CardContent>
-                        <CardFooter className="gap-2 flex-wrap">
+                        <CardFooter className="gap-2 flex-wrap min-h-10">
                             {lesson.meetLink && (
                                 <Button
-                                    size="sm"
+                                    size="xs"
                                     onClick={() => window.open(lesson.meetLink, "_blank", "noreferrer")}
                                 >
-                                    <ExternalLink className="size-3.5" />
+                                    <ExternalLink className="size-3" />
                                     {t("lessons.meet")}
                                 </Button>
                             )}
                             {lesson.boardId && (
-                                <Button size="sm" variant="outline">
-                                    <Layout className="size-3.5" />
+                                <Button size="xs" variant="outline">
+                                    <Layout className="size-3" />
                                     {t("lessons.board")}
                                 </Button>
                             )}
