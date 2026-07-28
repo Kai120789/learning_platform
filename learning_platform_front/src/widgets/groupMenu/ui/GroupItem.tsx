@@ -56,18 +56,20 @@ export function GroupItem({ group }: GroupItemProps) {
                     <CardDescription className="mt-1 break-all line-clamp-1">
                         {group.description}
                     </CardDescription>
-                    {group.tgGroupLink && (
-                        <a
-                            href={group.tgGroupLink}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex w-fit items-center gap-2 text-sm text-primary hover:underline"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <RiTelegramFill size={25} />
-                            Telegram
-                        </a>
-                    )}
+                    <div className="min-h-8 flex items-center">
+                        {group.tgGroupLink && (
+                            <a
+                                href={group.tgGroupLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 text-sm text-primary hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <RiTelegramFill size={25} />
+                                Telegram
+                            </a>
+                        )}
+                    </div>
                 </CardHeader>
 
             </Card>

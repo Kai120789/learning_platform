@@ -50,8 +50,8 @@ export function MaterialsBrowser() {
                         className={cn(
                             "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-left transition-colors justify-center sm:justify-start",
                             viewMode === "list"
-                                ? "bg-black text-white"
-                                : "sm:bg-white sm:border sm:border-border hover:bg-muted"
+                                ? "bg-primary text-card"
+                                : "sm:bg-card sm:border sm:border-border hover:bg-muted"
                         )}
                     >
                         <List className="size-4" />
@@ -62,8 +62,8 @@ export function MaterialsBrowser() {
                         className={cn(
                             "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-left transition-colors justify-center sm:justify-start",
                             viewMode === "grid"
-                                ? "bg-black text-white"
-                                : "sm:bg-white sm:border sm:border-border hover:bg-muted"
+                                ? "bg-primary text-card"
+                                : "sm:bg-card sm:border sm:border-border hover:bg-muted"
                         )}
                     >
                         <LayoutGrid className="size-4" />

@@ -10,7 +10,7 @@ export function GroupsMenu({ groups }: GroupsMenuProps) {
 
     return (
         <div>
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {groups.map((group) => (
                     <GroupItem key={group.id} group={group} />
                 ))}
