@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 	"learning-platform/api-gateway/internal/dto/authDto"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"time"
 )
 
@@ -39,14 +40,14 @@ func NewAuthClient(connection *grpc.ClientConn) *AuthClient {
 	}
 }
 
-func (a *AuthClient) Login(req authDto.LoginRequest, userId int64) (*authDto.LoginResponse, error) {
+func (a *AuthClient) Login(req authDto.LoginRequest, userID int64, role enum.UserRole) (*authDto.LoginResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	grpcBody := &authGRPC.LoginRequest{
-		UserId:   userId,
-		Email:    req.Email,
-		Password: req.Password,
+		UserId: userID,
+		Email:  req.Email,
+		Role:   enumToProtoRoleAuth(role),
 	}
 
 	res, err := a.client.Login(ctx, grpcBody)
@@ -59,14 +60,14 @@ func (a *AuthClient) Login(req authDto.LoginRequest, userId int64) (*authDto.Log
 	}, nil
 }
 
-func (a *AuthClient) Register(req authDto.RegisterRequest, userId int64) (*authDto.RegisterResponse, error) {
+func (a *AuthClient) Register(req authDto.RegisterRequest, userID int64) (*authDto.RegisterResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	grpcBody := &authGRPC.RegisterRequest{
-		UserId:   userId,
-		Email:    req.Email,
-		Password: req.Password,
+		UserId: userID,
+		Email:  req.Email,
+		Role:   enumToProtoRoleAuth(req.Role),
 	}
 
 	res, err := a.client.Register(ctx, grpcBody)
@@ -140,14 +141,29 @@ func (a *AuthClient) Logout(accessToken string) error {
 	return nil
 }
 
-func (a *AuthClient) LogoutAll(userId int64) error {
+func (a *AuthClient) LogoutAll(userID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := a.client.LogoutAll(ctx, &authGRPC.LogoutAllRequest{UserId: userId})
+	_, err := a.client.LogoutAll(ctx, &authGRPC.LogoutAllRequest{
+		UserId: userID,
+	})
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func enumToProtoRoleAuth(role enum.UserRole) authGRPC.UserRole {
+	switch role {
+	case enum.RoleTutor:
+		return authGRPC.UserRole_TUTOR
+	case enum.RoleStudent:
+		return authGRPC.UserRole_STUDENT
+	case enum.RoleAdmin:
+		return authGRPC.UserRole_ADMIN
+	default:
+		return authGRPC.UserRole_USER_ROLE_UNSPECIFIED
+	}
 }

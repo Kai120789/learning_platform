@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/go-chi/cors"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -28,12 +29,14 @@ type Handler struct {
 func New(
 	handler *Handler,
 	jwtMiddleware func(http.Handler) http.Handler,
+	roleMiddleware func(minNeededRole enum.UserRole) func(http.Handler) http.Handler,
 ) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
 			"http://localhost:5173",
+			"http://192.168.1.101:5173",
 		},
 		AllowedMethods: []string{
 			"GET",
@@ -60,12 +63,12 @@ func New(
 		SubjectRouter:  NewSubjectRouter(),
 	}
 
-	router.UserRouter.UserRoutes(r, handler.UserHandler, jwtMiddleware)
-	router.AuthRouter.AuthRoutes(r, handler.AuthHandler, jwtMiddleware)
-	router.GroupRouter.GroupRoutes(r, handler.GroupHandler, jwtMiddleware)
-	router.LessonRouter.LessonRoutes(r, handler.LessonHandler, jwtMiddleware)
-	router.ScheduleRouter.ScheduleRoutes(r, handler.ScheduleHandler, jwtMiddleware)
-	router.SubjectRouter.SubjectRoutes(r, handler.SubjectHandler, jwtMiddleware)
+	router.UserRouter.UserRoutes(r, handler.UserHandler, jwtMiddleware, roleMiddleware)
+	router.AuthRouter.AuthRoutes(r, handler.AuthHandler, jwtMiddleware, roleMiddleware)
+	router.GroupRouter.GroupRoutes(r, handler.GroupHandler, jwtMiddleware, roleMiddleware)
+	router.LessonRouter.LessonRoutes(r, handler.LessonHandler, jwtMiddleware, roleMiddleware)
+	router.ScheduleRouter.ScheduleRoutes(r, handler.ScheduleHandler, jwtMiddleware, roleMiddleware)
+	router.SubjectRouter.SubjectRoutes(r, handler.SubjectHandler, jwtMiddleware, roleMiddleware)
 
 	return r
 }

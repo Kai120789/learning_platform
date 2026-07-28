@@ -91,29 +91,24 @@ func (a *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func (a *AuthHandler) RefreshTokens(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("refresh")
-}
-
 func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		a.logger.Error("failed get request cookie", zap.Error(err))
-		http.Error(w, "cookie not found", http.StatusNotFound)
+		http.Error(w, "cookie not found", http.StatusUnauthorized)
 		return
 	}
 
 	if cookie.Value == "" {
 		a.logger.Error("incorrect cookie value", zap.Error(err))
-		http.Error(w, "incorrect cookie value", http.StatusBadRequest)
+		http.Error(w, "incorrect cookie value", http.StatusUnauthorized)
 		return
 	}
 
 	err = a.service.Logout(cookie.Value)
 	if err != nil {
 		a.logger.Error("failed logout user", zap.Error(err))
-		http.Error(w, "failed logout user", http.StatusInternalServerError)
+		http.Error(w, "failed logout user", http.StatusUnauthorized)
 		return
 	}
 
@@ -122,7 +117,7 @@ func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) LogoutAll(w http.ResponseWriter, r *http.Request) {
-	strUserId := chi.URLParam(r, "userId")
+	strUserId := chi.URLParam(r, "userID")
 	if strUserId == "" {
 		a.logger.Error("invalid param user id")
 		http.Error(w, "invalid param user id", http.StatusBadRequest)

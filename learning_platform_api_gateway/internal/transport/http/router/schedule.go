@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"net/http"
 )
 
@@ -27,16 +28,17 @@ func (s *ScheduleRouter) ScheduleRoutes(
 	r chi.Router,
 	h ScheduleHandler,
 	jwtMiddleware func(http.Handler) http.Handler,
+	roleMiddleware func(minNeededRole enum.UserRole) func(http.Handler) http.Handler,
 ) {
 	r.With(jwtMiddleware).Route("/api/schedule", func(r chi.Router) {
-		r.Get("/", h.GetAllSchedules)
-		r.Get("/{scheduleId}", h.GetScheduleByID)
-		r.Get("/tutor/{scheduleId}", h.GetSchedulesByTutorID)
-		r.Post("/", h.CreateSchedule)
-		r.Put("/{scheduleId}", h.UpdateSchedule)
-		r.Delete("/{scheduleId}", h.DeleteSchedule)
-		r.Put("/slot/{scheduleSlotId}", h.UpdateScheduleSlot)
-		r.Patch("/slot/{scheduleSlotId}", h.BindLessonToScheduleSlot)
-		r.Delete("/slot/{scheduleSlotId}", h.DeleteLessonFromScheduleSlot)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/", h.GetAllSchedules)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/{scheduleID}", h.GetScheduleByID)
+		r.With(roleMiddleware(enum.RoleTutor)).Get("/tutor/{scheduleID}", h.GetSchedulesByTutorID)
+		r.With(roleMiddleware(enum.RoleTutor)).Post("/", h.CreateSchedule)
+		r.With(roleMiddleware(enum.RoleTutor)).Put("/{scheduleID}", h.UpdateSchedule)
+		r.With(roleMiddleware(enum.RoleTutor)).Delete("/{scheduleID}", h.DeleteSchedule)
+		r.With(roleMiddleware(enum.RoleTutor)).Put("/slot/{scheduleSlotID}", h.UpdateScheduleSlot)
+		r.With(roleMiddleware(enum.RoleTutor)).Patch("/slot/{scheduleSlotID}", h.BindLessonToScheduleSlot)
+		r.With(roleMiddleware(enum.RoleTutor)).Delete("/slot/{scheduleSlotID}", h.DeleteLessonFromScheduleSlot)
 	})
 }

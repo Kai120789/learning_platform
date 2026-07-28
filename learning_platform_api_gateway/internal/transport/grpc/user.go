@@ -54,10 +54,12 @@ func (u *UserClient) GetUserByEmail(email string) (*userDto.GetUser, error) {
 		UserID:       res.GetUserId(),
 		Email:        res.GetEmail(),
 		PasswordHash: res.GetPasswordHash(),
+		Role:         protoToEnumRole(res.GetRole()),
+		Status:       protoToEnumUserStatus(res.GetStatus()),
 	}, nil
 }
 
-func (u *UserClient) GetUserById(id int64) (*userDto.GetUser, error) {
+func (u *UserClient) GetUserByID(id int64) (*userDto.GetUser, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

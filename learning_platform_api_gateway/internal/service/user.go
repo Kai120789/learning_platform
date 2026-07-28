@@ -12,7 +12,7 @@ type UserService struct {
 
 type UserClient interface {
 	GetUserByEmail(email string) (*userDto.GetUser, error)
-	GetUserById(id int64) (*userDto.GetUser, error)
+	GetUserByID(id int64) (*userDto.GetUser, error)
 	GetUserData(id int64) (*userDto.UserData, error)
 	CreateUser(newUser authDto.RegisterRequest) (*int64, error)
 	UpdateUserInfo(userID int64, userInfo userDto.UserInfoRequest) (*userDto.UserInfoResponse, error)
@@ -38,8 +38,8 @@ func (u *UserService) GetUserByEmail(email string) (*userDto.GetUser, error) {
 	return res, nil
 }
 
-func (u *UserService) GetUserById(id int64) (*userDto.GetUser, error) {
-	res, err := u.client.GetUserById(id)
+func (u *UserService) GetUserByID(id int64) (*userDto.GetUser, error) {
+	res, err := u.client.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}

@@ -17,7 +17,7 @@ type UserHandler struct {
 }
 
 type UserService interface {
-	GetUserById(id int64) (*userDto.GetUser, error)
+	GetUserByID(id int64) (*userDto.GetUser, error)
 	GetUserData(id int64) (*userDto.UserData, error)
 	CreateUser(newUser authDto.RegisterRequest) (*int64, error)
 	UpdateUserInfo(userID int64, userInfo userDto.UserInfoRequest) (*userDto.UserInfoResponse, error)
@@ -34,8 +34,8 @@ func NewUserHandler(service UserService, logger *zap.Logger) *UserHandler {
 	}
 }
 
-func (u *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "userId")
+func (u *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "userID")
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -48,7 +48,7 @@ func (u *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := u.service.GetUserById(int64(id))
+	user, err := u.service.GetUserByID(int64(id))
 	if err != nil {
 		u.logger.Error(
 			"failed get user by id",
@@ -104,7 +104,7 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUserId, err := u.service.CreateUser(createUserDto)
+	newUserID, err := u.service.CreateUser(createUserDto)
 	if err != nil {
 		u.logger.Error(
 			"failed create user",
@@ -117,7 +117,7 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newUserId)
+	json.NewEncoder(w).Encode(newUserID)
 }
 
 func (u *UserHandler) UpdateUserInfo(w http.ResponseWriter, r *http.Request) {

@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"learning-platform/api-gateway/internal/dto/authDto"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"learning-platform/api-gateway/internal/dto/userDto"
 	"learning-platform/api-gateway/internal/redis"
 )
@@ -14,7 +15,7 @@ type AuthService struct {
 }
 
 type AuthClient interface {
-	Login(req authDto.LoginRequest, userID int64) (*authDto.LoginResponse, error)
+	Login(req authDto.LoginRequest, userID int64, role enum.UserRole) (*authDto.LoginResponse, error)
 	Register(req authDto.RegisterRequest, userID int64) (*authDto.RegisterResponse, error)
 	RefreshTokens(accessToken string) (*string, error)
 	CheckPassword(password string, passwordHash string) (bool, error)
@@ -26,11 +27,11 @@ type AuthClient interface {
 type UserAuthService interface {
 	GetUserByEmail(email string) (*userDto.GetUser, error)
 	CreateUser(newUser authDto.RegisterRequest) (*int64, error)
-	GetUserById(id int64) (*userDto.GetUser, error)
+	GetUserByID(id int64) (*userDto.GetUser, error)
 }
 
 type RedisStorage interface {
-	GetTokens(sessionId string) (*authDto.RedisTokens, error)
+	GetTokens(sessionID string) (*authDto.RedisTokens, error)
 }
 
 func NewAuthService(
@@ -60,7 +61,7 @@ func (a *AuthService) Login(loginReq authDto.LoginRequest) (*authDto.LoginRespon
 		return nil, err
 	}
 
-	res, err := a.client.Login(loginReq, user.UserID)
+	res, err := a.client.Login(loginReq, user.UserID, user.Role)
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +99,8 @@ func (a *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 	return res, nil
 }
 
-func (a *AuthService) Logout(sessionId string) error {
-	tokens, err := a.redis.GetTokens(sessionId)
+func (a *AuthService) Logout(sessionID string) error {
+	tokens, err := a.redis.GetTokens(sessionID)
 	if err != nil {
 		return err
 	}
@@ -121,8 +122,8 @@ func (a *AuthService) LogoutAll(userID int64) error {
 	return nil
 }
 
-func (a *AuthService) GetTokens(sessionId string) (*authDto.RedisTokens, error) {
-	tokens, err := a.redis.GetTokens(sessionId)
+func (a *AuthService) GetTokens(sessionID string) (*authDto.RedisTokens, error) {
+	tokens, err := a.redis.GetTokens(sessionID)
 	if err != nil {
 		return nil, err
 	}

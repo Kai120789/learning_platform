@@ -6,15 +6,17 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"learning-platform/api-gateway/internal/dto/authDto"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"learning-platform/api-gateway/internal/utils"
 	"net/http"
 	"time"
 )
 
 type CustomJwtClaims struct {
-	UserID    int64  `json:"user_id"`
-	UserEmail string `json:"user_email"`
-	SessionId string `json:"session_id"`
+	UserID    int64         `json:"user_id"`
+	Email     string        `json:"email"`
+	Role      enum.UserRole `json:"role"`
+	SessionId string        `json:"session_id"`
 	jwt.RegisteredClaims
 }
 
@@ -87,8 +89,8 @@ func JWT(secretKey []byte, refreshTokenTTL int64, authService AuthService) func(
 				}
 			}
 
-			ctx := context.WithValue(r.Context(), "user_id", accessClaims.UserID)
-
+			ctxWithUserID := context.WithValue(r.Context(), "user_id", accessClaims.UserID)
+			ctx := context.WithValue(ctxWithUserID, "role", accessClaims.Role)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

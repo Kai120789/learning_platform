@@ -2,13 +2,14 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"net/http"
 )
 
 type UserRouter struct{}
 
 type UserHandler interface {
-	GetUserById(w http.ResponseWriter, r *http.Request)
+	GetUserByID(w http.ResponseWriter, r *http.Request)
 	GetUserData(w http.ResponseWriter, r *http.Request)
 	CreateUser(w http.ResponseWriter, r *http.Request)
 	UpdateUserInfo(w http.ResponseWriter, r *http.Request)
@@ -29,18 +30,19 @@ func (u *UserRouter) UserRoutes(
 	r chi.Router,
 	h UserHandler,
 	jwtMiddleware func(http.Handler) http.Handler,
+	roleMiddleware func(minNeededRole enum.UserRole) func(http.Handler) http.Handler,
 ) {
 	r.With(jwtMiddleware).Route("/api/user", func(r chi.Router) {
-		r.Get("/{userId}", h.GetUserById)
-		r.Get("/data", h.GetUserData)
-		r.Put("/info", h.UpdateUserInfo)
-		r.Put("/settings", h.UpdateUserSettings)
-		r.Patch("/theme", h.UpdateUserTheme)
-		r.Patch("/avatar", h.UpdateUserAvatar)
-		r.Patch("/tg", h.UpdateUserTgUsername)
-		r.Patch("/email", h.ChangeUserEmail)
-		r.Patch("/password", h.ChangeUserPassword)
-		r.Post("/", h.CreateUser)
-		r.Get("/", h.GetUsersWithPagination)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/{userID}", h.GetUserByID)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/data", h.GetUserData)
+		r.With(roleMiddleware(enum.RoleStudent)).Put("/info", h.UpdateUserInfo)
+		r.With(roleMiddleware(enum.RoleStudent)).Put("/settings", h.UpdateUserSettings)
+		r.With(roleMiddleware(enum.RoleStudent)).Patch("/theme", h.UpdateUserTheme)
+		r.With(roleMiddleware(enum.RoleStudent)).Patch("/avatar", h.UpdateUserAvatar)
+		r.With(roleMiddleware(enum.RoleStudent)).Patch("/tg", h.UpdateUserTgUsername)
+		r.With(roleMiddleware(enum.RoleStudent)).Patch("/email", h.ChangeUserEmail)
+		r.With(roleMiddleware(enum.RoleStudent)).Patch("/password", h.ChangeUserPassword)
+		r.With(roleMiddleware(enum.RoleAdmin)).Post("/", h.CreateUser)
+		r.With(roleMiddleware(enum.RoleTutor)).Get("/", h.GetUsersWithPagination)
 	})
 }

@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
+	"learning-platform/api-gateway/internal/dto/enum"
 	"net/http"
 )
 
@@ -23,12 +24,13 @@ func (s *SubjectRouter) SubjectRoutes(
 	r chi.Router,
 	h SubjectHandler,
 	jwtMiddleware func(handler http.Handler) http.Handler,
+	roleMiddleware func(minNeededRole enum.UserRole) func(http.Handler) http.Handler,
 ) {
 	r.With(jwtMiddleware).Route("/api/subject", func(r chi.Router) {
-		r.Get("/{subjectId}", h.GetOneSubject)
-		r.Get("/", h.GetAllSubjects)
-		r.Get("/user/{userId}", h.GetUserSubjects)
-		r.Post("/user/{userId}", h.SetUserSubjects)
-		r.Put("/user/{userId}", h.UpdateUserSubjects)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/{subjectID}", h.GetOneSubject)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/", h.GetAllSubjects)
+		r.With(roleMiddleware(enum.RoleStudent)).Get("/user/{userID}", h.GetUserSubjects)
+		r.With(roleMiddleware(enum.RoleStudent)).Post("/user/{userID}", h.SetUserSubjects)
+		r.With(roleMiddleware(enum.RoleStudent)).Put("/user/{userID}", h.UpdateUserSubjects)
 	})
 }

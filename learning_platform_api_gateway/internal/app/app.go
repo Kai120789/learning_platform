@@ -74,7 +74,7 @@ func Start() {
 		LessonHandler:   handlerLayer.LessonHandler,
 		ScheduleHandler: handlerLayer.ScheduleHandler,
 		SubjectHandler:  handlerLayer.SubjectHandler,
-	}, jwtMiddleware)
+	}, jwtMiddleware, middleware.MinNeededRole)
 
 	server := &http.Server{
 		Addr:    cfg.ServerAddress,
