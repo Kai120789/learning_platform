@@ -69,7 +69,7 @@ export function LoginForm({
                     <form className="p-6 md:p-8" onSubmit={onSubmit}>
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
-                                <h1 className="text-2xl font-bold">{t("auth.login.title")}</h1>
+                                <h1 className="text-xl font-bold">{t("auth.login.title")}</h1>
                                 <p className="text-balance text-muted-foreground">
                                     {t("auth.login.subtitle")}
                                 </p>

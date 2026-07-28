@@ -1,6 +1,7 @@
 import { UserLanguageEnum } from "@/shared/enums/user";
 import { cn } from "@/shared/lib/utils";
 import { Field, FieldLabel } from "@/shared/ui/Field";
+import { NativeSelect } from "@/shared/ui/NativeSelect";
 import { useTranslation } from "react-i18next";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import { PiChalkboardTeacher, PiStudent } from "react-icons/pi";
@@ -81,8 +82,8 @@ export function RoleAndLanguageStep({
             </Field>
             <Field>
                 <FieldLabel htmlFor="language">{t("auth.register.steps.language")}</FieldLabel>
-                <select
-                    className="border border-input rounded-lg p-2"
+                <NativeSelect
+                    id="language"
                     value={language}
                     onChange={(e) => setLanguage(e.target.value as UserLanguageEnum)}
                 >
@@ -91,7 +92,7 @@ export function RoleAndLanguageStep({
                             {t(languageToTranslationKey(language))}
                         </option>
                     ))}
-                </select>
+                </NativeSelect>
             </Field>
         </>
     )
