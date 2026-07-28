@@ -5,13 +5,16 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"learning-platform/auth/internal/dto"
+	"learning-platform/auth/internal/dto/enum"
 	"time"
 )
 
 type CustomJwtClaims struct {
-	UserID    int64  `json:"user_id"`
-	UserEmail string `json:"user_email"`
-	SessionID string `json:"session_id"`
+	UserID    int64          `json:"user_id"`
+	Email     string         `json:"email"`
+	SessionID string         `json:"session_id"`
+	Role      enum.UserRole  `json:"role"`
+	TokenType enum.TokenType `json:"token_type"`
 	jwt.RegisteredClaims
 }
 
@@ -22,10 +25,13 @@ func CreateJWT(createJwtDto dto.CreateJWT) (*dto.TokenBundle, error) {
 	} else {
 		sessionId = uuid.New().String()
 	}
+
 	accessClaims := CustomJwtClaims{
 		createJwtDto.UserID,
-		createJwtDto.UserEmail,
+		createJwtDto.Email,
 		sessionId,
+		createJwtDto.Role,
+		enum.Access,
 		jwt.RegisteredClaims{
 			Issuer:    createJwtDto.Issuer,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(createJwtDto.AccessTime) * time.Minute)),
@@ -38,8 +44,10 @@ func CreateJWT(createJwtDto dto.CreateJWT) (*dto.TokenBundle, error) {
 	}
 	refreshClaims := CustomJwtClaims{
 		createJwtDto.UserID,
-		createJwtDto.UserEmail,
+		createJwtDto.Email,
 		sessionId,
+		createJwtDto.Role,
+		enum.Refresh,
 		jwt.RegisteredClaims{
 			Issuer:    createJwtDto.Issuer,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(createJwtDto.RefreshTime) * time.Hour * 24)),

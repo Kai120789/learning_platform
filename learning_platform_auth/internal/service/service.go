@@ -35,7 +35,8 @@ func New(
 func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, error) {
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
 		UserID:      loginData.UserID,
-		UserEmail:   loginData.Email,
+		Email:       loginData.Email,
+		Role:        loginData.Role,
 		SignedKey:   s.config.SignedKey,
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,
@@ -58,7 +59,8 @@ func (s *AuthService) Login(loginData dto.LoginRequest) (*dto.LoginResponse, err
 func (s *AuthService) Register(registerData dto.RegisterRequest) (*dto.RegisterResponse, error) {
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
 		UserID:      registerData.UserID,
-		UserEmail:   registerData.Email,
+		Email:       registerData.Email,
+		Role:        registerData.Role,
 		SignedKey:   s.config.SignedKey,
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,
@@ -86,7 +88,8 @@ func (s *AuthService) RefreshTokens(refreshToken string) (*string, error) {
 
 	tokenBundle, err := utils.CreateJWT(dto.CreateJWT{
 		UserID:      accessClaims.UserID,
-		UserEmail:   accessClaims.UserEmail,
+		Email:       accessClaims.Email,
+		Role:        accessClaims.Role,
 		SignedKey:   s.config.SignedKey,
 		Issuer:      s.config.Issuer,
 		AccessTime:  s.config.AccessTokenLifeTime,

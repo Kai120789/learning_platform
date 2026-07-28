@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"learning-platform/auth/internal/dto"
+	"learning-platform/auth/internal/dto/enum"
 	"strings"
 )
 
@@ -43,9 +44,9 @@ func (g *AuthGRPCServer) Login(
 	in *authGRPC.LoginRequest,
 ) (*authGRPC.LoginResponse, error) {
 	res, err := g.service.Login(dto.LoginRequest{
-		UserID:   in.GetUserId(),
-		Email:    in.GetEmail(),
-		Password: in.GetPassword(),
+		UserID: in.GetUserId(),
+		Email:  in.GetEmail(),
+		Role:   protoRoleToEnum(in.GetRole()),
 	})
 	if err != nil {
 		g.logger.Error(
@@ -66,9 +67,9 @@ func (g *AuthGRPCServer) Register(
 	in *authGRPC.RegisterRequest,
 ) (*authGRPC.RegisterResponse, error) {
 	request := dto.RegisterRequest{
-		UserID:   in.GetUserId(),
-		Email:    in.GetEmail(),
-		Password: in.GetPassword(),
+		UserID: in.GetUserId(),
+		Email:  in.GetEmail(),
+		Role:   protoRoleToEnum(in.GetRole()),
 	}
 
 	res, err := g.service.Register(request)
@@ -211,4 +212,17 @@ func getAuthTokenFromMetadata(ctx context.Context) (*string, error) {
 	token := strings.TrimPrefix(authHeader[0], "Bearer ")
 
 	return &token, nil
+}
+
+func protoRoleToEnum(role authGRPC.UserRole) enum.UserRole {
+	switch role {
+	case authGRPC.UserRole_TUTOR:
+		return enum.RoleTutor
+	case authGRPC.UserRole_STUDENT:
+		return enum.RoleStudent
+	case authGRPC.UserRole_ADMIN:
+		return enum.RoleAdmin
+	default:
+		return ""
+	}
 }
