@@ -5,6 +5,7 @@ import App from './app/App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { StoreProvider } from './app/providers/storeProvider/index.ts';
 import { ThemeProvider } from '@teispace/next-themes/client';
+import { UserPreferencesSync } from './app/providers';
 import "./app/providers/i18n/config";
 import { TooltipProvider } from './shared/ui/Tooltip.tsx';
 
@@ -19,6 +20,7 @@ const renderApp = async () => {
 	root.render(
 		<StoreProvider>
 			<ThemeProvider attribute="class">
+				<UserPreferencesSync />
 				<TooltipProvider>
 					<RouterProvider router={router} />
 				</TooltipProvider>

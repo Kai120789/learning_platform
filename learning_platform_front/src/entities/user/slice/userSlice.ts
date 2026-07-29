@@ -1,9 +1,12 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { UserSchema } from "../types/types";
-import { getUserData } from "@/entities/user";
-import { login } from "@/features/loginForm";
-import { register } from "@/features/registerForm/api/register";
-import { logout } from "@/widgets/dropdownMenu/api/logout";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import type { UserSchema } from "../types/types"
+import { getUserData } from "@/entities/user"
+import { updateUserSettings } from "@/entities/user"
+import { updateUserTheme } from "@/entities/user"
+import { login } from "@/features/loginForm"
+import { register } from "@/features/registerForm/api/register"
+import { logout } from "@/widgets/dropdownMenu/api/logout"
+import type { UserThemeEnum } from "@/shared/enums/user"
 
 const initialState: UserSchema = {
     data: null,
@@ -11,20 +14,20 @@ const initialState: UserSchema = {
     isInitialized: false,
     isLoading: false,
     error: undefined
-};
+}
 
 const userSlice = createSlice({
-    name: 'user',
+    name: "user",
     initialState,
     reducers: {
         setIsAuth: (state, action: PayloadAction<boolean>) => {
             state.isAuth = action.payload
-        }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getUserData.pending, (state) => {
             state.isLoading = true
-            state.error = ''
+            state.error = ""
         })
         builder.addCase(getUserData.rejected, (state, action) => {
             state.isLoading = false
@@ -35,7 +38,7 @@ const userSlice = createSlice({
         builder.addCase(getUserData.fulfilled, (state, action) => {
             state.isLoading = false
             state.isInitialized = true
-            state.error = ''
+            state.error = ""
             state.isAuth = true
             state.data = {
                 user: {
@@ -61,14 +64,47 @@ const userSlice = createSlice({
                     is2FaEnabled: action.payload.user_settings.is_2_fa_enabled,
                     isNotificationsEnabled: action.payload.user_settings.is_notifications_enabled,
                     language: action.payload.user_settings.language,
-                    theme: action.payload.user_settings.theme
-                }
+                    theme: action.payload.user_settings.theme,
+                },
             }
+        })
+        builder.addCase(updateUserSettings.pending, (state) => {
+            state.isLoading = true
+            state.error = ""
+        })
+        builder.addCase(updateUserSettings.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(updateUserSettings.fulfilled, (state, action) => {
+            if (!state.data) return
+            state.data.userSettings = {
+                is2FaEnabled: action.payload.is_2_fa_enabled,
+                isNotificationsEnabled: action.payload.is_notifications_enabled,
+                language: action.payload.language,
+                theme: action.payload.theme,
+            }
+            state.isLoading = false
+            state.error = ""
+        })
+        builder.addCase(updateUserTheme.pending, (state) => {
+            state.isLoading = true
+            state.error = ""
+        })
+        builder.addCase(updateUserTheme.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload as string
+        })
+        builder.addCase(updateUserTheme.fulfilled, (state, action) => {
+            if (!state.data) return
+            state.data.userSettings.theme = action.meta.arg as UserThemeEnum
+            state.isLoading = false
+            state.error = ""
         })
         builder.addCase(login.pending, (state) => {
             state.isAuth = false
             state.isLoading = true
-            state.error = ''
+            state.error = ""
         })
         builder.addCase(login.rejected, (state, action) => {
             state.isAuth = false
@@ -79,12 +115,12 @@ const userSlice = createSlice({
             state.isAuth = true
             state.isInitialized = true
             state.isLoading = true
-            state.error = ''
+            state.error = ""
         })
         builder.addCase(register.pending, (state) => {
             state.isAuth = false
             state.isLoading = true
-            state.error = ''
+            state.error = ""
         })
         builder.addCase(register.rejected, (state, action) => {
             state.isAuth = false
@@ -95,12 +131,12 @@ const userSlice = createSlice({
             state.isAuth = true
             state.isInitialized = true
             state.isLoading = true
-            state.error = ''
+            state.error = ""
         })
         builder.addCase(logout.pending, (state) => {
             state.isAuth = false
             state.isLoading = true
-            state.error = ''
+            state.error = ""
         })
         builder.addCase(logout.rejected, (state, action) => {
             state.isAuth = false
@@ -110,10 +146,10 @@ const userSlice = createSlice({
         builder.addCase(logout.fulfilled, (state) => {
             state.isAuth = false
             state.isLoading = true
-            state.error = ''
+            state.error = ""
+            state.data = null
         })
-    }
-});
+    },
+})
 
-export const { actions: userActions, reducer: userReducer } =
-    userSlice;
+export const { actions: userActions, reducer: userReducer } = userSlice

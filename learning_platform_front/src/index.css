@@ -233,3 +233,96 @@
         @apply font-sans;
     }
 }
+
+.Toastify__toast-container {
+    width: min(360px, calc(100vw - 1.5rem));
+    top: 4.5rem;
+}
+
+.Toastify__toast-container .Toastify__toast.app-toast {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px oklch(0.2 0 0 / 8%);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    min-height: 4.25rem;
+    padding: 1rem 1.05rem;
+    margin-bottom: 0.65rem;
+    align-items: center;
+}
+
+.Toastify__toast-body {
+    margin: 0;
+    padding: 0;
+    align-items: flex-start;
+}
+
+.Toastify__toast-icon {
+    width: 1.15rem;
+    margin-inline-end: 0.7rem;
+}
+
+.Toastify__toast .Toastify__close-button,
+.Toastify__toast .Toastify__close-button--light,
+.Toastify__toast .Toastify__close-button--dark {
+    color: var(--secondary-foreground);
+    opacity: 0.45;
+}
+
+.Toastify__toast .Toastify__close-button > svg {
+    fill: currentColor;
+}
+
+.Toastify__toast .Toastify__close-button:hover,
+.Toastify__toast .Toastify__close-button:focus {
+    opacity: 0.9;
+}
+
+.Toastify__progress-bar.app-toast-progress {
+    height: 2px;
+    background: var(--muted-foreground);
+    opacity: 0.35;
+}
+
+.Toastify__toast--success.app-toast {
+    border-left: 3px solid oklch(0.62 0.08 150);
+}
+
+.Toastify__toast--success .Toastify__toast-icon {
+    color: oklch(0.55 0.09 150);
+}
+
+.Toastify__toast--error.app-toast {
+    border-left: 3px solid oklch(0.62 0.12 25);
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
+    color: oklch(0.55 0.12 25);
+}
+
+.Toastify__toast--warning.app-toast {
+    border-left: 3px solid oklch(0.72 0.1 80);
+}
+
+.Toastify__toast--warning .Toastify__toast-icon {
+    color: oklch(0.62 0.1 80);
+}
+
+.Toastify__toast--info.app-toast {
+    border-left: 3px solid oklch(0.62 0.07 240);
+}
+
+.Toastify__toast--info .Toastify__toast-icon {
+    color: oklch(0.55 0.07 240);
+}
+
+.dark .Toastify__toast.app-toast {
+    box-shadow: 0 8px 24px oklch(0 0 0 / 35%);
+}
+
+.dark .Toastify__progress-bar.app-toast-progress {
+    opacity: 0.45;
+}

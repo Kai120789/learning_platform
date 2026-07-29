@@ -5,6 +5,7 @@ import { Loader } from 'lucide-react';
 import { AuthProvider } from '@/app/providers';
 import { NotificationList } from '@/features/notifications';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export type AppRoutesProps = RouteProps & {
@@ -41,17 +42,18 @@ export function AppRouter() {
         <>
             <NotificationList />
             <ToastContainer
-                className="min-h-[100px]"
                 position="top-right"
-                autoClose={5000}
+                autoClose={4500}
                 hideProgressBar={false}
-                newestOnTop={false}
+                newestOnTop
                 closeOnClick
                 rtl={false}
                 pauseOnFocusLoss
-                draggable
+                draggable={false}
                 pauseOnHover
-                theme="colored"
+                toastClassName="app-toast"
+                progressClassName="app-toast-progress"
+                closeButton
             />
             <Routes>
                 <Route>

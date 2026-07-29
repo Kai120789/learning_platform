@@ -99,7 +99,7 @@ export default function MonthlyCalendar({
                             key={day.toString()}
                             onClick={() => onSelectDate(day)}
                             className={cn(
-                                "min-h-16 border p-1 text-left transition-colors hover:bg-muted/60",
+                                "min-h-[4.5rem] border p-1.5 text-left transition-colors hover:bg-muted/60",
                                 !isSameMonth(day, month) && "bg-muted/40 text-muted-foreground",
                                 isToday(day) && "bg-primary/5",
                                 selected && "ring-2 ring-inset ring-primary",

@@ -9,6 +9,7 @@ import {
     CardTitle,
 } from "@/shared/ui/Card"
 import { Label } from "@/shared/ui/Label"
+import { practiceStatusClass } from "@/shared/lib/statusStyles"
 
 export default function PracticesPage() {
     const { t } = useTranslation()
@@ -37,7 +38,10 @@ export default function PracticesPage() {
                                     <CardTitle className="text-sm font-medium line-clamp-2 min-h-10">
                                         {practice.title}
                                     </CardTitle>
-                                    <Badge variant="secondary" className="shrink-0 text-[10px]">
+                                    <Badge
+                                        variant="outline"
+                                        className={`shrink-0 text-[10px] ${practiceStatusClass(practice.status)}`}
+                                    >
                                         {t(`practiceStatus.${practice.status}`)}
                                     </Badge>
                                 </div>

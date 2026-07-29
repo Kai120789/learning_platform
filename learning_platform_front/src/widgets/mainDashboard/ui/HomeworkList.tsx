@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import { mockPractices } from "@/shared/mocks"
 import { Badge } from "@/shared/ui/Badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card"
+import { practiceStatusClass } from "@/shared/lib/statusStyles"
 
 export function HomeworkList() {
     const { t } = useTranslation()
@@ -29,7 +30,10 @@ export function HomeworkList() {
                                 {t("practices.deadline")}: {new Date(practice.endTime).toLocaleDateString()}
                             </div>
                         </div>
-                        <Badge variant="secondary" className="shrink-0">
+                        <Badge
+                            variant="outline"
+                            className={`shrink-0 ${practiceStatusClass(practice.status)}`}
+                        >
                             {t(`practiceStatus.${practice.status}`)}
                         </Badge>
                     </div>

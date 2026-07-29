@@ -12,6 +12,7 @@ import {
     CardTitle,
 } from "@/shared/ui/Card"
 import { Label } from "@/shared/ui/Label"
+import { lessonStatusClass } from "@/shared/lib/statusStyles"
 
 export default function LessonsPage() {
     const { t } = useTranslation()
@@ -35,7 +36,10 @@ export default function LessonsPage() {
                                 <CardTitle className="text-sm font-medium line-clamp-2 min-h-10">
                                     {lesson.subjectTitle}
                                 </CardTitle>
-                                <Badge variant="secondary" className="shrink-0 text-[10px]">
+                                <Badge
+                                    variant="outline"
+                                    className={`shrink-0 text-[10px] ${lessonStatusClass(lesson.status)}`}
+                                >
                                     {t(`lessonStatus.${lesson.status}`)}
                                 </Badge>
                             </div>

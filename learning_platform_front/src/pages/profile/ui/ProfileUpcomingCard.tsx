@@ -3,6 +3,7 @@ import { Clock } from "lucide-react"
 import { mockLessons } from "@/shared/mocks"
 import { Badge } from "@/shared/ui/Badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card"
+import { lessonStatusClass } from "@/shared/lib/statusStyles"
 
 export function ProfileUpcomingCard() {
     const { t, i18n } = useTranslation()
@@ -35,7 +36,10 @@ export function ProfileUpcomingCard() {
                                     <span className="truncate text-sm font-medium">
                                         {lesson.subjectTitle}
                                     </span>
-                                    <Badge variant="secondary">
+                                    <Badge
+                                        variant="outline"
+                                        className={lessonStatusClass(lesson.status)}
+                                    >
                                         {t(`lessonStatus.${lesson.status}`)}
                                     </Badge>
                                 </div>
