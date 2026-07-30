@@ -21,7 +21,7 @@ func NewScheduleStorage(conn *pgxpool.Pool) *ScheduleStorage {
 func (s *ScheduleStorage) GetScheduleByID(scheduleID int64) (*models.Schedule, error) {
 	var schedule models.Schedule
 	query := `
-		SELECT id, tutor_id, start_time, end_time
+		SELECT id, title, tutor_id, start_time, end_time
 		FROM schedules
 		WHERE id = $1
 	`
@@ -32,6 +32,7 @@ func (s *ScheduleStorage) GetScheduleByID(scheduleID int64) (*models.Schedule, e
 		scheduleID,
 	).Scan(
 		&schedule.ID,
+		&schedule.Title,
 		&schedule.TutorID,
 		&schedule.StartTime,
 		&schedule.EndTime,
@@ -46,7 +47,7 @@ func (s *ScheduleStorage) GetScheduleByID(scheduleID int64) (*models.Schedule, e
 func (s *ScheduleStorage) GetAllSchedules() ([]models.Schedule, error) {
 	var resSchedules []models.Schedule
 	query := `
-		SELECT id, tutor_id, start_time, end_time
+		SELECT id, title, tutor_id, start_time, end_time
 		FROM schedules
 	`
 
@@ -63,6 +64,7 @@ func (s *ScheduleStorage) GetAllSchedules() ([]models.Schedule, error) {
 
 		err := rows.Scan(
 			&oneSchedule.ID,
+			&oneSchedule.Title,
 			&oneSchedule.TutorID,
 			&oneSchedule.StartTime,
 			&oneSchedule.EndTime,
@@ -80,7 +82,7 @@ func (s *ScheduleStorage) GetAllSchedules() ([]models.Schedule, error) {
 func (s *ScheduleStorage) GetSchedulesByTutorID(tutorID int64) ([]models.Schedule, error) {
 	var resSchedules []models.Schedule
 	query := `
-		SELECT id, tutor_id, start_time, end_time
+		SELECT id, title, tutor_id, start_time, end_time
 		FROM schedules
 		WHERE tutor_id = $1
 	`
@@ -99,6 +101,7 @@ func (s *ScheduleStorage) GetSchedulesByTutorID(tutorID int64) ([]models.Schedul
 
 		err := rows.Scan(
 			&oneSchedule.ID,
+			&oneSchedule.Title,
 			&oneSchedule.TutorID,
 			&oneSchedule.StartTime,
 			&oneSchedule.EndTime,
@@ -116,19 +119,21 @@ func (s *ScheduleStorage) GetSchedulesByTutorID(tutorID int64) ([]models.Schedul
 func (s *ScheduleStorage) CreateSchedule(schedule dto.CreateSchedule) (*models.Schedule, error) {
 	var resSchedule models.Schedule
 	query := `
-		INSERT INTO schedules (tutor_id, start_time, end_time)
-		VALUES ($1, $2, $3)
-		RETURNING id, tutor_id, start_time, end_time
+		INSERT INTO schedules (title, tutor_id, start_time, end_time)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, title, tutor_id, start_time, end_time
 	`
 
 	err := s.conn.QueryRow(
 		context.Background(),
 		query,
+		schedule.Title,
 		schedule.TutorID,
 		schedule.StartTime,
 		schedule.EndTime,
 	).Scan(
 		&resSchedule.ID,
+		&resSchedule.Title,
 		&resSchedule.TutorID,
 		&resSchedule.StartTime,
 		&resSchedule.EndTime,
@@ -144,19 +149,21 @@ func (s *ScheduleStorage) UpdateSchedule(schedule dto.UpdateSchedule) (*models.S
 	var resSchedule models.Schedule
 	query := `
 		UPDATE schedules
-		SET start_time = $2, end_time = $3
+		SET title = $2, start_time = $3, end_time = $4
 		WHERE id = $1
-		RETURNING id, tutor_id, start_time, end_time
+		RETURNING id, title, tutor_id, start_time, end_time
 	`
 
 	err := s.conn.QueryRow(
 		context.Background(),
 		query,
 		schedule.ID,
+		schedule.Title,
 		schedule.StartTime,
 		schedule.EndTime,
 	).Scan(
 		&resSchedule.ID,
+		&resSchedule.Title,
 		&resSchedule.TutorID,
 		&resSchedule.StartTime,
 		&resSchedule.EndTime,

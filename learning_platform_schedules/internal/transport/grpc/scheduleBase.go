@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"learning-platform/schedules/internal/dto"
+	"learning-platform/schedules/internal/models"
 	"learning-platform/schedules/internal/models/enum"
 )
 
@@ -15,7 +16,7 @@ type ScheduleService interface {
 	GetAllSchedules() ([]dto.ScheduleResponse, error)
 	GetScheduleByID(scheduleID int64) (*dto.ScheduleResponse, error)
 	GetSchedulesByTutorID(tutorID int64) ([]dto.ScheduleResponse, error)
-	CreateSchedule(newSchedule dto.CreateSchedule) (*dto.ScheduleResponse, error)
+	CreateSchedule(newSchedule dto.CreateSchedule) (*models.Schedule, error)
 	UpdateSchedule(newSchedule dto.UpdateSchedule) (*dto.ScheduleResponse, error)
 	DeleteSchedule(scheduleID int64) error
 }
@@ -58,6 +59,7 @@ func (s *ScheduleGRPCServer) GetScheduleByID(
 
 	return &scheduleGRPC.GetScheduleByIDResponse{
 		Id:        resSchedule.GetId(),
+		Title:     resSchedule.GetTitle(),
 		TutorId:   resSchedule.GetTutorId(),
 		StartTime: resSchedule.GetStartTime(),
 		EndTime:   resSchedule.GetEndTime(),
@@ -93,21 +95,11 @@ func (s *ScheduleGRPCServer) CreateSchedule(
 	ctx context.Context,
 	in *scheduleGRPC.CreateScheduleRequest,
 ) (*scheduleGRPC.CreateScheduleResponse, error) {
-	var createSlots []dto.CreateScheduleSlot
-
-	for _, slot := range in.GetSlots() {
-		createSlots = append(createSlots, dto.CreateScheduleSlot{
-			StartTime: slot.StartTime.AsTime(),
-			Duration:  slot.Duration,
-			LessonID:  slot.LessonId,
-		})
-	}
-
 	createDto := dto.CreateSchedule{
 		TutorID:   in.GetTutorId(),
+		Title:     in.GetTitle(),
 		StartTime: in.GetStartTime().AsTime(),
 		EndTime:   in.GetEndTime().AsTime(),
-		Slots:     createSlots,
 	}
 
 	schedule, err := s.service.ScheduleService.CreateSchedule(createDto)
@@ -119,10 +111,15 @@ func (s *ScheduleGRPCServer) CreateSchedule(
 		return nil, status.Error(codes.Internal, "failed to create schedule")
 	}
 
-	resSchedule := scheduleResponseDTOToProto(*schedule)
-
 	return &scheduleGRPC.CreateScheduleResponse{
-		Schedule: resSchedule,
+		Schedule: &scheduleGRPC.GetScheduleByIDResponse{
+			Id:        schedule.ID,
+			Title:     schedule.Title,
+			TutorId:   schedule.TutorID,
+			StartTime: timestamppb.New(schedule.StartTime.Time),
+			EndTime:   timestamppb.New(schedule.EndTime.Time),
+			Slots:     make([]*scheduleGRPC.ScheduleSlot, 0),
+		},
 	}, nil
 }
 
@@ -130,25 +127,14 @@ func (s *ScheduleGRPCServer) UpdateSchedule(
 	ctx context.Context,
 	in *scheduleGRPC.UpdateScheduleRequest,
 ) (*scheduleGRPC.UpdateScheduleResponse, error) {
-	var createSlots []dto.CreateScheduleSlot
-
-	for _, slot := range in.GetSlots() {
-		createSlots = append(createSlots, dto.CreateScheduleSlot{
-			StartTime: slot.StartTime.AsTime(),
-			Duration:  slot.Duration,
-			LessonID:  slot.LessonId,
-		})
+	updateDto := dto.UpdateSchedule{
+		ID:        in.GetId(),
+		Title:     in.GetTitle(),
+		StartTime: in.GetStartTime().AsTime(),
+		EndTime:   in.GetEndTime().AsTime(),
 	}
 
-	createDto := dto.UpdateSchedule{
-		ID:                    in.GetId(),
-		StartTime:             in.GetStartTime().AsTime(),
-		EndTime:               in.GetEndTime().AsTime(),
-		Slots:                 createSlots,
-		DeleteScheduleSlotIDs: in.GetDeletedScheduleSlotIds(),
-	}
-
-	schedule, err := s.service.ScheduleService.UpdateSchedule(createDto)
+	schedule, err := s.service.ScheduleService.UpdateSchedule(updateDto)
 	if err != nil {
 		s.logger.Error(
 			"failed to update schedule",
@@ -197,6 +183,7 @@ func scheduleResponseDTOToProto(schedule dto.ScheduleResponse) *scheduleGRPC.Get
 
 	return &scheduleGRPC.GetScheduleByIDResponse{
 		Id:        schedule.ID,
+		Title:     schedule.Title,
 		TutorId:   schedule.TutorID,
 		StartTime: timestamppb.New(schedule.StartTime),
 		EndTime:   timestamppb.New(schedule.EndTime),

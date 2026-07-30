@@ -22,7 +22,6 @@ type ScheduleStorage interface {
 
 type ScheduleSlotsForScheduleStorage interface {
 	GetAllScheduleSlots(scheduleID int64) ([]models.ScheduleSlot, error)
-	SetScheduleSlots(scheduleID int64, slots []dto.CreateScheduleSlot) ([]models.ScheduleSlot, error)
 	DeleteScheduleSlots(scheduleSlotIDs []int64) error
 }
 
@@ -86,37 +85,17 @@ func (s *ScheduleService) GetSchedulesByTutorID(tutorID int64) ([]dto.ScheduleRe
 	return resSchedules, nil
 }
 
-func (s *ScheduleService) CreateSchedule(newSchedule dto.CreateSchedule) (*dto.ScheduleResponse, error) {
+func (s *ScheduleService) CreateSchedule(newSchedule dto.CreateSchedule) (*models.Schedule, error) {
 	schedule, err := s.scheduleStorage.CreateSchedule(newSchedule)
 	if err != nil {
 		return nil, err
 	}
 
-	scheduleSlots, err := s.scheduleSlotStorage.SetScheduleSlots(schedule.ID, newSchedule.Slots)
-	if err != nil {
-		return nil, err
-	}
-
-	resSchedule, err := s.buildScheduleWithSlotsDTO(schedule, scheduleSlots)
-	if err != nil {
-		return nil, err
-	}
-
-	return resSchedule, nil
+	return schedule, nil
 }
 
 func (s *ScheduleService) UpdateSchedule(newSchedule dto.UpdateSchedule) (*dto.ScheduleResponse, error) {
 	schedule, err := s.scheduleStorage.UpdateSchedule(newSchedule)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.scheduleSlotStorage.DeleteScheduleSlots(newSchedule.DeleteScheduleSlotIDs)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = s.scheduleSlotStorage.SetScheduleSlots(schedule.ID, newSchedule.Slots)
 	if err != nil {
 		return nil, err
 	}
@@ -167,6 +146,7 @@ func (s *ScheduleService) buildScheduleWithSlotsDTO(
 
 	return &dto.ScheduleResponse{
 		ID:        schedule.ID,
+		Title:     schedule.Title,
 		TutorID:   schedule.TutorID,
 		StartTime: schedule.StartTime.Time,
 		EndTime:   schedule.EndTime.Time,

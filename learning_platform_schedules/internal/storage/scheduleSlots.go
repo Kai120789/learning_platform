@@ -7,7 +7,6 @@ import (
 	"learning-platform/schedules/internal/dto"
 	"learning-platform/schedules/internal/models"
 	"learning-platform/schedules/internal/models/enum"
-	"time"
 )
 
 type ScheduleSlotsStorage struct {
@@ -58,28 +57,10 @@ func (ss *ScheduleSlotsStorage) GetAllScheduleSlots(scheduleID int64) ([]models.
 	return resScheduleSlots, nil
 }
 
-func (ss *ScheduleSlotsStorage) SetScheduleSlots(
-	scheduleID int64,
-	slots []dto.CreateScheduleSlot,
-) ([]models.ScheduleSlot, error) {
-	var resSlots []models.ScheduleSlot
-	startTimeSlots := make([]time.Time, 0, len(slots))
-	statusSlots := make([]string, 0, len(slots))
-	durationSlots := make([]*int64, 0, len(slots))
-	lessonIDSlots := make([]*int64, 0, len(slots))
-	scheduleIDSlots := make([]int64, 0, len(slots))
-
-	for _, slot := range slots {
-		startTimeSlots = append(startTimeSlots, slot.StartTime)
-		durationSlots = append(durationSlots, slot.Duration)
-		lessonIDSlots = append(lessonIDSlots, slot.LessonID)
-		scheduleIDSlots = append(scheduleIDSlots, scheduleID)
-		if slot.LessonID != nil {
-			statusSlots = append(statusSlots, string(enum.StatusBooked))
-		} else {
-			statusSlots = append(statusSlots, string(enum.StatusFree))
-		}
-	}
+func (ss *ScheduleSlotsStorage) CreateScheduleSlot(
+	slot dto.CreateScheduleSlot,
+) (*models.ScheduleSlot, error) {
+	var resSlot models.ScheduleSlot
 
 	query := `
 		INSERT INTO schedule_slots (
@@ -89,62 +70,43 @@ func (ss *ScheduleSlotsStorage) SetScheduleSlots(
 		    duration, 
 		    lesson_id
 		)
-		SELECT *
-		FROM unnest(
-			$1::bigint[],
-			$2::timestamptz[],
-			$3::status_enum[],
-			$4::bigint[],
-		    $5::bigint[]
-		)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, schedule_id, start_time, status, duration, lesson_id
 	`
 
-	rows, err := ss.conn.Query(
+	err := ss.conn.QueryRow(
 		context.Background(),
 		query,
-		scheduleIDSlots,
-		startTimeSlots,
-		statusSlots,
-		durationSlots,
-		lessonIDSlots,
+		slot.ScheduleID,
+		slot.StartTime,
+		string(enum.StatusFree),
+		slot.Duration,
+		nil,
+	).Scan(
+		&resSlot.ID,
+		&resSlot.ScheduleID,
+		&resSlot.StartTime,
+		&resSlot.Status,
+		&resSlot.Duration,
+		&resSlot.LessonID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("set schedule %d slots: %w", scheduleID, err)
+		return nil, fmt.Errorf("create schedule %d slot: %w", slot.ScheduleID, err)
 	}
 
-	for rows.Next() {
-		var oneSlot models.ScheduleSlot
-
-		err := rows.Scan(
-			&oneSlot.ID,
-			&oneSlot.ScheduleID,
-			&oneSlot.StartTime,
-			&oneSlot.Status,
-			&oneSlot.Duration,
-			&oneSlot.LessonID,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("scan one slot for schedule %d: %w", scheduleID, err)
-		}
-
-		resSlots = append(resSlots, oneSlot)
-	}
-
-	return resSlots, nil
+	return &resSlot, nil
 }
 
 func (ss *ScheduleSlotsStorage) UpdateScheduleSlot(
 	scheduleSlotID int64,
-	scheduleSlot dto.CreateScheduleSlot,
+	scheduleSlot dto.UpdateScheduleSlot,
 ) (*models.ScheduleSlot, error) {
 	var resScheduleSlot models.ScheduleSlot
 	query := `
 		UPDATE schedule_slots
 		SET 
 		    start_time = $2,
-		    duration = $3,
-			lesson_id = $4
+		    duration = $3
 		WHERE id = $1
 		RETURNING id, schedule_id, start_time, status, duration, lesson_id
 	`
@@ -155,7 +117,6 @@ func (ss *ScheduleSlotsStorage) UpdateScheduleSlot(
 		scheduleSlotID,
 		scheduleSlot.StartTime,
 		scheduleSlot.Duration,
-		scheduleSlot.LessonID,
 	).Scan(
 		&resScheduleSlot.ID,
 		&resScheduleSlot.ScheduleID,
@@ -169,6 +130,24 @@ func (ss *ScheduleSlotsStorage) UpdateScheduleSlot(
 	}
 
 	return &resScheduleSlot, nil
+}
+
+func (ss *ScheduleSlotsStorage) DeleteOneScheduleSlot(scheduleSlotID int64) error {
+	query := `
+		DELETE FROM schedule_slots
+		WHERE id = $1
+	`
+
+	_, err := ss.conn.Exec(
+		context.Background(),
+		query,
+		scheduleSlotID,
+	)
+	if err != nil {
+		return fmt.Errorf("delete one schedule slot: %w", err)
+	}
+
+	return nil
 }
 
 func (ss *ScheduleSlotsStorage) DeleteScheduleSlots(scheduleSlotIDs []int64) error {

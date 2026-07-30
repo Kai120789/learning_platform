@@ -6,6 +6,7 @@ import (
 
 type Schedule struct {
 	ID        int64              `json:"id"`
+	Title     string             `json:"title"`
 	TutorID   int64              `json:"tutor_id"`
 	StartTime pgtype.Timestamptz `json:"start_time"`
 	EndTime   pgtype.Timestamptz `json:"end_time"`
