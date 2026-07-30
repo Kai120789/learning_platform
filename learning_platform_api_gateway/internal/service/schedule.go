@@ -11,9 +11,11 @@ type ScheduleClient interface {
 	GetScheduleByID(scheduleID int64) (*scheduleDto.ScheduleResponse, error)
 	GetSchedulesByTutorID(tutorID int64) ([]scheduleDto.ScheduleResponse, error)
 	CreateSchedule(schedule scheduleDto.CreateSchedule) (*scheduleDto.ScheduleResponse, error)
+	CreateScheduleSlot(createSlot scheduleDto.CreateScheduleSlot) (*scheduleDto.ScheduleSlot, error)
+	UpdateScheduleSlot(scheduleSlotID int64, updatedSlot scheduleDto.UpdateScheduleSlot) (*scheduleDto.ScheduleSlot, error)
+	DeleteScheduleSlot(scheduleSlotID int64) error
 	UpdateSchedule(schedule scheduleDto.UpdateSchedule) (*scheduleDto.ScheduleResponse, error)
 	DeleteSchedule(scheduleID int64) error
-	UpdateScheduleSlot(scheduleSlotID int64, updatedSlot scheduleDto.CreateScheduleSlot) (*scheduleDto.ScheduleSlot, error)
 	BindLessonToScheduleSlot(scheduleSlotID, lessonID int64) error
 	DeleteLessonFromScheduleSlot(scheduleSlotID int64) error
 }
@@ -78,9 +80,20 @@ func (s *ScheduleService) DeleteSchedule(scheduleID int64) error {
 	return nil
 }
 
+func (s *ScheduleService) CreateScheduleSlot(
+	createSlot scheduleDto.CreateScheduleSlot,
+) (*scheduleDto.ScheduleSlot, error) {
+	res, err := s.client.CreateScheduleSlot(createSlot)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
 func (s *ScheduleService) UpdateScheduleSlot(
 	scheduleSlotID int64,
-	updatedSlot scheduleDto.CreateScheduleSlot,
+	updatedSlot scheduleDto.UpdateScheduleSlot,
 ) (*scheduleDto.ScheduleSlot, error) {
 	res, err := s.client.UpdateScheduleSlot(scheduleSlotID, updatedSlot)
 	if err != nil {
@@ -88,6 +101,15 @@ func (s *ScheduleService) UpdateScheduleSlot(
 	}
 
 	return res, nil
+}
+
+func (s *ScheduleService) DeleteScheduleSlot(scheduleSlotID int64) error {
+	err := s.client.DeleteScheduleSlot(scheduleSlotID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *ScheduleService) BindLessonToScheduleSlot(scheduleSlotID, lessonID int64) error {

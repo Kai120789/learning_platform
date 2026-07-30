@@ -21,7 +21,9 @@ type ScheduleService interface {
 	CreateSchedule(schedule scheduleDto.CreateSchedule) (*scheduleDto.ScheduleResponse, error)
 	UpdateSchedule(schedule scheduleDto.UpdateSchedule) (*scheduleDto.ScheduleResponse, error)
 	DeleteSchedule(scheduleID int64) error
-	UpdateScheduleSlot(scheduleSlotID int64, updatedSlot scheduleDto.CreateScheduleSlot) (*scheduleDto.ScheduleSlot, error)
+	CreateScheduleSlot(createSlot scheduleDto.CreateScheduleSlot) (*scheduleDto.ScheduleSlot, error)
+	UpdateScheduleSlot(scheduleSlotID int64, updatedSlot scheduleDto.UpdateScheduleSlot) (*scheduleDto.ScheduleSlot, error)
+	DeleteScheduleSlot(scheduleSlotID int64) error
 	BindLessonToScheduleSlot(scheduleSlotID, lessonID int64) error
 	DeleteLessonFromScheduleSlot(scheduleSlotID int64) error
 }
@@ -161,6 +163,34 @@ func (s *ScheduleHandler) DeleteSchedule(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusOK)
 }
 
+func (s *ScheduleHandler) CreateScheduleSlot(w http.ResponseWriter, r *http.Request) {
+	var scheduleSlot scheduleDto.CreateScheduleSlot
+	err := json.NewDecoder(r.Body).Decode(&scheduleSlot)
+	if err != nil {
+		s.logger.Error(
+			"invalid create schedule slot dto",
+			zap.Error(err),
+		)
+		http.Error(w, "invalid create schedule slot dto", http.StatusBadRequest)
+		return
+	}
+
+	res, err := s.service.CreateScheduleSlot(scheduleSlot)
+	if err != nil {
+		s.logger.Error(
+			"failed to create schedule slot",
+			zap.Int64("scheduleID", scheduleSlot.ScheduleID),
+			zap.Error(err),
+		)
+		http.Error(w, "failed to create schedule slot", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(res)
+}
+
 func (s *ScheduleHandler) UpdateScheduleSlot(w http.ResponseWriter, r *http.Request) {
 	strScheduleSlotID := chi.URLParam(r, "scheduleSlotID")
 	scheduleSlotID, err := strconv.Atoi(strScheduleSlotID)
@@ -170,7 +200,7 @@ func (s *ScheduleHandler) UpdateScheduleSlot(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	var scheduleSlot scheduleDto.CreateScheduleSlot
+	var scheduleSlot scheduleDto.UpdateScheduleSlot
 	err = json.NewDecoder(r.Body).Decode(&scheduleSlot)
 	if err != nil {
 		s.logger.Error(
@@ -196,6 +226,29 @@ func (s *ScheduleHandler) UpdateScheduleSlot(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(res)
+}
+
+func (s *ScheduleHandler) DeleteScheduleSlot(w http.ResponseWriter, r *http.Request) {
+	strScheduleSlotID := chi.URLParam(r, "scheduleSlotID")
+	scheduleSlotID, err := strconv.Atoi(strScheduleSlotID)
+	if err != nil {
+		s.logger.Error("invalid param schedule slot id", zap.Error(err))
+		http.Error(w, "invalid param schedule slot id", http.StatusBadRequest)
+		return
+	}
+
+	err = s.service.DeleteScheduleSlot(int64(scheduleSlotID))
+	if err != nil {
+		s.logger.Error(
+			"failed to delete schedule slot",
+			zap.Int("scheduleSlotID", scheduleSlotID),
+			zap.Error(err),
+		)
+		http.Error(w, "failed to delete schedule slot", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *ScheduleHandler) BindLessonToScheduleSlot(w http.ResponseWriter, r *http.Request) {

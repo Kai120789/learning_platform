@@ -83,21 +83,11 @@ func (s *ScheduleClient) CreateSchedule(schedule scheduleDto.CreateSchedule) (*s
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var slots []*scheduleGRPC.CreateScheduleSlot
-
-	for _, oneSlot := range schedule.Slots {
-		slots = append(slots, &scheduleGRPC.CreateScheduleSlot{
-			StartTime: timestamppb.New(oneSlot.StartTime),
-			Duration:  oneSlot.Duration,
-			LessonId:  oneSlot.LessonID,
-		})
-	}
-
 	newSchedule := &scheduleGRPC.CreateScheduleRequest{
 		TutorId:   schedule.TutorID,
+		Title:     schedule.Title,
 		StartTime: timestamppb.New(schedule.StartTime),
 		EndTime:   timestamppb.New(schedule.EndTime),
-		Slots:     slots,
 	}
 
 	res, err := s.client.CreateSchedule(ctx, newSchedule)
@@ -112,22 +102,11 @@ func (s *ScheduleClient) UpdateSchedule(schedule scheduleDto.UpdateSchedule) (*s
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var newSlots []*scheduleGRPC.CreateScheduleSlot
-
-	for _, oneSlot := range schedule.Slots {
-		newSlots = append(newSlots, &scheduleGRPC.CreateScheduleSlot{
-			StartTime: timestamppb.New(oneSlot.StartTime),
-			Duration:  oneSlot.Duration,
-			LessonId:  oneSlot.LessonID,
-		})
-	}
-
 	newSchedule := &scheduleGRPC.UpdateScheduleRequest{
-		Id:                     schedule.ID,
-		StartTime:              timestamppb.New(schedule.StartTime),
-		EndTime:                timestamppb.New(schedule.EndTime),
-		Slots:                  newSlots,
-		DeletedScheduleSlotIds: schedule.DeleteScheduleSlotIDs,
+		Id:        schedule.ID,
+		Title:     schedule.Title,
+		StartTime: timestamppb.New(schedule.StartTime),
+		EndTime:   timestamppb.New(schedule.EndTime),
 	}
 
 	res, err := s.client.UpdateSchedule(ctx, newSchedule)
@@ -150,9 +129,34 @@ func (s *ScheduleClient) DeleteSchedule(scheduleID int64) error {
 	return nil
 }
 
+func (s *ScheduleClient) CreateScheduleSlot(
+	createSlot scheduleDto.CreateScheduleSlot,
+) (*scheduleDto.ScheduleSlot, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.CreateScheduleSlot(ctx, &scheduleGRPC.CreateScheduleSlotRequest{
+		ScheduleId: createSlot.ScheduleID,
+		StartTime:  timestamppb.New(createSlot.StartTime),
+		Duration:   createSlot.Duration,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &scheduleDto.ScheduleSlot{
+		ID:         res.GetSlot().GetId(),
+		ScheduleID: res.GetSlot().GetScheduleId(),
+		StartTime:  res.GetSlot().GetStartTime().AsTime(),
+		Status:     protoToEnumStatus(res.GetSlot().GetStatus()),
+		Duration:   res.GetSlot().Duration,
+		LessonID:   res.GetSlot().LessonId,
+	}, nil
+}
+
 func (s *ScheduleClient) UpdateScheduleSlot(
 	scheduleSlotID int64,
-	updatedSlot scheduleDto.CreateScheduleSlot,
+	updatedSlot scheduleDto.UpdateScheduleSlot,
 ) (*scheduleDto.ScheduleSlot, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -161,7 +165,6 @@ func (s *ScheduleClient) UpdateScheduleSlot(
 		Id:        scheduleSlotID,
 		StartTime: timestamppb.New(updatedSlot.StartTime),
 		Duration:  updatedSlot.Duration,
-		LessonId:  updatedSlot.LessonID,
 	})
 	if err != nil {
 		return nil, err
@@ -175,6 +178,22 @@ func (s *ScheduleClient) UpdateScheduleSlot(
 		Duration:   res.Duration,
 		LessonID:   res.LessonId,
 	}, nil
+}
+
+func (s *ScheduleClient) DeleteScheduleSlot(
+	scheduleSlotID int64,
+) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := s.client.DeleteScheduleSlot(ctx, &scheduleGRPC.DeleteScheduleSlotRequest{
+		SlotId: scheduleSlotID,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *ScheduleClient) BindLessonToScheduleSlot(scheduleSlotID, lessonID int64) error {
@@ -222,6 +241,7 @@ func grpcScheduleToDTO(schedule *scheduleGRPC.GetScheduleByIDResponse) *schedule
 
 	return &scheduleDto.ScheduleResponse{
 		ID:        schedule.GetId(),
+		Title:     schedule.GetTitle(),
 		TutorID:   schedule.GetTutorId(),
 		StartTime: schedule.GetStartTime().AsTime(),
 		EndTime:   schedule.GetEndTime().AsTime(),
