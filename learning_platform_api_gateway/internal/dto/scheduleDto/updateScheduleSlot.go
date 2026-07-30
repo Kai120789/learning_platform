@@ -4,8 +4,7 @@ import (
 	"time"
 )
 
-type CreateScheduleSlot struct {
+type UpdateScheduleSlot struct {
 	StartTime time.Time `json:"start_time"`
 	Duration  *int64    `json:"duration"`
-	LessonID  *int64    `json:"lesson_id"`
 }
