@@ -23,9 +23,8 @@ export function DayColumn({
 
     return (
         <div
-            className={`flex min-h-0 min-w-0 flex-col border-r last:border-r-0 ${
-                isToday ? "bg-primary/5" : ""
-            }`}
+            className={`flex min-h-0 min-w-0 flex-col border-r last:border-r-0 ${isToday ? "bg-primary/5" : ""
+                }`}
         >
             <div className="shrink-0 border-b px-2 py-1.5 text-center">
                 <div className={`text-sm font-medium ${isToday ? "text-primary" : ""}`}>
@@ -37,25 +36,22 @@ export function DayColumn({
             <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto p-1.5">
                 {items.length === 0 ? (
                     <div className="px-1 py-6 text-center text-xs text-muted-foreground">
-                        —
+                        –
                     </div>
                 ) : (
                     items.map((item) => (
                         <button
                             type="button"
                             key={item.id}
-                            className="w-full cursor-pointer rounded-md border bg-background px-2 py-1.5 text-left space-y-0.5 transition-colors hover:bg-muted/50"
+                            className="w-full cursor-pointer rounded-md border bg-background px-2 py-1.5 text-left transition-colors hover:bg-muted/50"
                             onClick={() => onSelectLesson(item.lessonId)}
                         >
-                            <div className="text-[11px] font-medium text-muted-foreground">
-                                {item.start} – {item.end}
-                            </div>
-                            <div className="line-clamp-1 text-xs font-medium">
-                                {t("schedule.bookedLesson", { id: item.lessonId })}
+                            <div className="truncate text-xs font-medium">
+                                {item.start}–{item.end}
                             </div>
                             <Badge
                                 variant="outline"
-                                className={cn("text-[10px]", lessonStatusClass(item.status))}
+                                className={cn("mt-1 text-[10px]", lessonStatusClass(item.status))}
                             >
                                 {t(`lessonStatus.${item.status}`)}
                             </Badge>

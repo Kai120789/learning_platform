@@ -2,20 +2,18 @@ import {
     AppRoutes,
     getRouteCourses,
     getRouteGroups,
-    getRouteLessons,
     getRouteLogin, getRouteMain, getRouteMaterials, getRoutePractices, getRouteProfile,
-    getRouteRegister, getRouteSchedule, getRouteScheduleDetails, getRouteSettings, getRouteTutors,
+    getRouteRegister, getRouteSchedule, getRouteSettings, getRouteTutors,
     getRouteWelcome
 } from './routePaths'
 import type { AppRoutesProps } from './AppRouter'
 import { WelcomePage } from '@/pages/welcome'
 import { LoginPage } from '@/pages/login'
-import { LessonsPage } from "@/pages/lessons";
 import { MainPage } from "@/pages/main";
 import { MaterialsPage } from "@/pages/materials";
 import { PracticesPage } from "@/pages/practices";
 import { ProfilePage } from "@/pages/profile";
-import { ScheduleDetailsPage, SchedulePage } from "@/pages/schedule";
+import { SchedulePage } from "@/pages/schedule";
 import { CoursesPage } from "@/pages/courses";
 import { TutorsPage } from "@/pages/tutors";
 import { SettingsPage } from '@/pages/settings'
@@ -47,14 +45,6 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
         ),
         authOnly: false,
         layout: <AuthLayout />
-    },
-    [AppRoutes.LESSONS]: {
-        path: getRouteLessons(),
-        element: (
-            <LessonsPage />
-        ),
-        authOnly: true,
-        layout: <MainLayout />
     },
     [AppRoutes.COURSES]: {
         path: getRouteCourses(),
@@ -100,14 +90,6 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
         path: getRouteSchedule(),
         element: (
             <SchedulePage />
-        ),
-        authOnly: true,
-        layout: <MainLayout />
-    },
-    [AppRoutes.SCHEDULE_DETAILS]: {
-        path: getRouteScheduleDetails(':id'),
-        element: (
-            <ScheduleDetailsPage />
         ),
         authOnly: true,
         layout: <MainLayout />

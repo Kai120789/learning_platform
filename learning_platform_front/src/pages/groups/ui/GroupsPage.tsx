@@ -32,10 +32,16 @@ export default function GroupsPage() {
                     <Label className="text-xl lg:text-2xl">
                         {t("groups.title")}
                     </Label>
-                    {isCanEdit && <Button onClick={() => setIsOpen(true)} className="rounded-full">
-                        <FaPlus className="size-3" />
-                        {t("groups.create")}
-                    </Button>}
+                    {isCanEdit && (
+                        <Button
+                            size="sm"
+                            onClick={() => setIsOpen(true)}
+                            className="rounded-full md:h-8 md:gap-1.5 md:px-2.5 md:text-sm"
+                        >
+                            <FaPlus className="size-3 md:size-3.5" />
+                            {t("groups.create")}
+                        </Button>
+                    )}
                 </div>
                 <Label className="text-sm lg:text-base font-normal text-primary/50">
                     {t("groups.subtitle")}

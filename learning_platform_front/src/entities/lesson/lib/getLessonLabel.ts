@@ -1,11 +1,11 @@
-import { format } from "date-fns"
+import { addMinutes, format } from "date-fns"
 import type { LessonData } from "../types/types"
 
 export function getLessonLabel(lesson: LessonData) {
     const start = new Date(lesson.startTime)
-    const time = Number.isNaN(start.getTime())
-        ? "—"
-        : format(start, "d MMM, HH:mm")
+    if (Number.isNaN(start.getTime())) return "–"
 
-    return `#${lesson.id} · ${time} · ${lesson.duration} мин`
+    const duration = lesson.duration && lesson.duration > 0 ? lesson.duration : 60
+    const end = addMinutes(start, duration)
+    return `${format(start, "HH:mm")}–${format(end, "HH:mm")}`
 }

@@ -72,7 +72,7 @@ export function GroupItem({ group }: GroupItemProps) {
                                 Telegram
                             </a>
                         ) : (
-                            <span className="text-xs text-transparent select-none">—</span>
+                            <span className="text-xs text-transparent select-none">–</span>
                         )}
                     </div>
                 </CardHeader>

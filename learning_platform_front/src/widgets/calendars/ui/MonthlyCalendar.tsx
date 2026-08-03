@@ -26,8 +26,11 @@ export type CalendarEvent = {
     date: string
     start: number
     end: number
+    startMinutes?: number
+    endMinutes?: number
     timeLabel?: string
     status?: "FREE" | "BOOKED"
+    lessonStatus?: "SCHEDULED" | "IN_PROCESS" | "COMPLETED" | "CANCELLED"
     lessonId?: number | null
 }
 
@@ -35,6 +38,7 @@ type MonthlyCalendarProps = {
     events: CalendarEvent[]
     selectedDate: Date
     onSelectDate: (date: Date) => void
+    onCreateAt?: (date: Date) => void
     periodStart?: string | Date
     periodEnd?: string | Date
 }
@@ -43,6 +47,7 @@ export default function MonthlyCalendar({
     events,
     selectedDate,
     onSelectDate,
+    onCreateAt,
     periodStart,
     periodEnd,
 }: MonthlyCalendarProps) {
@@ -123,6 +128,7 @@ export default function MonthlyCalendar({
                             type="button"
                             key={day.toString()}
                             onClick={() => onSelectDate(day)}
+                            onDoubleClick={() => onCreateAt?.(day)}
                             className={cn(
                                 "min-h-[4.5rem] cursor-pointer border p-1.5 text-left transition-colors hover:bg-muted/60",
                                 !isSameMonth(day, month) && "bg-muted/40 text-muted-foreground",

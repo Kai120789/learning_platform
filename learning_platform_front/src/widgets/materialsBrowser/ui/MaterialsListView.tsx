@@ -54,7 +54,7 @@ export function MaterialsListView({
                             {t("materials.items", { count: folder.itemCount })}
                         </span>
                         <span className="hidden items-center text-sm text-muted-foreground lg:flex">
-                            —
+                            –
                         </span>
                     </button>
                 ))}

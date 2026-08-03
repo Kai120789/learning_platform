@@ -19,18 +19,21 @@ const TUTOR_BOARDS_STUB: { id: number; title: string }[] = []
 type CreateLessonModalProps = {
     isOpen: boolean
     setIsOpen: (isOpen: boolean) => void
+    defaultStartTime?: Date | null
 }
 
 export function CreateLessonModal({
     isOpen,
     setIsOpen,
+    defaultStartTime = null,
 }: CreateLessonModalProps) {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const userData = useAppSelector(getUserFullData)
 
+    const initialStart = toDateTimeLocalValue(defaultStartTime ?? new Date())
     const [meetLink, setMeetLink] = useState("")
-    const [startTime, setStartTime] = useState(toDateTimeLocalValue(new Date()))
+    const [startTime, setStartTime] = useState(initialStart)
     const [duration, setDuration] = useState(60)
     const [boardId, setBoardId] = useState<number | "">("")
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -39,7 +42,7 @@ export function CreateLessonModal({
 
     const resetForm = () => {
         setMeetLink("")
-        setStartTime(toDateTimeLocalValue(new Date()))
+        setStartTime(toDateTimeLocalValue(defaultStartTime ?? new Date()))
         setDuration(60)
         setBoardId("")
         setIsSubmitting(false)
@@ -59,14 +62,6 @@ export function CreateLessonModal({
         if (!userData?.user.userID || !startTime || duration < 15) {
             dispatch(notificationActions.addNotification({
                 message: t("createLesson.error"),
-                type: "error",
-            }))
-            return
-        }
-
-        if (students.selectedUsers.length === 0) {
-            dispatch(notificationActions.addNotification({
-                message: t("createLesson.studentsRequired"),
                 type: "error",
             }))
             return

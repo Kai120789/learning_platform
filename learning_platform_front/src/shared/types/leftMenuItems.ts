@@ -1,7 +1,7 @@
-import { getRouteCourses, getRouteLessons, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
+import { getRouteCourses, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
 import { LeftMenuTabs } from "./leftMenuTabs"
 import { AiOutlineHome, AiOutlineCalendar } from "react-icons/ai";
-import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool, FiVideo } from "react-icons/fi";
+import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool } from "react-icons/fi";
 import { PiStudent } from "react-icons/pi";
 import type { IconType } from "react-icons/lib";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ export function LeftMenuItemsType(): LeftMenuItemTab[] {
         {
             icon: AiOutlineCalendar,
             path: getRouteSchedule(),
-            text: t("tabs.schedules"),
+            text: t("tabs.schedule"),
             field: LeftMenuTabs.SCHEDULE
         },
         {
@@ -62,12 +62,6 @@ export function LeftMenuItemsType(): LeftMenuItemTab[] {
             text: t("tabs.studying"),
             field: LeftMenuTabs.STUDYING,
             childrens: [
-                {
-                    icon: FiVideo,
-                    path: getRouteLessons(),
-                    text: t("tabs.lessons"),
-                    field: LeftMenuTabs.LESSONS
-                },
                 {
                     icon: FiUsers,
                     path: getRouteCourses(),

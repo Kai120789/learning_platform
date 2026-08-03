@@ -150,66 +150,22 @@
         "nextSlot": "Next slot"
     },
     "schedule": {
-        "title": "Schedules",
-        "subtitle": "Track planned lessons and availability slots",
+        "title": "Schedule",
+        "subtitle": "Planned lessons",
+        "tutorSubtitle": "Create and manage lessons on the calendar",
+        "studentSubtitle": "Your lessons by week and month",
         "week": "Week",
         "month": "Month",
-        "createSchedule": "Create schedule",
-        "createLesson": "Create lesson",
-        "bindLesson": "Bind lesson",
-        "unbindLesson": "Unbind lesson",
-        "editPeriod": "Edit",
-        "addSlot": "Add slot",
-        "addSlots": "Add slots",
-        "editSlot": "Edit slot",
+        "cards": "Cards",
         "dayDetails": "Selected day",
-        "upcoming": "Upcoming",
-        "mySchedules": "My schedules",
-        "noEvents": "No slots on this day",
-        "noUpcoming": "No upcoming slots",
-        "noSchedules": "No schedules yet",
-        "freeSlot": "Free slot",
+        "noEvents": "No lessons on this day",
         "bookedLesson": "Lesson #{{id}}",
-        "scheduleItem": "Schedule #{{id}}",
-        "slots": "Slots",
-        "slotsCount": "Total slots: {{count}}",
-        "freeCount": "Free: {{count}}",
-        "bookedCount": "Booked: {{count}}",
-        "backToList": "Back to schedules",
-        "notFound": "Schedule not found",
-        "deleteSchedule": "Delete schedule",
-        "deleteSlot": "Delete slot",
-        "deleteSuccess": "Schedule deleted",
-        "deleteError": "Failed to delete schedule",
-        "deleteSlotSuccess": "Slot deleted",
-        "deleteSlotError": "Failed to delete slot",
-        "unbindSuccess": "Lesson unbound from slot",
-        "unbindError": "Failed to unbind lesson",
-        "studentHint": "Student schedule will appear after the lessons service is connected.",
-        "studentSubtitle": "Your lessons in the calendar",
-        "noStudentLessons": "No lessons assigned yet"
-    },
-    "scheduleSlotStatus": {
-        "FREE": "Free",
-        "BOOKED": "Booked"
-    },
-    "createSchedule": {
-        "title": "Create schedule",
-        "name": "Name",
-        "namePlaceholder": "For example, Fall semester",
-        "date": "Date",
-        "startDate": "Start date",
-        "endDate": "End date",
-        "slots": "Slots",
-        "addSlot": "Add slot",
-        "removeSlot": "Remove slot",
-        "slotStart": "Slot {{index}}",
-        "duration": "Min",
-        "success": "Schedule created",
-        "error": "Failed to create schedule",
-        "invalidSlots": "Add at least one valid slot",
-        "invalidPeriod": "End date cannot be earlier than start date",
-        "slotsPartialError": "Schedule created, but some slots could not be added"
+        "noStudentLessons": "No lessons yet",
+        "viewMode": "View mode",
+        "layoutCalendar": "Calendar",
+        "layoutList": "List",
+        "layoutMode": "Display mode",
+        "calendarSpan": "Calendar range"
     },
     "createLesson": {
         "title": "Create lesson",
@@ -243,34 +199,6 @@
         "success": "Lesson updated",
         "error": "Failed to update lesson"
     },
-    "editSchedule": {
-        "title": "Edit period",
-        "success": "Schedule period updated",
-        "error": "Failed to update period"
-    },
-    "addScheduleSlots": {
-        "title": "Add slots",
-        "success": "Slots added",
-        "error": "Failed to add slots"
-    },
-    "editScheduleSlot": {
-        "title": "Edit slot",
-        "startTime": "Start time",
-        "success": "Slot updated",
-        "error": "Failed to update slot"
-    },
-    "bindLesson": {
-        "title": "Bind lesson",
-        "slot": "Free slot",
-        "lesson": "Lesson",
-        "lessonId": "Lesson ID",
-        "submit": "Bind",
-        "noFreeSlots": "No free slots",
-        "noLessons": "No available lessons",
-        "invalid": "Select a slot and a lesson",
-        "success": "Lesson bound to slot",
-        "error": "Failed to bind lesson"
-    },
     "lessons": {
         "title": "Lessons",
         "subtitle": "Online lessons and webinars with materials and meet links",
@@ -292,7 +220,7 @@
         "completeError": "Failed to complete lesson",
         "startsIn": "Starts in: {{time}}",
         "waitingStartStudent": "Please wait until the tutor starts the lesson",
-        "waitingStartTutor": "Start time has passed — you can start the lesson",
+        "waitingStartTutor": "Start time has passed – you can start the lesson",
         "inProcessHint": "Lesson is in progress"
     },
     "courses": {

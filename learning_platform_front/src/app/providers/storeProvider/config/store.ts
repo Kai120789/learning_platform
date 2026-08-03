@@ -6,7 +6,6 @@ import { $api } from "./api";
 import { userReducer } from "@/entities/user";
 import { groupReducer } from "@/entities/group";
 import { subjectReducer } from "@/entities/subject";
-import { scheduleReducer } from "@/entities/schedule";
 import { lessonReducer } from "@/entities/lesson";
 import { interceptor } from "@/shared/api/interceptor.ts";
 import { resetStore } from "@/shared/lib/resetStore";
@@ -21,7 +20,6 @@ export function createReduxStore(
         user: userReducer,
         group: groupReducer,
         subject: subjectReducer,
-        schedule: scheduleReducer,
         lesson: lessonReducer,
     };
 

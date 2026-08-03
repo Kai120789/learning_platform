@@ -168,7 +168,6 @@ export function AddUsersToGroupModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
-            {/* размер модалки поиска юзеров — sm:max-w-* */}
             <DialogContent className="sm:max-w-lg p-5 overflow-x-hidden">
                 <DialogHeader>
                     <DialogTitle className="text-base text-left">
