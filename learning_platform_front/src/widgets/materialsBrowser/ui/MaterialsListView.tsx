@@ -32,7 +32,7 @@ export function MaterialsListView({
                         type="button"
                         onClick={() => onOpenFolder(folder.id)}
                         className={`grid ${gridClass} 
-                            w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50
+                            w-full cursor-pointer gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50
                         `}
                     >
                         <div className="flex min-w-0 items-center gap-3">
@@ -68,7 +68,7 @@ export function MaterialsListView({
                             type="button"
                             onClick={() => onOpenFile(file)}
                             className={`grid ${gridClass} 
-                                w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50
+                                w-full cursor-pointer gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50
                             `}
                         >
 

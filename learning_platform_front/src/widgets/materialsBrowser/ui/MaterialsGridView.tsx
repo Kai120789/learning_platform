@@ -22,7 +22,7 @@ export function MaterialsGridView({
                                 key={folder.id}
                                 type="button"
                                 onClick={() => onOpenFolder(folder.id)}
-                                className="group flex h-full min-h-36 flex-col items-center gap-2 rounded-xl p-2 text-center transition-colors hover:bg-muted/50"
+                                className="group flex h-full min-h-36 cursor-pointer flex-col items-center gap-2 rounded-xl p-2 text-center transition-colors hover:bg-muted/50"
                             >
                                 <Folder
                                     className="size-20 shrink-0 fill-foreground/70 text-foreground/70 transition-transform group-hover:scale-[1.03]"
@@ -53,7 +53,7 @@ export function MaterialsGridView({
                                     key={file.id}
                                     type="button"
                                     onClick={() => onOpenFile(file)}
-                                    className="group flex h-full min-h-40 flex-col items-center gap-2 rounded-xl p-2 text-center transition-colors hover:bg-muted/50"
+                                    className="group flex h-full min-h-40 cursor-pointer flex-col items-center gap-2 rounded-xl p-2 text-center transition-colors hover:bg-muted/50"
                                 >
                                     <Icon
                                         className="size-16 shrink-0 text-foreground/75 transition-transform group-hover:scale-[1.03]"

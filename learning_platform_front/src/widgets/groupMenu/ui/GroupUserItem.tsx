@@ -37,28 +37,36 @@ export function GroupUserItem({
     }
 
     return (
-        <div className="flex items-center justify-between rounded-lg border px-2.5 py-2 transition-colors hover:bg-muted/50">
-            <div className="flex items-center gap-2.5">
-                <Avatar size="sm">
+        <div className="flex min-w-0 items-center justify-between gap-3 overflow-hidden py-3 transition-colors hover:bg-muted/40">
+            <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+                <Avatar className="shrink-0">
                     <AvatarFallback>
                         {user.name[0] + user.surname[0]}
                     </AvatarFallback>
                 </Avatar>
 
-                <div>
-                    <p className="text-sm font-medium leading-none">
+                <div className="min-w-0 flex-1 overflow-hidden">
+                    <p className="truncate text-base font-medium leading-tight">
                         {`${user.name} ${user.surname}`}
                     </p>
 
-                    <p className="text-xs text-muted-foreground">
-                        {user.tgUsername}
-                    </p>
+                    {user.tgUsername && (
+                        <p className="mt-1 truncate text-sm text-muted-foreground">
+                            {user.tgUsername}
+                        </p>
+                    )}
                 </div>
             </div>
 
-            <div className="flex flex-row gap-1">
-                <RiTelegramFill className="cursor-pointer" size={20} />
-                {isCanEdit && <MdDelete onClick={onClickRemoveUser} className="cursor-pointer text-destructive/70" size={20} />}
+            <div className="flex shrink-0 flex-row items-center gap-1.5 pr-4">
+                <RiTelegramFill className="cursor-pointer" size={24} />
+                {isCanEdit && (
+                    <MdDelete
+                        onClick={onClickRemoveUser}
+                        className="cursor-pointer text-destructive/70"
+                        size={24}
+                    />
+                )}
             </div>
         </div>
     )

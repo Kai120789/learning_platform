@@ -1,16 +1,21 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
+import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
 import {
     bindLessonToScheduleSlot,
     getSlotTimeLabel,
     type ScheduleSlotData,
 } from "@/entities/schedule"
+import {
+    getLessonLabel,
+    getLessons,
+    getLessonsByTutorId,
+} from "@/entities/lesson"
+import { getUserFullData } from "@/entities/user"
 import { notificationActions } from "@/features/notifications"
 import { Button } from "@/shared/ui/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Dialog"
 import { Field, FieldGroup, FieldLabel } from "@/shared/ui/Field"
-import { Input } from "@/shared/ui/Input"
 import { NativeSelect } from "@/shared/ui/NativeSelect"
 import { Separator } from "@/shared/ui/Separator"
 
@@ -29,8 +34,11 @@ export function BindLessonModal({
 }: BindLessonModalProps) {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
+    const userData = useAppSelector(getUserFullData)
+    const lessons = useAppSelector(getLessons)
+
     const [slotId, setSlotId] = useState<number | "">("")
-    const [lessonId, setLessonId] = useState("")
+    const [lessonId, setLessonId] = useState<number | "">("")
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const sortedSlots = useMemo(
@@ -38,14 +46,30 @@ export function BindLessonModal({
         [freeSlots],
     )
 
+    const bindableLessons = useMemo(
+        () => [...(lessons ?? [])]
+            .filter((lesson) => lesson.status === "SCHEDULED" || lesson.status === "IN_PROCESS")
+            .sort((a, b) => a.startTime.localeCompare(b.startTime)),
+        [lessons],
+    )
+
+    useEffect(() => {
+        if (!isOpen || !userData?.user.userID) return
+        dispatch(getLessonsByTutorId(userData.user.userID))
+    }, [dispatch, isOpen, userData?.user.userID])
+
+    const resolvedLessonId = lessonId !== ""
+        ? lessonId
+        : (bindableLessons[0]?.id ?? "")
+
     const onOpenChange = (open: boolean) => {
         setIsOpen(open)
         if (open) {
-            const preferred = preselectedSlotId
+            const preferredSlot = preselectedSlotId
                 && sortedSlots.some((slot) => slot.id === preselectedSlotId)
                 ? preselectedSlotId
                 : sortedSlots[0]?.id
-            setSlotId(preferred ?? "")
+            setSlotId(preferredSlot ?? "")
             setLessonId("")
         }
     }
@@ -53,8 +77,7 @@ export function BindLessonModal({
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const parsedLessonId = Number(lessonId)
-        if (!slotId || !Number.isFinite(parsedLessonId) || parsedLessonId <= 0) {
+        if (!slotId || !resolvedLessonId) {
             dispatch(notificationActions.addNotification({
                 message: t("bindLesson.invalid"),
                 type: "error",
@@ -65,7 +88,7 @@ export function BindLessonModal({
         setIsSubmitting(true)
         const response = await dispatch(bindLessonToScheduleSlot({
             scheduleSlotID: Number(slotId),
-            lessonID: parsedLessonId,
+            lessonID: Number(resolvedLessonId),
         }))
         setIsSubmitting(false)
 
@@ -115,22 +138,33 @@ export function BindLessonModal({
                             </NativeSelect>
                         </Field>
                         <Field className="w-full">
-                            <FieldLabel>{t("bindLesson.lessonId")}</FieldLabel>
-                            <Input
-                                className="w-full"
+                            <FieldLabel>{t("bindLesson.lesson")}</FieldLabel>
+                            <NativeSelect
                                 required
-                                type="number"
-                                min={1}
-                                value={lessonId}
-                                onChange={(e) => setLessonId(e.target.value)}
-                                placeholder="1"
-                            />
+                                value={resolvedLessonId}
+                                disabled={bindableLessons.length === 0}
+                                onChange={(e) => setLessonId(Number(e.target.value))}
+                            >
+                                {bindableLessons.length === 0 ? (
+                                    <option value="">{t("bindLesson.noLessons")}</option>
+                                ) : (
+                                    bindableLessons.map((lesson) => (
+                                        <option key={lesson.id} value={lesson.id}>
+                                            {getLessonLabel(lesson)}
+                                        </option>
+                                    ))
+                                )}
+                            </NativeSelect>
                         </Field>
                         <Field className="pt-3">
                             <Button
                                 type="submit"
                                 className="w-full"
-                                disabled={isSubmitting || sortedSlots.length === 0}
+                                disabled={
+                                    isSubmitting
+                                    || sortedSlots.length === 0
+                                    || bindableLessons.length === 0
+                                }
                             >
                                 {isSubmitting ? t("common.loading") : t("bindLesson.submit")}
                             </Button>

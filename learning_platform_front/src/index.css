@@ -252,6 +252,21 @@
     padding: 1rem 1.05rem;
     margin-bottom: 0.65rem;
     align-items: center;
+    overflow: hidden;
+}
+
+@media (max-width: 639px) {
+    .Toastify__toast-container .Toastify__toast.app-toast {
+        border: none;
+        border-radius: 0;
+    }
+
+    .Toastify__toast--success.app-toast,
+    .Toastify__toast--error.app-toast,
+    .Toastify__toast--warning.app-toast,
+    .Toastify__toast--info.app-toast {
+        border-left: none;
+    }
 }
 
 .Toastify__toast-body {
@@ -282,9 +297,9 @@
 }
 
 .Toastify__progress-bar.app-toast-progress {
-    height: 2px;
+    height: 5px;
     background: var(--muted-foreground);
-    opacity: 0.35;
+    opacity: 0.3;
 }
 
 .Toastify__toast--success.app-toast {

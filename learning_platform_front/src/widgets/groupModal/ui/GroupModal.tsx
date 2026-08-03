@@ -90,7 +90,7 @@ export function GroupModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="p-5">
+            <DialogContent className="sm:max-w-md p-5 overflow-x-hidden">
                 <DialogHeader>
                     <DialogTitle className="text-base text-left line-clamp-2 pr-10">
                         {isEditMode
@@ -139,12 +139,12 @@ export function GroupModal({
                             </Button>}
                         </div>
 
-                        <div className="max-h-52 space-y-2 overflow-y-auto pr-1">
+                        <div className="max-h-52 overflow-x-hidden overflow-y-auto">
                             {group.users?.length
                                 ? group.users.map((user) => (
                                     <GroupUserItem key={user.id} user={user} groupID={group.id} />
                                 ))
-                                : <div className="text-sm text-muted-foreground">{t("groups.emptyUsers")}</div>
+                                : <div className="py-2 text-sm text-muted-foreground">{t("groups.emptyUsers")}</div>
                             }
                         </div>
                     </>

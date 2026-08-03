@@ -1,42 +1,54 @@
 import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
-import { format } from "date-fns"
+import { FaPlus } from "react-icons/fa"
 import { enUS, ru } from "date-fns/locale"
-import { FaPlus, FaTrash } from "react-icons/fa"
 import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
-import { getRouteScheduleDetails } from "@/app/router/routePaths"
 import {
     deleteSchedule,
     getSchedules,
     getSchedulesIsLoading,
     getSchedulesByTutorId,
-    scheduleSlotStatusClass,
     type ScheduleData,
 } from "@/entities/schedule"
+import {
+    getLessons,
+    getLessonsByStudentId,
+    getLessonsIsLoading,
+} from "@/entities/lesson"
 import { getUserFullData, useCanEdit } from "@/entities/user"
 import { notificationActions } from "@/features/notifications"
-import { Badge } from "@/shared/ui/Badge"
 import { Button } from "@/shared/ui/Button"
-import { Card, CardContent } from "@/shared/ui/Card"
 import { Label } from "@/shared/ui/Label"
 import { cn } from "@/shared/lib/utils"
 import { CreateScheduleModal } from "@/widgets/createScheduleModal"
+import { StudentLessonsCalendar, type ScheduleTab } from "./StudentLessonsCalendar"
+import { TutorScheduleList } from "./TutorScheduleList"
 
 export default function SchedulePage() {
     const { t, i18n } = useTranslation()
-    const navigate = useNavigate()
     const dispatch = useAppDispatch()
     const canEdit = useCanEdit()
     const userData = useAppSelector(getUserFullData)
     const schedules = useAppSelector(getSchedules)
     const isLoading = useAppSelector(getSchedulesIsLoading)
+    const lessons = useAppSelector(getLessons)
+    const lessonsLoading = useAppSelector(getLessonsIsLoading)
     const [isOpen, setIsOpen] = useState(false)
+    const [studentTab, setStudentTab] = useState<ScheduleTab>("month")
     const dateLocale = i18n.language === "ru" ? ru : enUS
 
+    const studentTabs: { id: ScheduleTab; label: string }[] = [
+        { id: "week", label: t("schedule.week") },
+        { id: "month", label: t("schedule.month") },
+    ]
+
     useEffect(() => {
-        if (!canEdit || !userData?.user.userID) return
-        dispatch(getSchedulesByTutorId(userData.user.userID))
+        if (!userData?.user.userID) return
+        if (canEdit) {
+            dispatch(getSchedulesByTutorId(userData.user.userID))
+        } else {
+            dispatch(getLessonsByStudentId(userData.user.userID))
+        }
     }, [canEdit, dispatch, userData?.user.userID])
 
     const sortedSchedules = useMemo(
@@ -65,27 +77,48 @@ export default function SchedulePage() {
 
     return (
         <div className="py-8 lg:py-10 px-6 lg:px-20 space-y-6">
-            <div className="space-y-1">
-                <div className="flex justify-between items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-1">
                     <Label className="text-xl lg:text-2xl">
                         {t("schedule.title")}
                     </Label>
-                    {canEdit && (
-                        <Button onClick={() => setIsOpen(true)} className="rounded-full">
-                            <FaPlus className="size-3" />
-                            {t("schedule.createSchedule")}
-                        </Button>
-                    )}
+                    <Label className="text-sm lg:text-base font-normal text-primary/50">
+                        {canEdit ? t("schedule.subtitle") : t("schedule.studentSubtitle")}
+                    </Label>
                 </div>
-                <Label className="text-sm lg:text-base font-normal text-primary/50">
-                    {t("schedule.subtitle")}
-                </Label>
+
+                {canEdit ? (
+                    <Button onClick={() => setIsOpen(true)} className="rounded-full shrink-0">
+                        <FaPlus className="size-3" />
+                        {t("schedule.createSchedule")}
+                    </Button>
+                ) : (
+                    <div className="flex shrink-0 self-end sm:self-start rounded-lg border border-border p-0.5 bg-secondary/60">
+                        {studentTabs.map((item) => (
+                            <button
+                                key={item.id}
+                                type="button"
+                                onClick={() => setStudentTab(item.id)}
+                                className={cn(
+                                    "rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
+                                    item.id === studentTab
+                                        ? "bg-primary text-primary-foreground shadow-sm"
+                                        : "text-secondary-foreground hover:bg-muted",
+                                )}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {!canEdit && (
-                <p className="text-sm text-muted-foreground">
-                    {t("schedule.studentHint")}
-                </p>
+                <StudentLessonsCalendar
+                    lessons={lessons}
+                    isLoading={lessonsLoading}
+                    tab={studentTab}
+                />
             )}
 
             {canEdit && schedules === null && isLoading && (
@@ -97,62 +130,11 @@ export default function SchedulePage() {
             )}
 
             {canEdit && sortedSchedules.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    {sortedSchedules.map((schedule) => {
-                        const freeCount = schedule.slots.filter((slot) => slot.status === "FREE").length
-                        const bookedCount = schedule.slots.filter((slot) => slot.status === "BOOKED").length
-
-                        return (
-                            <Card
-                                key={schedule.id}
-                                size="sm"
-                                className="cursor-pointer transition-all hover:shadow-md"
-                                onClick={() => navigate(getRouteScheduleDetails(schedule.id))}
-                            >
-                                <CardContent className="flex items-center justify-between gap-4 py-3">
-                                    <div className="min-w-0 space-y-1">
-                                        <div className="text-sm font-medium truncate">
-                                            {schedule.title?.trim()
-                                                || t("schedule.scheduleItem", { id: schedule.id })}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            {format(new Date(schedule.startTime), "d MMM yyyy", { locale: dateLocale })}
-                                            {" – "}
-                                            {format(new Date(schedule.endTime), "d MMM yyyy", { locale: dateLocale })}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs text-muted-foreground">
-                                            {t("schedule.slotsCount", { count: schedule.slots.length })}
-                                        </span>
-                                        <Badge
-                                            variant="outline"
-                                            className={cn("text-[10px]", scheduleSlotStatusClass("FREE"))}
-                                        >
-                                            {t("schedule.freeCount", { count: freeCount })}
-                                        </Badge>
-                                        <Badge
-                                            variant="outline"
-                                            className={cn("text-[10px]", scheduleSlotStatusClass("BOOKED"))}
-                                        >
-                                            {t("schedule.bookedCount", { count: bookedCount })}
-                                        </Badge>
-                                        <Button
-                                            type="button"
-                                            size="icon-sm"
-                                            variant="outline"
-                                            onClick={(e) => onDeleteSchedule(e, schedule)}
-                                            aria-label={t("schedule.deleteSchedule")}
-                                        >
-                                            <FaTrash className="size-3.5" />
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )
-                    })}
-                </div>
+                <TutorScheduleList
+                    schedules={sortedSchedules}
+                    dateLocale={dateLocale}
+                    onDeleteSchedule={onDeleteSchedule}
+                />
             )}
 
             {canEdit && (

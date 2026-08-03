@@ -56,7 +56,7 @@ export function GroupsRowList() {
                                 key={group.id}
                                 type="button"
                                 onClick={() => openGroup(group)}
-                                className="flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-3 text-left transition-colors hover:bg-muted/50"
+                                className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-3 text-left transition-colors hover:bg-muted/50"
                             >
                                 <div className="min-w-0 space-y-1">
                                     <div className="truncate font-medium">{group.title}</div>

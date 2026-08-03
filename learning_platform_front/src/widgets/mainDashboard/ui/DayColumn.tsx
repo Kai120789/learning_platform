@@ -1,18 +1,23 @@
 import { useTranslation } from "react-i18next"
-import type { WeekDaySlotView } from "@/entities/schedule"
+import type { LessonWeekItem } from "@/entities/lesson"
+import { lessonStatusClass } from "@/shared/lib/statusStyles"
+import { Badge } from "@/shared/ui/Badge"
+import { cn } from "@/shared/lib/utils"
 
 type DayColumnProps = {
     dayKey: string
     dateLabel: string
     isToday: boolean
-    slots: WeekDaySlotView[]
+    items: LessonWeekItem[]
+    onSelectLesson: (lessonId: number) => void
 }
 
 export function DayColumn({
     dayKey,
     dateLabel,
     isToday,
-    slots,
+    items,
+    onSelectLesson,
 }: DayColumnProps) {
     const { t } = useTranslation()
 
@@ -30,30 +35,31 @@ export function DayColumn({
             </div>
 
             <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto p-1.5">
-                {slots.length === 0 ? (
+                {items.length === 0 ? (
                     <div className="px-1 py-6 text-center text-xs text-muted-foreground">
                         —
                     </div>
                 ) : (
-                    slots.map((slot) => (
-                        <div
-                            key={slot.id}
-                            className="rounded-md border bg-background px-2 py-1.5 space-y-0.5"
+                    items.map((item) => (
+                        <button
+                            type="button"
+                            key={item.id}
+                            className="w-full cursor-pointer rounded-md border bg-background px-2 py-1.5 text-left space-y-0.5 transition-colors hover:bg-muted/50"
+                            onClick={() => onSelectLesson(item.lessonId)}
                         >
                             <div className="text-[11px] font-medium text-muted-foreground">
-                                {slot.start} – {slot.end}
+                                {item.start} – {item.end}
                             </div>
                             <div className="line-clamp-1 text-xs font-medium">
-                                {slot.title}
+                                {t("schedule.bookedLesson", { id: item.lessonId })}
                             </div>
-                            {slot.subtitle && (
-                                <div className="truncate text-[11px] text-muted-foreground">
-                                    {t(`scheduleSlotStatus.${slot.status}`, {
-                                        defaultValue: slot.status,
-                                    })}
-                                </div>
-                            )}
-                        </div>
+                            <Badge
+                                variant="outline"
+                                className={cn("text-[10px]", lessonStatusClass(item.status))}
+                            >
+                                {t(`lessonStatus.${item.status}`)}
+                            </Badge>
+                        </button>
                     ))
                 )}
             </div>

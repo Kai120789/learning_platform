@@ -88,7 +88,7 @@ export default function WeeklySchedule({
                             key={date.toString()}
                             onClick={() => onSelectDate(date)}
                             className={cn(
-                                "border-r p-2 text-xs last:border-r-0 hover:bg-muted",
+                                "cursor-pointer border-r p-2 text-xs last:border-r-0 hover:bg-muted",
                                 inPeriod && !isPeriodStart && !isPeriodEnd && "bg-primary/10",
                                 (isPeriodStart || isPeriodEnd) && "border-2 border-primary/60 bg-primary/25 last:border-2",
                                 isSameDay(date, selectedDate) && "ring-2 ring-inset ring-primary",

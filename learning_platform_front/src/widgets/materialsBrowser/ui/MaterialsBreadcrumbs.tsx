@@ -23,7 +23,7 @@ export function MaterialsBreadcrumbs({
                 type="button"
                 onClick={() => onNavigate(null)}
                 className={cn(
-                    "rounded-md py-1 transition-colors hover:bg-muted",
+                    "cursor-pointer rounded-md py-1 transition-colors hover:bg-muted",
                     currentFolderId == null && "font-medium"
                 )}
             >
@@ -36,7 +36,7 @@ export function MaterialsBreadcrumbs({
                         type="button"
                         onClick={() => onNavigate(folder.id)}
                         className={cn(
-                            "rounded-md px-2 py-1 transition-colors hover:bg-muted",
+                            "cursor-pointer rounded-md px-2 py-1 transition-colors hover:bg-muted",
                             currentFolderId === folder.id && "font-medium"
                         )}
                     >

@@ -49,7 +49,7 @@ export function MaterialsBrowser() {
                         type="button"
                         onClick={() => setViewMode("list")}
                         className={cn(
-                            "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+                            "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
                             viewMode === "list"
                                 ? "bg-primary text-primary-foreground shadow-sm"
                                 : "text-secondary-foreground hover:bg-muted"
@@ -62,7 +62,7 @@ export function MaterialsBrowser() {
                         type="button"
                         onClick={() => setViewMode("grid")}
                         className={cn(
-                            "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+                            "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
                             viewMode === "grid"
                                 ? "bg-primary text-primary-foreground shadow-sm"
                                 : "text-secondary-foreground hover:bg-muted"

@@ -169,7 +169,7 @@ export function AddUsersToGroupModal({
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
             {/* размер модалки поиска юзеров — sm:max-w-* */}
-            <DialogContent className="sm:max-w-lg p-5">
+            <DialogContent className="sm:max-w-lg p-5 overflow-x-hidden">
                 <DialogHeader>
                     <DialogTitle className="text-base text-left">
                         {t("groups.addUsersTitle")}
@@ -186,7 +186,7 @@ export function AddUsersToGroupModal({
                     />
                 </div>
 
-                <div className="max-h-64 space-y-2 overflow-y-auto">
+                <div className="max-h-64 overflow-x-hidden overflow-y-auto">
                     {renderList()}
                 </div>
 

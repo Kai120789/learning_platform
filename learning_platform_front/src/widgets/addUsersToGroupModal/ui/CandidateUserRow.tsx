@@ -1,7 +1,6 @@
 import type { ShortUserInfo } from "@/entities/group"
 import { cn } from "@/shared/lib/utils"
-import { Avatar, AvatarFallback } from "@/shared/ui/Avatar"
-import { Checkbox } from "@/shared/ui/Checkbox"
+import { SelectionMark } from "@/shared/ui/SelectionMark"
 
 type CandidateUserRowProps = {
     user: ShortUserInfo
@@ -14,39 +13,43 @@ export function CandidateUserRow({
     isSelected,
     onToggle,
 }: CandidateUserRowProps) {
+    const initials = `${user.name?.[0] ?? ""}${user.surname?.[0] ?? ""}`.toUpperCase() || "?"
+
     return (
         <div
+            role="button"
+            tabIndex={0}
             className={cn(
-                "flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50",
-                isSelected && "border-primary bg-primary/5"
+                "flex min-w-0 cursor-pointer items-center justify-between gap-3 overflow-hidden py-2.5 transition-colors hover:bg-muted/40",
+                isSelected && "bg-primary/5",
             )}
             onClick={onToggle}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    onToggle()
+                }
+            }}
         >
-            <div className="flex items-center gap-3">
-                <Avatar>
-                    <AvatarFallback>
-                        {user.name[0]}{user.surname[0]}
-                    </AvatarFallback>
-                </Avatar>
+            <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-medium text-muted-foreground">
+                    {initials}
+                </span>
 
-                <div>
-                    <p className="font-medium leading-none">
-                        {`${user.name} ${user.surname}`}
+                <div className="min-w-0 flex-1 overflow-hidden">
+                    <p className="truncate text-sm font-medium leading-none">
+                        {`${user.name} ${user.surname}`.trim()}
                     </p>
 
                     {user.tg_username && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="mt-1 truncate text-xs text-muted-foreground">
                             {user.tg_username}
                         </p>
                     )}
                 </div>
             </div>
 
-            <Checkbox
-                checked={isSelected}
-                onCheckedChange={onToggle}
-                onClick={(e) => e.stopPropagation()}
-            />
+            <SelectionMark checked={isSelected} />
         </div>
     )
 }

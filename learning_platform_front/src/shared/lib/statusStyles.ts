@@ -1,4 +1,5 @@
-import type { LessonStatus, PracticeStatus } from "@/shared/mocks"
+import type { LessonStatus } from "@/entities/lesson"
+import type { PracticeStatus } from "@/shared/mocks"
 
 export function lessonStatusClass(status: LessonStatus): string {
     switch (status) {
@@ -9,7 +10,7 @@ export function lessonStatusClass(status: LessonStatus): string {
         case "COMPLETED":
             return "border-current/50 bg-emerald-500/[0.05] text-emerald-700/65 dark:text-emerald-200/55"
         case "CANCELLED":
-            return "border-current/50 bg-rose-500/[0.05] text-rose-700/65 dark:text-rose-200/55"
+            return "border-muted-foreground/25 bg-muted/40 text-muted-foreground"
         default:
             return ""
     }
