@@ -65,7 +65,6 @@ func JWT(secretKey []byte, refreshTokenTTL int64, authService AuthService) func(
 					newAccessToken, err := authService.RefreshTokens(redisTokens.RefreshToken)
 					if err != nil {
 						http.Error(w, "refresh tokens error", http.StatusInternalServerError)
-						http.SetCookie(w, utils.DeleteCookie("session_id"))
 						return
 					}
 
