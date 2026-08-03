@@ -4,7 +4,7 @@ import {
     getRouteGroups,
     getRouteLessons,
     getRouteLogin, getRouteMain, getRouteMaterials, getRoutePractices, getRouteProfile,
-    getRouteRegister, getRouteSchedule, getRouteSettings, getRouteTutors,
+    getRouteRegister, getRouteSchedule, getRouteScheduleDetails, getRouteSettings, getRouteTutors,
     getRouteWelcome
 } from './routePaths'
 import type { AppRoutesProps } from './AppRouter'
@@ -15,7 +15,7 @@ import { MainPage } from "@/pages/main";
 import { MaterialsPage } from "@/pages/materials";
 import { PracticesPage } from "@/pages/practices";
 import { ProfilePage } from "@/pages/profile";
-import { SchedulePage } from "@/pages/schedule";
+import { ScheduleDetailsPage, SchedulePage } from "@/pages/schedule";
 import { CoursesPage } from "@/pages/courses";
 import { TutorsPage } from "@/pages/tutors";
 import { SettingsPage } from '@/pages/settings'
@@ -100,6 +100,14 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
         path: getRouteSchedule(),
         element: (
             <SchedulePage />
+        ),
+        authOnly: true,
+        layout: <MainLayout />
+    },
+    [AppRoutes.SCHEDULE_DETAILS]: {
+        path: getRouteScheduleDetails(':id'),
+        element: (
+            <ScheduleDetailsPage />
         ),
         authOnly: true,
         layout: <MainLayout />

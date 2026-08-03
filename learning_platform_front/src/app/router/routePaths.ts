@@ -4,6 +4,7 @@ export enum AppRoutes {
     REGISTER = 'register',
     LESSONS = 'lessons',
     SCHEDULE = 'schedule',
+    SCHEDULE_DETAILS = 'schedule_details',
     PROFILE = 'profile',
     COURSES = 'courses',
     MAIN = 'main',
@@ -20,6 +21,7 @@ export const getRouteRegister = () => '/register'
 export const getRouteCourses = () => '/courses'
 export const getRouteLessons = () => '/lessons'
 export const getRouteSchedule = () => '/schedule'
+export const getRouteScheduleDetails = (id: string | number) => `/schedule/${id}`
 export const getRouteProfile = () => '/profile'
 export const getRouteMain = () => '/'
 export const getRouteMaterials = () => '/materials'

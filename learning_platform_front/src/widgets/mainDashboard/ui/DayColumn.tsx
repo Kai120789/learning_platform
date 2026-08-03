@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next"
-import type { ScheduleSlotMock } from "@/shared/mocks"
+import type { WeekDaySlotView } from "@/entities/schedule"
 
 type DayColumnProps = {
     dayKey: string
     dateLabel: string
     isToday: boolean
-    slots: ScheduleSlotMock[]
+    slots: WeekDaySlotView[]
 }
 
 export function DayColumn({
@@ -44,11 +44,15 @@ export function DayColumn({
                                 {slot.start} – {slot.end}
                             </div>
                             <div className="line-clamp-1 text-xs font-medium">
-                                {slot.subjectTitle}
+                                {slot.title}
                             </div>
-                            <div className="truncate text-[11px] text-muted-foreground">
-                                {slot.groupTitle}
-                            </div>
+                            {slot.subtitle && (
+                                <div className="truncate text-[11px] text-muted-foreground">
+                                    {t(`scheduleSlotStatus.${slot.status}`, {
+                                        defaultValue: slot.status,
+                                    })}
+                                </div>
+                            )}
                         </div>
                     ))
                 )}

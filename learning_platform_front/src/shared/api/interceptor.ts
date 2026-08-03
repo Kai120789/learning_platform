@@ -1,8 +1,8 @@
 import type { AxiosInstance } from 'axios';
 import { getRouteLogin } from '@/app/router/routePaths';
 import { notificationActions } from "@/features/notifications";
-import { userActions } from '@/entities/user';
 import type { AppStore } from '@/app/providers/storeProvider';
+import { resetStore } from '@/shared/lib/resetStore';
 import { t } from 'i18next';
 
 export function interceptor(api: AxiosInstance, store: AppStore) {
@@ -15,7 +15,7 @@ export function interceptor(api: AxiosInstance, store: AppStore) {
 
                     if (status === 401 && store.getState().user.isAuth) {
                         console.error(`Auth error (${status}):`, error.response.data);
-                        store.dispatch(userActions.setIsAuth(false));
+                        store.dispatch(resetStore());
                         store.dispatch(notificationActions.addNotification({
                             type: "error",
                             message: t("unauthorized"),

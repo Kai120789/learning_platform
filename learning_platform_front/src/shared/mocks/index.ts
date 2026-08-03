@@ -8,7 +8,6 @@ export {
     mockMaterials,
     mockPractices,
     mockTutors,
-    mockWeekSlots,
 } from "./learningMocks"
 export type {
     CandidateUserMock,
@@ -21,6 +20,5 @@ export type {
     MediaType,
     PracticeMock,
     PracticeStatus,
-    ScheduleSlotMock,
     TutorMock,
 } from "./learningMocks"

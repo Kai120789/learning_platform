@@ -1,12 +1,15 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
     addMonths,
     eachDayOfInterval,
+    endOfDay,
     endOfMonth,
     format,
     isSameDay,
     isSameMonth,
     isToday,
+    isWithinInterval,
+    startOfDay,
     startOfMonth,
     startOfWeek,
     endOfWeek,
@@ -23,22 +26,39 @@ export type CalendarEvent = {
     date: string
     start: number
     end: number
+    timeLabel?: string
+    status?: "FREE" | "BOOKED"
+    lessonId?: number | null
 }
 
 type MonthlyCalendarProps = {
     events: CalendarEvent[]
     selectedDate: Date
     onSelectDate: (date: Date) => void
+    periodStart?: string | Date
+    periodEnd?: string | Date
 }
 
 export default function MonthlyCalendar({
     events,
     selectedDate,
     onSelectDate,
+    periodStart,
+    periodEnd,
 }: MonthlyCalendarProps) {
     const { t, i18n } = useTranslation()
-    const [month, setMonth] = useState(new Date())
+    const [monthOverride, setMonthOverride] = useState<Date | null>(null)
     const dateLocale = i18n.language === "ru" ? ru : enUS
+    const month = monthOverride ?? startOfMonth(selectedDate)
+
+    const period = useMemo(() => {
+        if (!periodStart || !periodEnd) return null
+        const start = startOfDay(new Date(periodStart))
+        const end = endOfDay(new Date(periodEnd))
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null
+        if (end < start) return null
+        return { start, end }
+    }, [periodStart, periodEnd])
 
     const weekdays = [
         t("common.weekdays.mon"),
@@ -65,7 +85,7 @@ export default function MonthlyCalendar({
                 <FaArrowLeft
                     size={16}
                     className="cursor-pointer hover:text-primary/50"
-                    onClick={() => setMonth(addMonths(month, -1))}
+                    onClick={() => setMonthOverride(addMonths(month, -1))}
                 />
 
                 <h2 className="text-sm font-semibold capitalize">
@@ -75,7 +95,7 @@ export default function MonthlyCalendar({
                 <FaArrowRight
                     size={16}
                     className="cursor-pointer hover:text-primary/50"
-                    onClick={() => setMonth(addMonths(month, 1))}
+                    onClick={() => setMonthOverride(addMonths(month, 1))}
                 />
             </div>
 
@@ -92,6 +112,11 @@ export default function MonthlyCalendar({
                     const dayKey = format(day, "yyyy-MM-dd")
                     const dayEvents = events.filter((event) => event.date === dayKey)
                     const selected = isSameDay(day, selectedDate)
+                    const inPeriod = period
+                        ? isWithinInterval(day, { start: period.start, end: period.end })
+                        : false
+                    const isPeriodStart = period ? isSameDay(day, period.start) : false
+                    const isPeriodEnd = period ? isSameDay(day, period.end) : false
 
                     return (
                         <button
@@ -101,7 +126,9 @@ export default function MonthlyCalendar({
                             className={cn(
                                 "min-h-[4.5rem] border p-1.5 text-left transition-colors hover:bg-muted/60",
                                 !isSameMonth(day, month) && "bg-muted/40 text-muted-foreground",
-                                isToday(day) && "bg-primary/5",
+                                inPeriod && !isPeriodStart && !isPeriodEnd && "bg-primary/10",
+                                (isPeriodStart || isPeriodEnd) && "bg-primary/25 border-2 border-primary/60",
+                                isToday(day) && !inPeriod && "bg-primary/5",
                                 selected && "ring-2 ring-inset ring-primary",
                             )}
                         >

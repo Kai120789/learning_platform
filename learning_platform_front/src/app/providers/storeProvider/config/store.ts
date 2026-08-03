@@ -6,7 +6,9 @@ import { $api } from "./api";
 import { userReducer } from "@/entities/user";
 import { groupReducer } from "@/entities/group";
 import { subjectReducer } from "@/entities/subject";
+import { scheduleReducer } from "@/entities/schedule";
 import { interceptor } from "@/shared/api/interceptor.ts";
+import { resetStore } from "@/shared/lib/resetStore";
 
 export function createReduxStore(
     initialState: StateSchema,
@@ -18,9 +20,17 @@ export function createReduxStore(
         user: userReducer,
         group: groupReducer,
         subject: subjectReducer,
+        schedule: scheduleReducer,
     };
 
     const reducerManager = createReducerManager(rootReducer);
+
+    const rootReducerWithReset: Reducer<StateSchema> = (state, action) => (
+        reducerManager.reduce(
+            resetStore.match(action) ? undefined as unknown as StateSchema : state as StateSchema,
+            action,
+        )
+    );
 
     const extraArg = {
         api: $api,
@@ -28,7 +38,7 @@ export function createReduxStore(
 
     const store = configureStore({
 
-        reducer: reducerManager.reduce as Reducer<StateSchema>,
+        reducer: rootReducerWithReset,
         devTools: true,
         preloadedState: initialState,
         middleware: (getDefaultMiddleware) => getDefaultMiddleware({

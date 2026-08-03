@@ -12,7 +12,7 @@ import { getRouteGroups, getRouteProfile, getRouteSettings, getRouteWelcome } fr
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { logout } from "../api/logout";
 import { useTranslation } from "react-i18next";
-import { userActions } from "@/entities/user";
+import { resetStore } from "@/shared/lib/resetStore";
 
 type DropdownMenuIconsProps = {
     trigger: ReactElement
@@ -28,7 +28,7 @@ export function DropdownMenuIcons({ trigger }: DropdownMenuIconsProps) {
         const response = await dispatch(logout())
 
         if (response.meta.requestStatus == "fulfilled") {
-            dispatch(userActions.setIsAuth(false))
+            dispatch(resetStore())
             navigate(getRouteWelcome())
         }
     }

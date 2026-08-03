@@ -1,7 +1,11 @@
+import { useMemo } from "react"
 import {
     addDays,
+    endOfDay,
     format,
     isSameDay,
+    isWithinInterval,
+    startOfDay,
     startOfWeek,
 } from "date-fns"
 import { enUS, ru } from "date-fns/locale"
@@ -14,6 +18,8 @@ type WeeklyScheduleProps = {
     events: CalendarEvent[]
     selectedDate: Date
     onSelectDate: (date: Date) => void
+    periodStart?: string | Date
+    periodEnd?: string | Date
 }
 
 const hours = Array.from({ length: 19 }, (_, i) => i + 6)
@@ -22,12 +28,23 @@ export default function WeeklySchedule({
     events,
     selectedDate,
     onSelectDate,
+    periodStart,
+    periodEnd,
 }: WeeklyScheduleProps) {
     const { i18n } = useTranslation()
     const dateLocale = i18n.language === "ru" ? ru : enUS
 
     const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 })
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+
+    const period = useMemo(() => {
+        if (!periodStart || !periodEnd) return null
+        const start = startOfDay(new Date(periodStart))
+        const end = endOfDay(new Date(periodEnd))
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null
+        if (end < start) return null
+        return { start, end }
+    }, [periodStart, periodEnd])
 
     const dayEvents = events.filter(
         (event) => event.date === format(selectedDate, "yyyy-MM-dd"),
@@ -58,24 +75,34 @@ export default function WeeklySchedule({
             </div>
 
             <div className="grid grid-cols-7 border-b">
-                {weekDays.map((date) => (
-                    <button
-                        type="button"
-                        key={date.toString()}
-                        onClick={() => onSelectDate(date)}
-                        className={cn(
-                            "border-r p-2 text-xs last:border-r-0 hover:bg-muted",
-                            isSameDay(date, selectedDate) && "bg-primary/10",
-                        )}
-                    >
-                        <div className="text-muted-foreground">
-                            {format(date, "EEE", { locale: dateLocale })}
-                        </div>
-                        <div className="font-semibold text-sm">
-                            {format(date, "d")}
-                        </div>
-                    </button>
-                ))}
+                {weekDays.map((date) => {
+                    const inPeriod = period
+                        ? isWithinInterval(date, { start: period.start, end: period.end })
+                        : false
+                    const isPeriodStart = period ? isSameDay(date, period.start) : false
+                    const isPeriodEnd = period ? isSameDay(date, period.end) : false
+
+                    return (
+                        <button
+                            type="button"
+                            key={date.toString()}
+                            onClick={() => onSelectDate(date)}
+                            className={cn(
+                                "border-r p-2 text-xs last:border-r-0 hover:bg-muted",
+                                inPeriod && !isPeriodStart && !isPeriodEnd && "bg-primary/10",
+                                (isPeriodStart || isPeriodEnd) && "border-2 border-primary/60 bg-primary/25 last:border-2",
+                                isSameDay(date, selectedDate) && "ring-2 ring-inset ring-primary",
+                            )}
+                        >
+                            <div className="text-muted-foreground">
+                                {format(date, "EEE", { locale: dateLocale })}
+                            </div>
+                            <div className="font-semibold text-sm">
+                                {format(date, "d")}
+                            </div>
+                        </button>
+                    )
+                })}
             </div>
 
             <div className="max-h-[420px] overflow-y-auto">
@@ -106,7 +133,7 @@ export default function WeeklySchedule({
                                             </div>
                                         )}
                                         <div className="text-[11px] text-muted-foreground">
-                                            {event.start}:00 – {event.end}:00
+                                            {event.timeLabel ?? `${event.start}:00 – ${event.end}:00`}
                                         </div>
                                     </div>
                                 ))}
