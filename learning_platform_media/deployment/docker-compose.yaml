@@ -8,6 +8,6 @@ services:
     depends_on:
       - learning-platform-minio
     ports:
-      - "50056:50056"
+      - "50057:50057"
     volumes:
       - ..:/app
