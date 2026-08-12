@@ -11,7 +11,7 @@ import (
 )
 
 func StartApp() {
-	cfg := config.Getconfig()
+	cfg := config.GetConfig()
 
 	zapLog, err := logger.New(cfg.LogLevel)
 	if err != nil {

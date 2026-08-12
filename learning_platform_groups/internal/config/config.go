@@ -11,7 +11,7 @@ type Config struct {
 	DBDSN             string
 }
 
-func Getconfig() *Config {
+func GetConfig() *Config {
 	_ = godotenv.Load()
 
 	cfg := &Config{}
