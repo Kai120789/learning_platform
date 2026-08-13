@@ -11,7 +11,7 @@ export function GuestTopMenu() {
 
     return (
         <div className="border-b-2 border-border bg-background">
-            <div className="flex flex-row p-[20px] justify-between">
+            <div className="flex flex-row p-[20px] justify-between items-center">
                 <LearningLogo className="text-base" />
                 <div className="flex gap-4 lg:gap-8 items-center">
                     <div className="flex gap-2">
