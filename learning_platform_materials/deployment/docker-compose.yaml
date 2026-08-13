@@ -1,0 +1,14 @@
+services:
+  learning-platform-materials:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    container_name: learning-platform-materials
+    restart: on-failure
+    depends_on:
+      - learning-platform-media
+      - learning-platform-minio
+    ports:
+      - "50058:50058"
+    volumes:
+      - ..:/app
