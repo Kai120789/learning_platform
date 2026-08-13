@@ -1,5 +1,4 @@
-import { IoMoonOutline } from "react-icons/io5";
-import { FiSun } from "react-icons/fi";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from '@teispace/next-themes/client';
 
 
@@ -9,7 +8,11 @@ import { updateUserTheme } from "@/entities/user";
 import { UserThemeEnum } from "@/shared/enums/user";
 import { notificationActions } from "@/features/notifications";
 
-export function ThemeSwitch() {
+type ThemeSwitchProps = {
+    compact?: boolean
+}
+
+export function ThemeSwitch({ compact = false }: ThemeSwitchProps) {
     const { theme, setTheme } = useTheme();
     const dispatch = useAppDispatch()
 
@@ -31,13 +34,26 @@ export function ThemeSwitch() {
 
     return (
         <div className="flex items-center gap-1.5">
-            <FiSun className="size-3 shrink-0" />
-            <Switch
-                size="sm"
-                checked={theme == 'dark'}
-                onCheckedChange={toggleTheme}
-            />
-            <IoMoonOutline className="size-3 shrink-0" />
+            {compact ? (
+                <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className="flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                    aria-label="Theme"
+                >
+                    {theme === "dark" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+                </button>
+            ) : (
+                <>
+                    <Sun className="size-3 shrink-0" />
+                    <Switch
+                        size="sm"
+                        checked={theme == 'dark'}
+                        onCheckedChange={toggleTheme}
+                    />
+                    <Moon className="size-3 shrink-0" />
+                </>
+            )}
         </div>
     )
 }

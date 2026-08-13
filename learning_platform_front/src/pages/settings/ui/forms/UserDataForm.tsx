@@ -14,10 +14,9 @@ import { Textarea } from "@/shared/ui/Textarea"
 import { ConfirmButton } from "@/widgets/confirmButton"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Pencil, User } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { CiEdit, CiUser } from "react-icons/ci"
 
 type UserDataFormProps = {
     userData: UserFullData
@@ -64,7 +63,7 @@ export function UserDataForm({
             <div className="flex items-center gap-4 pb-4 border-b">
                 <div className="group relative h-16 w-16 lg:h-20 lg:w-20 cursor-pointer overflow-hidden rounded-full border">
                     <div className="flex h-full w-full items-center justify-center bg-background">
-                        <CiUser className="size-8 lg:size-10" />
+                        <User className="size-8 lg:size-10" />
                     </div>
                     <div
                         className="
@@ -72,7 +71,7 @@ export function UserDataForm({
                             bg-black/30 opacity-0 transition-opacity duration-200 group-hover:opacity-100
                         "
                     >
-                        <CiEdit className="text-white" size={22} />
+                        <Pencil className="size-[22px] text-white" />
                     </div>
                 </div>
                 <div className="space-y-0.5">

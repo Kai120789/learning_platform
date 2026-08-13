@@ -1,13 +1,11 @@
-import { getRouteCourses, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
+import { getRouteCourses, getRouteGroups, getRouteMain, getRouteMaterials, getRoutePractices, getRouteSchedule, getRouteTutors } from "@/app/router/routePaths"
 import { LeftMenuTabs } from "./leftMenuTabs"
-import { AiOutlineHome, AiOutlineCalendar } from "react-icons/ai";
-import { FiUsers, FiShoppingCart, FiBookOpen, FiPenTool } from "react-icons/fi";
-import { PiStudent } from "react-icons/pi";
-import type { IconType } from "react-icons/lib";
+import { BookOpen, Calendar, GraduationCap, Home, Library, PenTool, ShoppingCart, UserRound, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export interface LeftMenuItemTab {
-    icon: IconType
+    icon: LucideIcon
     path: string
     text: string
     field: LeftMenuTabs
@@ -19,37 +17,43 @@ export function LeftMenuItemsType(): LeftMenuItemTab[] {
 
     return [
         {
-            icon: AiOutlineHome,
+            icon: Home,
             path: getRouteMain(),
             text: t("tabs.main"),
             field: LeftMenuTabs.MAIN
         },
         {
-            icon: AiOutlineCalendar,
+            icon: Calendar,
             path: getRouteSchedule(),
             text: t("tabs.schedule"),
             field: LeftMenuTabs.SCHEDULE
         },
         {
-            icon: FiUsers,
+            icon: Users,
+            path: getRouteGroups(),
+            text: t("tabs.groups"),
+            field: LeftMenuTabs.GROUPS
+        },
+        {
+            icon: UserRound,
             path: getRouteTutors(),
             text: t("tabs.tutors"),
             field: LeftMenuTabs.TUTORS
         },
         {
-            icon: FiShoppingCart,
+            icon: ShoppingCart,
             path: "",
             text: t("tabs.services"),
             field: LeftMenuTabs.SERVICES,
             childrens: [
                 {
-                    icon: FiShoppingCart,
+                    icon: ShoppingCart,
                     path: "",
                     text: t("tabs.items"),
                     field: LeftMenuTabs.SERVICES_ITEMS
                 },
                 {
-                    icon: FiShoppingCart,
+                    icon: ShoppingCart,
                     path: "",
                     text: t("tabs.orders"),
                     field: LeftMenuTabs.SERVICES_ORDERS
@@ -57,25 +61,25 @@ export function LeftMenuItemsType(): LeftMenuItemTab[] {
             ]
         },
         {
-            icon: PiStudent,
+            icon: GraduationCap,
             path: "",
             text: t("tabs.studying"),
             field: LeftMenuTabs.STUDYING,
             childrens: [
                 {
-                    icon: FiUsers,
+                    icon: Library,
                     path: getRouteCourses(),
                     text: t("tabs.courses"),
                     field: LeftMenuTabs.COURSES
                 },
                 {
-                    icon: FiPenTool,
+                    icon: PenTool,
                     path: getRoutePractices(),
                     text: t("tabs.practices"),
                     field: LeftMenuTabs.PRACTICES
                 },
                 {
-                    icon: FiBookOpen,
+                    icon: BookOpen,
                     path: getRouteMaterials(),
                     text: t("tabs.materials"),
                     field: LeftMenuTabs.MATERIALS

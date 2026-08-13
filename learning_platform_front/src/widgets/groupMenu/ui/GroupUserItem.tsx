@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback } from "@/shared/ui/Avatar"
-import { RiTelegramFill } from "react-icons/ri"
-import { MdDelete } from "react-icons/md";
+import { Send, Trash2 } from "lucide-react"
 import type { GroupUser } from "@/entities/group";
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks";
 import { removeUserFromGroup } from "@/entities/group";
@@ -59,12 +58,11 @@ export function GroupUserItem({
             </div>
 
             <div className="flex shrink-0 flex-row items-center gap-1.5 pr-4">
-                <RiTelegramFill className="cursor-pointer" size={24} />
+                <Send className="size-6 cursor-pointer" />
                 {isCanEdit && (
-                    <MdDelete
+                    <Trash2
                         onClick={onClickRemoveUser}
-                        className="cursor-pointer text-destructive/70"
-                        size={24}
+                        className="size-6 cursor-pointer text-destructive/70"
                     />
                 )}
             </div>

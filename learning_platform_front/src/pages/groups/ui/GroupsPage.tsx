@@ -7,7 +7,7 @@ import { CreateGroupModal } from "@/widgets/createGroupModal"
 import { GroupsMenu } from "@/widgets/groupMenu"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { FaPlus } from "react-icons/fa"
+import { Plus } from "lucide-react"
 
 export default function GroupsPage() {
     const { t } = useTranslation()
@@ -38,7 +38,7 @@ export default function GroupsPage() {
                             onClick={() => setIsOpen(true)}
                             className="rounded-full md:h-8 md:gap-1.5 md:px-2.5 md:text-sm"
                         >
-                            <FaPlus className="size-3 md:size-3.5" />
+                            <Plus className="size-3 md:size-3.5" />
                             {t("groups.create")}
                         </Button>
                     )}

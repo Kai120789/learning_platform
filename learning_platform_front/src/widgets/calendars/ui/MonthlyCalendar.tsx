@@ -15,7 +15,7 @@ import {
     endOfWeek,
 } from "date-fns"
 import { enUS, ru } from "date-fns/locale"
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/shared/lib/utils"
 
@@ -87,9 +87,8 @@ export default function MonthlyCalendar({
     return (
         <div className="rounded-lg border overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 border-b">
-                <FaArrowLeft
-                    size={16}
-                    className="cursor-pointer hover:text-primary/50"
+                <ArrowLeft
+                    className="size-4 cursor-pointer hover:text-primary/50"
                     onClick={() => setMonthOverride(addMonths(month, -1))}
                 />
 
@@ -97,9 +96,8 @@ export default function MonthlyCalendar({
                     {format(month, "LLLL yyyy", { locale: dateLocale })}
                 </h2>
 
-                <FaArrowRight
-                    size={16}
-                    className="cursor-pointer hover:text-primary/50"
+                <ArrowRight
+                    className="size-4 cursor-pointer hover:text-primary/50"
                     onClick={() => setMonthOverride(addMonths(month, 1))}
                 />
             </div>

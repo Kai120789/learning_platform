@@ -1,4 +1,4 @@
-import { FaRegCheckCircle } from "react-icons/fa";
+import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import type { ReactNode } from "react";
 
@@ -49,7 +49,7 @@ export function Stepper({
                                 )}
                                 disabled={step.id > currentStep}
                             >
-                                {completed ? <FaRegCheckCircle className="h-5 w-5" /> : step.icon}
+                                {completed ? <CheckCircle2 className="h-5 w-5" /> : step.icon}
                             </button>
 
                             {index !== steps.length - 1 && (

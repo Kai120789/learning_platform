@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
-import { RiTelegramFill } from "react-icons/ri"
-import { Users } from "lucide-react"
+import { Send, Users } from "lucide-react"
 import { getRouteGroups } from "@/app/router/routePaths"
 import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
 import { getAllGroups, loadGroupsByRole } from "@/entities/group"
@@ -77,7 +76,7 @@ export function GroupsRowList() {
                                             className="text-primary hover:opacity-80"
                                             onClick={(e) => e.stopPropagation()}
                                         >
-                                            <RiTelegramFill size={22} />
+                                            <Send className="size-[22px]" />
                                         </a>
                                     )}
                                 </div>

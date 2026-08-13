@@ -1,10 +1,10 @@
-import { FiSettings, FiShield, FiUser } from "react-icons/fi"
-import type { IconType } from "react-icons/lib"
+import { Settings, Shield, User } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 export type Section = {
     ID: SectionTabs,
     Title: string
-    Icon: IconType
+    Icon: LucideIcon
 }
 
 export enum SectionTabs {
@@ -17,16 +17,16 @@ export const Sections: Section[] = [
     {
         ID: SectionTabs.PROFILE,
         Title: "Личные данные",
-        Icon: FiUser,
+        Icon: User,
     },
     {
         ID: SectionTabs.ACCOUNT,
         Title: "Аккаунт",
-        Icon: FiShield,
+        Icon: Shield,
     },
     {
         ID: SectionTabs.SETTINGS,
         Title: "Настройки",
-        Icon: FiSettings,
+        Icon: Settings,
     },
 ]

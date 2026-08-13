@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
-import { AiOutlineCalendar } from "react-icons/ai"
-import { FiBookOpen, FiUsers } from "react-icons/fi"
+import { BookOpen, Calendar, Users } from "lucide-react"
 import { getRouteLogin, getRouteRegister } from "@/app/router/routePaths"
 import { Button } from "@/shared/ui/Button"
 import {
@@ -18,17 +17,17 @@ export default function WelcomePage() {
 
     const features = [
         {
-            icon: AiOutlineCalendar,
+            icon: Calendar,
             title: t("welcome.features.schedule.title"),
             text: t("welcome.features.schedule.text"),
         },
         {
-            icon: FiUsers,
+            icon: Users,
             title: t("welcome.features.groups.title"),
             text: t("welcome.features.groups.text"),
         },
         {
-            icon: FiBookOpen,
+            icon: BookOpen,
             title: t("welcome.features.practice.title"),
             text: t("welcome.features.practice.text"),
         },

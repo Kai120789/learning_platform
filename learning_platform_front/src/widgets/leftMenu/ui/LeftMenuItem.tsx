@@ -1,51 +1,127 @@
-import type { LeftMenuItemTab } from "@/shared/types/leftMenuItems";
-import { Button } from "@/shared/ui/Button";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+import type { LeftMenuItemTab } from "@/shared/types/leftMenuItems"
+import { cn } from "@/shared/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/Tooltip"
+import { ChevronDown } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 
 type LeftMenuItemProps = {
-    item: LeftMenuItemTab;
-    onClick: () => void
-};
+    item: LeftMenuItemTab
+    collapsed?: boolean
+    nested?: boolean
+    onNavigate?: () => void
+    onExpandSidebar?: () => void
+}
 
-export function LeftMenuItem({ item, onClick }: LeftMenuItemProps) {
-    const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
+function isPathActive(pathname: string, path: string) {
+    if (!path) return false
+    if (path === "/") return pathname === "/"
+    return pathname === path || pathname.startsWith(`${path}/`)
+}
 
-    const hasChildren = !!item.childrens?.length;
+function isItemActive(item: LeftMenuItemTab, pathname: string): boolean {
+    if (isPathActive(pathname, item.path)) return true
+    return item.childrens?.some((child) => isItemActive(child, pathname)) ?? false
+}
+
+export function LeftMenuItem({
+    item,
+    collapsed = false,
+    nested = false,
+    onNavigate,
+    onExpandSidebar,
+}: LeftMenuItemProps) {
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
+    const hasChildren = Boolean(item.childrens?.length)
+    const active = isItemActive(item, pathname)
+    const childActive = item.childrens?.some((child) => isItemActive(child, pathname)) ?? false
+    const [open, setOpen] = useState(childActive)
+
+    useEffect(() => {
+        if (childActive) setOpen(true)
+    }, [childActive])
 
     const onClickItem = () => {
-        onClick()
-        navigate(item.path);
-    };
+        if (hasChildren) {
+            if (collapsed) {
+                onExpandSidebar?.()
+                setOpen(true)
+                return
+            }
+            setOpen((prev) => !prev)
+            return
+        }
+
+        if (!item.path) return
+        navigate(item.path)
+        onNavigate?.()
+    }
+
+    const rowClassName = cn(
+        "relative flex w-full items-center rounded-md text-sm transition-colors",
+        collapsed ? "h-10 justify-center px-0" : "h-9 gap-2.5 px-2.5",
+        nested && !collapsed && "h-8 text-[13px]",
+        active
+            ? "bg-muted font-medium text-foreground"
+            : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+    )
+
+    const content = (
+        <>
+            {active && !nested && (
+                <span className="absolute left-0.5 h-4 w-0.5 rounded-full bg-primary" />
+            )}
+            <item.icon className="size-4 shrink-0" />
+            {!collapsed && (
+                <>
+                    <span className="min-w-0 flex-1 truncate text-left">{item.text}</span>
+                    {hasChildren && (
+                        <ChevronDown
+                            className={cn(
+                                "size-3.5 shrink-0 text-muted-foreground transition-transform",
+                                open && "rotate-180"
+                            )}
+                        />
+                    )}
+                </>
+            )}
+        </>
+    )
 
     return (
-        <div className="flex flex-col items-start">
-            <div className="flex flex-row items-center">
-                <Button
-                    variant="link"
-                    onClick={onClickItem}
-                    className="flex items-center gap-2 text-sm cursor-pointer"
-                >
-                    <item.icon className="size-4" />
-                    {item.text}
-                </Button>
-                {hasChildren &&
-                    (isOpen ? (
-                        <FaCaretUp onClick={() => setIsOpen((prev) => !prev)} className="size-4 cursor-pointer" />
-                    ) : (
-                        <FaCaretDown onClick={() => setIsOpen((prev) => !prev)} className="size-4 cursor-pointer" />
-                    ))
-                }
-            </div>
-            {isOpen &&
-                item.childrens?.map((child) => (
-                    <div key={child.path} className="ml-8">
-                        <LeftMenuItem onClick={onClick} item={child} />
-                    </div>
-                ))
-            }
+        <div className="w-full">
+            {collapsed ? (
+                <Tooltip>
+                    <TooltipTrigger
+                        type="button"
+                        onClick={onClickItem}
+                        className={rowClassName}
+                    >
+                        {content}
+                    </TooltipTrigger>
+                    <TooltipContent side="right" sideOffset={8}>
+                        {item.text}
+                    </TooltipContent>
+                </Tooltip>
+            ) : (
+                <button type="button" onClick={onClickItem} className={rowClassName}>
+                    {content}
+                </button>
+            )}
+
+            {hasChildren && open && !collapsed && (
+                <div className="mt-0.5 ml-4 space-y-0.5 border-l border-border pl-2">
+                    {item.childrens?.map((child) => (
+                        <LeftMenuItem
+                            key={child.field}
+                            item={child}
+                            nested
+                            onNavigate={onNavigate}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
-    );
-};
+    )
+}

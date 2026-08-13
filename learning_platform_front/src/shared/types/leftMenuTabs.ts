@@ -1,6 +1,7 @@
 export enum LeftMenuTabs {
     MAIN = "MAIN",
     SCHEDULE = "SCHEDULE",
+    GROUPS = "GROUPS",
     TUTORS = "TUTORS",
     SERVICES = "SERVICES",
     STUDYING = "STUDYING",

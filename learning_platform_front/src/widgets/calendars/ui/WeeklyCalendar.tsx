@@ -9,7 +9,7 @@ import {
     startOfWeek,
 } from "date-fns"
 import { enUS, ru } from "date-fns/locale"
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { lessonStatusClass } from "@/shared/lib/statusStyles"
 import { cn } from "@/shared/lib/utils"
@@ -79,9 +79,8 @@ export default function WeeklySchedule({
     return (
         <div className="rounded-lg border overflow-hidden">
             <div className="flex items-center justify-between border-b px-3 py-2">
-                <FaArrowLeft
-                    size={16}
-                    className="cursor-pointer hover:text-primary/50"
+                <ArrowLeft
+                    className="size-4 cursor-pointer hover:text-primary/50"
                     onClick={() => shiftWeek(-1)}
                 />
 
@@ -89,9 +88,8 @@ export default function WeeklySchedule({
                     {format(selectedDate, "LLLL yyyy", { locale: dateLocale })}
                 </div>
 
-                <FaArrowRight
-                    size={16}
-                    className="cursor-pointer hover:text-primary/50"
+                <ArrowRight
+                    className="size-4 cursor-pointer hover:text-primary/50"
                     onClick={() => shiftWeek(1)}
                 />
             </div>

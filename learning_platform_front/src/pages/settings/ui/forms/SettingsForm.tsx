@@ -9,7 +9,7 @@ import { NativeSelect } from "@/shared/ui/NativeSelect";
 import { ConfirmButton } from "@/widgets/confirmButton";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FaLanguage } from "react-icons/fa6";
+import { Languages } from "lucide-react";
 
 type SettingsFormProps = {
     userIs2FaEnabled: boolean
@@ -56,7 +56,7 @@ export function SettingsForm({
                     <div className="min-w-0 space-y-0.5">
                         <h3 className="text-sm font-medium flex items-center gap-1.5">
                             {t("settings.language")}
-                            <FaLanguage className="size-4 text-muted-foreground" />
+                            <Languages className="size-4 text-muted-foreground" />
                         </h3>
                     </div>
                     <NativeSelect

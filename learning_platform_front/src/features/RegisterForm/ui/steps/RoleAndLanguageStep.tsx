@@ -3,8 +3,7 @@ import { cn } from "@/shared/lib/utils";
 import { Field, FieldLabel } from "@/shared/ui/Field";
 import { NativeSelect } from "@/shared/ui/NativeSelect";
 import { useTranslation } from "react-i18next";
-import { IoCheckmarkCircle } from "react-icons/io5";
-import { PiChalkboardTeacher, PiStudent } from "react-icons/pi";
+import { CheckCircle2, GraduationCap, Presentation } from "lucide-react";
 import { RegisterRoleEnum } from "../../types/types";
 import { languageToTranslationKey } from "../../utils/utils";
 
@@ -40,10 +39,10 @@ export function RoleAndLanguageStep({
                         )}
                     >
                         {role === RegisterRoleEnum.STUDENT && (
-                            <IoCheckmarkCircle className="absolute right-3 top-3 h-5 w-5 text-primary" />
+                            <CheckCircle2 className="absolute right-3 top-3 h-5 w-5 text-primary" />
                         )}
 
-                        <PiStudent className="mb-4 h-10 w-10 text-primary" />
+                        <GraduationCap className="mb-4 h-10 w-10 text-primary" />
 
                         <span className="font-semibold">
                             {t("auth.register.steps.student")}
@@ -65,10 +64,10 @@ export function RoleAndLanguageStep({
                         )}
                     >
                         {role === RegisterRoleEnum.TUTOR && (
-                            <IoCheckmarkCircle className="absolute right-3 top-3 h-5 w-5 text-primary" />
+                            <CheckCircle2 className="absolute right-3 top-3 h-5 w-5 text-primary" />
                         )}
 
-                        <PiChalkboardTeacher className="mb-4 h-10 w-10 text-primary" />
+                        <Presentation className="mb-4 h-10 w-10 text-primary" />
 
                         <span className="font-semibold">
                             {t("auth.register.steps.tutor")}

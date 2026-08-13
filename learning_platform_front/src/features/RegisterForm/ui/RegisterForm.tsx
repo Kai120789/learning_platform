@@ -8,9 +8,8 @@ import {
     FieldGroup,
 } from "@/shared/ui/Field"
 import { Stepper, type Step } from "@/shared/ui/Stepper"
-import { useState, type ReactNode } from "react"
-import { CgProfile } from "react-icons/cg"
-import { MdLockOutline } from "react-icons/md";
+import {type ReactNode, useState} from "react"
+import { GraduationCap, Lock, User, UserCheck } from "lucide-react"
 
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
@@ -18,10 +17,8 @@ import { RegisterRoleEnum, type RegisterRequestDTO } from "../types/types"
 import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
 import { register } from "../api/register"
 import { notificationActions } from "@/features/notifications"
-import { PiStudent } from "react-icons/pi"
 import { getUserData } from "@/entities/user"
 import { UserGenderEnum, UserLanguageEnum } from "@/shared/enums/user"
-import { FiUserCheck } from "react-icons/fi"
 import { RoleAndLanguageStep } from "./steps/RoleAndLanguageStep"
 import { UserDataStep } from "./steps/UserDataStep"
 import { AuthDataStep } from "./steps/AuthDataStep"
@@ -49,10 +46,10 @@ export function RegisterForm({
     const dispatch = useAppDispatch()
 
     const steps: Step[] = [
-        { id: 1, icon: <PiStudent size={20} /> },
-        { id: 2, icon: <CgProfile size={20} /> },
-        { id: 3, icon: <MdLockOutline size={20} /> },
-        { id: 4, icon: <FiUserCheck size={20} /> }
+        { id: 1, icon: <GraduationCap className="size-5" /> },
+        { id: 2, icon: <User className="size-5" /> },
+        { id: 3, icon: <Lock className="size-5" /> },
+        { id: 4, icon: <UserCheck className="size-5" /> }
     ]
 
     const [currentStep, setCurrentStep] = useState<number>(1)
@@ -103,10 +100,7 @@ export function RegisterForm({
     }
 
     const checkConfirmPasswordCorrect = (): boolean => {
-        if (confirmPassword !== password) {
-            return false
-        }
-        return true
+        return confirmPassword === password;
     }
 
     const checkNextStepDisabled = (): boolean => {

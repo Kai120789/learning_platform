@@ -10,8 +10,7 @@ import {
 
 import { Badge } from "@/shared/ui/Badge"
 
-import { RiTelegramFill } from "react-icons/ri"
-import { Users } from "lucide-react"
+import { Send, Users } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/Tooltip"
 import { GroupModal } from "@/widgets/groupModal"
 
@@ -68,7 +67,7 @@ export function GroupItem({ group }: GroupItemProps) {
                                 className="flex w-fit items-center gap-1.5 text-xs text-primary hover:underline"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <RiTelegramFill size={18} />
+                                <Send className="size-[18px]" />
                                 Telegram
                             </a>
                         ) : (

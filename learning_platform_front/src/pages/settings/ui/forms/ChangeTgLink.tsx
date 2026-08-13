@@ -3,7 +3,7 @@ import { Input } from "@/shared/ui/Input"
 import { ConfirmButton } from "@/widgets/confirmButton"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { RiTelegramFill } from "react-icons/ri"
+import { Send } from "lucide-react"
 
 // TODO: поменять link на username
 
@@ -21,7 +21,7 @@ export function ChangeTgLink({
         <div className="flex flex-col border border-border bg-background p-4 lg:p-5 rounded-lg space-y-3">
             <Field>
                 <FieldLabel htmlFor="tgLink" className="flex items-center gap-1.5">
-                    <RiTelegramFill size={18} />
+                    <Send className="size-[18px]" />
                     {t("settings.telegram")}
                 </FieldLabel>
                 <Input

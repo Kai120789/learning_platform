@@ -1,28 +1,25 @@
-import { FiBell, FiMenu } from "react-icons/fi";
-import { FaRegFontAwesomeLogoFull, FaRegUserCircle } from "react-icons/fa";
-import { DropdownMenuIcons } from "@/widgets/dropdownMenu";
+import { LearningLogo } from "@/shared/ui/LearningLogo"
+import { Menu } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 type TopMenuProps = {
     onClick: () => void
 }
 
 export function TopMenu({ onClick }: TopMenuProps) {
+    const { t } = useTranslation()
+
     return (
-        <div className="border-b-2 border-border bg-background">
-            <div className="flex flex-row p-3 lg:p-4 justify-between items-center">
-                <div className="flex flex-row items-center gap-3 lg:gap-6">
-                    <FiMenu onClick={onClick} className="size-5 cursor-pointer" />
-                    <div className='z-50'>
-                        <FaRegFontAwesomeLogoFull className="h-[32px] w-[120px]" />
-                    </div>
-                </div>
-                <div className="flex flex-row gap-3">
-                    <FiBell className="size-5" />
-                    <DropdownMenuIcons trigger={
-                        <FaRegUserCircle className="size-5 cursor-pointer border-none" />
-                    } />
-                </div>
-            </div>
-        </div>
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background px-4 lg:hidden">
+            <button
+                type="button"
+                onClick={onClick}
+                className="rounded-md p-1 text-foreground hover:bg-muted"
+                aria-label={t("sidebar.open")}
+            >
+                <Menu className="size-5" />
+            </button>
+            <LearningLogo />
+        </header>
     )
 }

@@ -10,19 +10,19 @@ import { SettingsForm } from "./forms/SettingsForm";
 import { UserDataForm } from "./forms/UserDataForm";
 import { ChangeTgLink } from "./forms/ChangeTgLink";
 import { useTranslation } from "react-i18next";
-import { FiSettings, FiShield, FiUser } from "react-icons/fi";
-import type { IconType } from "react-icons/lib";
+import { Settings, Shield, User } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 type SettingsSection = {
     id: SectionTabs
     titleKey: string
-    icon: IconType
+    icon: LucideIcon
 }
 
 const sections: SettingsSection[] = [
-    { id: SectionTabs.PROFILE, titleKey: "settings.tabs.profile", icon: FiUser },
-    { id: SectionTabs.ACCOUNT, titleKey: "settings.tabs.account", icon: FiShield },
-    { id: SectionTabs.SETTINGS, titleKey: "settings.tabs.settings", icon: FiSettings },
+    { id: SectionTabs.PROFILE, titleKey: "settings.tabs.profile", icon: User },
+    { id: SectionTabs.ACCOUNT, titleKey: "settings.tabs.account", icon: Shield },
+    { id: SectionTabs.SETTINGS, titleKey: "settings.tabs.settings", icon: Settings },
 ]
 
 export default function SettingsPage() {
@@ -100,7 +100,7 @@ export default function SettingsPage() {
                                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                     )}
                                 >
-                                    <Icon size={15} />
+                                    <Icon className="size-[15px]" />
                                     <span className="hidden lg:flex">{t(section.titleKey)}</span>
                                 </button>
                             );

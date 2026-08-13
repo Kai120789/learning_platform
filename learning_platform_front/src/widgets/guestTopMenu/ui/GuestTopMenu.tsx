@@ -2,7 +2,7 @@
 import { getRouteLogin, getRouteRegister } from "@/app/router/routePaths";
 import { Button } from "@/shared/ui/Button";
 import { useNavigate } from "react-router-dom";
-import { FaRegFontAwesomeLogoFull } from "react-icons/fa";
+import { LearningLogo } from "@/shared/ui/LearningLogo";
 import { useTranslation } from "react-i18next";
 
 export function GuestTopMenu() {
@@ -12,7 +12,7 @@ export function GuestTopMenu() {
     return (
         <div className="border-b-2 border-border bg-background">
             <div className="flex flex-row p-[20px] justify-between">
-                <FaRegFontAwesomeLogoFull className="h-[40px] w-[150px]" />
+                <LearningLogo className="text-base" />
                 <div className="flex gap-4 lg:gap-8 items-center">
                     <div className="flex gap-2">
                         <Button
