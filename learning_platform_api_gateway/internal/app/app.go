@@ -40,6 +40,7 @@ func Start() {
 		cfg.LessonServiceUrl,
 		cfg.ScheduleServiceUrl,
 		cfg.SubjectServiceUrl,
+		cfg.MediaServiceUrl,
 	)
 	if err != nil {
 		log.Fatal("init grpc client error", zap.Error(err))
@@ -52,6 +53,7 @@ func Start() {
 		LessonClient:   client.LessonClient,
 		ScheduleClient: client.ScheduleClient,
 		SubjectClient:  client.SubjectClient,
+		MediaClient:    client.MediaClient,
 	}, redisLayer)
 
 	_ = serviceLayer
