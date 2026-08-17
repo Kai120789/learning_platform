@@ -4,6 +4,7 @@ import {
     endOfDay,
     format,
     isSameDay,
+    isToday,
     isWithinInterval,
     startOfDay,
     startOfWeek,
@@ -117,7 +118,12 @@ export default function WeeklySchedule({
                             <div className="text-muted-foreground">
                                 {format(date, "EEE", { locale: dateLocale })}
                             </div>
-                            <div className="font-semibold text-sm">
+                            <div
+                                className={cn(
+                                    "mt-0.5 flex size-6 items-center justify-center rounded-full text-sm font-semibold",
+                                    isToday(date) && "bg-primary text-primary-foreground",
+                                )}
+                            >
                                 {format(date, "d")}
                             </div>
                         </button>
