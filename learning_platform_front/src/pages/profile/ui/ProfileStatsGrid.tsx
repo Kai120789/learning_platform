@@ -56,7 +56,7 @@ export function ProfileStatsGrid() {
                     </CardHeader>
                     <CardContent className="mt-auto space-y-1">
                         <div className="text-xl font-bold">{stat.value}</div>
-                        <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
+                        <div className="flex items-center gap-1 text-xs text-emerald-600/80 dark:text-emerald-300/65">
                             <TrendingUp className="size-3" />
                             {t("profile.statChange", { count: stat.change })}
                         </div>

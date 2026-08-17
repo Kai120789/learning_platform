@@ -19,7 +19,7 @@ export function LessonTiming({ lesson, canEdit }: LessonTimingProps) {
 
     if (lesson.status === "IN_PROCESS") {
         return (
-            <div className="text-xs text-amber-700/80 dark:text-amber-200/70">
+            <div className="text-xs text-amber-700/80 dark:text-amber-200/45">
                 {t("lessons.inProcessHint")}
             </div>
         )
@@ -35,14 +35,14 @@ export function LessonTiming({ lesson, canEdit }: LessonTimingProps) {
 
     if (canEdit) {
         return (
-            <div className="text-xs text-amber-700/80 dark:text-amber-200/70">
+            <div className="text-xs text-amber-700/80 dark:text-amber-200/45">
                 {t("lessons.waitingStartTutor")}
             </div>
         )
     }
 
     return (
-        <div className="text-xs text-amber-700/80 dark:text-amber-200/70">
+        <div className="text-xs text-amber-700/80 dark:text-amber-200/45">
             {t("lessons.waitingStartStudent")}
         </div>
     )

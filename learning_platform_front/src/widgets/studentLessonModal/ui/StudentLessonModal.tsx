@@ -37,7 +37,7 @@ function LessonTiming({
 
     if (lesson.status === "IN_PROCESS") {
         return (
-            <p className="text-amber-700/80 dark:text-amber-200/70">
+            <p className="text-amber-700/80 dark:text-amber-200/45">
                 {t("lessons.inProcessHint")}
             </p>
         )
@@ -53,14 +53,14 @@ function LessonTiming({
 
     if (canEdit) {
         return (
-            <p className="text-amber-700/80 dark:text-amber-200/70">
+            <p className="text-amber-700/80 dark:text-amber-200/45">
                 {t("lessons.waitingStartTutor")}
             </p>
         )
     }
 
     return (
-        <p className="text-amber-700/80 dark:text-amber-200/70">
+        <p className="text-amber-700/80 dark:text-amber-200/45">
             {t("lessons.waitingStartStudent")}
         </p>
     )

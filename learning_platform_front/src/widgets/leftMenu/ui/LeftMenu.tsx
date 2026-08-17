@@ -39,7 +39,7 @@ export function LeftMenu({
         <button
             type="button"
             className={cn(
-                "flex w-full flex-col items-center rounded-lg text-center outline-none transition-colors hover:bg-muted focus-visible:bg-muted",
+                "flex w-full flex-col items-center rounded-lg text-center outline-none transition-colors hover:bg-sidebar-accent focus-visible:bg-sidebar-accent",
                 collapsed ? "py-2" : "gap-2 px-2 py-3"
             )}
         >
@@ -57,7 +57,7 @@ export function LeftMenu({
                         {displayName || userData?.user.email}
                     </span>
                     {role && (
-                        <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                        <span className="mt-0.5 block truncate text-xs text-sidebar-foreground/55">
                             {t(`roles.${role}`)}
                         </span>
                     )}
@@ -69,7 +69,7 @@ export function LeftMenu({
     return (
         <aside
             className={cn(
-                "h-full shrink-0 flex-col overflow-hidden border-r border-border bg-background",
+                "h-full shrink-0 flex-col overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground",
                 collapsed ? "w-16" : "w-52",
                 className
             )}
@@ -85,7 +85,7 @@ export function LeftMenu({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        className="rounded-md p-1 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                         aria-label={t("sidebar.close")}
                     >
                         <X className="size-4" />
@@ -95,7 +95,7 @@ export function LeftMenu({
                     <button
                         type="button"
                         onClick={() => onCollapsedChange(true)}
-                        className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        className="rounded-md p-1 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                         aria-label={t("sidebar.collapse")}
                     >
                         <ChevronsLeft className="size-4" />
@@ -124,8 +124,8 @@ export function LeftMenu({
             </nav>
 
             <div className={cn("mt-auto shrink-0 px-2 pb-5 pt-2", collapsed && "px-1.5")}>
-                <div className="mx-2 h-px bg-border" />
-                <div className={cn("mt-5 flex items-center", collapsed ? "justify-center" : "justify-between px-2 text-sm text-muted-foreground")}>
+                <div className="mx-2 h-px bg-sidebar-border" />
+                <div className={cn("mt-5 flex items-center", collapsed ? "justify-center" : "justify-between px-2 text-sm text-sidebar-foreground/60")}>
                     {!collapsed && t("theme")}
                     <ThemeSwitch compact={collapsed} />
                 </div>
@@ -134,7 +134,7 @@ export function LeftMenu({
                     <button
                         type="button"
                         onClick={() => onCollapsedChange(false)}
-                        className="flex h-10 w-full items-center justify-center rounded-md text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                        className="flex h-10 w-full items-center justify-center rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                         aria-label={t("sidebar.expand")}
                     >
                         <ChevronsRight className="size-4" />

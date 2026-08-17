@@ -63,14 +63,14 @@ export function LeftMenuItem({
         collapsed ? "h-10 justify-center px-0" : "h-9 gap-2.5 px-2.5",
         nested && !collapsed && "h-8 text-[13px]",
         active
-            ? "bg-muted font-medium text-foreground"
-            : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+            ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
+            : "text-sidebar-foreground/65 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
     )
 
     const content = (
         <>
             {active && !nested && (
-                <span className="absolute left-0.5 h-4 w-0.5 rounded-full bg-primary" />
+                <span className="absolute left-0.5 h-4 w-0.5 rounded-full bg-sidebar-primary" />
             )}
             <item.icon className="size-4 shrink-0" />
             {!collapsed && (
@@ -79,7 +79,7 @@ export function LeftMenuItem({
                     {hasChildren && (
                         <ChevronDown
                             className={cn(
-                                "size-3.5 shrink-0 text-muted-foreground transition-transform",
+                                "size-3.5 shrink-0 text-sidebar-foreground/50 transition-transform",
                                 open && "rotate-180"
                             )}
                         />
@@ -111,7 +111,7 @@ export function LeftMenuItem({
             )}
 
             {hasChildren && open && !collapsed && (
-                <div className="mt-0.5 ml-4 space-y-0.5 border-l border-border pl-2">
+                <div className="mt-0.5 ml-4 space-y-0.5 border-l border-sidebar-border pl-2">
                     {item.childrens?.map((child) => (
                         <LeftMenuItem
                             key={child.field}
