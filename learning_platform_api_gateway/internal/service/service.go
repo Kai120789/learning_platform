@@ -12,6 +12,7 @@ type Service struct {
 	ScheduleService *ScheduleService
 	SubjectService  *SubjectService
 	MediaService    *MediaService
+	MaterialService *MaterialService
 }
 
 type Client struct {
@@ -22,11 +23,13 @@ type Client struct {
 	ScheduleClient ScheduleClient
 	SubjectClient  SubjectClient
 	MediaClient    MediaClient
+	MaterialClient MaterialClient
 }
 
 func New(client *Client, redis *redis.RedisStorage) *Service {
 	userService := NewUserService(client.UserClient)
 	subjectService := NewSubjectService(client.SubjectClient)
+	mediaService := NewMediaService(client.MediaClient)
 	return &Service{
 		AuthService:     NewAuthService(client.AuthClient, userService, redis),
 		UserService:     userService,
@@ -34,6 +37,7 @@ func New(client *Client, redis *redis.RedisStorage) *Service {
 		LessonService:   NewLessonService(client.LessonClient),
 		ScheduleService: NewScheduleService(client.ScheduleClient),
 		SubjectService:  subjectService,
-		MediaService:    NewMediaService(client.MediaClient),
+		MediaService:    mediaService,
+		MaterialService: NewMaterialService(client.MaterialClient, mediaService),
 	}
 }

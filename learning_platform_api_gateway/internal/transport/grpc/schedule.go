@@ -187,7 +187,7 @@ func (s *ScheduleClient) DeleteScheduleSlot(
 	defer cancel()
 
 	_, err := s.client.DeleteScheduleSlot(ctx, &scheduleGRPC.DeleteScheduleSlotRequest{
-		SlotId: scheduleSlotID,
+		ScheduleSlotId: scheduleSlotID,
 	})
 	if err != nil {
 		return err

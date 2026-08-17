@@ -41,6 +41,7 @@ func Start() {
 		cfg.ScheduleServiceUrl,
 		cfg.SubjectServiceUrl,
 		cfg.MediaServiceUrl,
+		cfg.MaterialServiceUrl,
 	)
 	if err != nil {
 		log.Fatal("init grpc client error", zap.Error(err))
@@ -54,6 +55,7 @@ func Start() {
 		ScheduleClient: client.ScheduleClient,
 		SubjectClient:  client.SubjectClient,
 		MediaClient:    client.MediaClient,
+		MaterialClient: client.MaterialClient,
 	}, redisLayer)
 
 	_ = serviceLayer
@@ -65,6 +67,7 @@ func Start() {
 		LessonService:   serviceLayer.LessonService,
 		ScheduleService: serviceLayer.ScheduleService,
 		SubjectService:  serviceLayer.SubjectService,
+		MaterialService: serviceLayer.MaterialService,
 	}, log, cfg)
 
 	jwtMiddleware := middleware.JWT([]byte(cfg.SignedKey), cfg.RefreshTokenLiveTime, serviceLayer.AuthService)
@@ -76,6 +79,7 @@ func Start() {
 		LessonHandler:   handlerLayer.LessonHandler,
 		ScheduleHandler: handlerLayer.ScheduleHandler,
 		SubjectHandler:  handlerLayer.SubjectHandler,
+		MaterialHandler: handlerLayer.MaterialHandler,
 	}, jwtMiddleware, middleware.MinNeededRole)
 
 	server := &http.Server{

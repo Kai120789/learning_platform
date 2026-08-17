@@ -8,6 +8,7 @@ type Client struct {
 	ScheduleClient *ScheduleClient
 	SubjectClient  *SubjectClient
 	MediaClient    *MediaClient
+	MaterialClient *MaterialClient
 }
 
 func NewClient(
@@ -18,6 +19,7 @@ func NewClient(
 	scheduleGrpcUrl string,
 	subjectGrpcUrl string,
 	mediaGrpcUrl string,
+	materialGrpcUrl string,
 ) (*Client, error) {
 	userGrpcConnection, err := NewUserGrpcConnection(userGrpcUrl)
 	if err != nil {
@@ -54,6 +56,11 @@ func NewClient(
 		return nil, err
 	}
 
+	materialGrpcConnection, err := NewMaterialGrpcConnection(materialGrpcUrl)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
 		UserClient:     NewUserClient(userGrpcConnection),
 		AuthClient:     NewAuthClient(authGrpcConnection),
@@ -62,5 +69,6 @@ func NewClient(
 		ScheduleClient: NewScheduleClient(scheduleGrpcConnection),
 		SubjectClient:  NewSubjectClient(subjectGrpcConnection),
 		MediaClient:    NewMediaClient(mediaGrpcConnection),
+		MaterialClient: NewMaterialClient(materialGrpcConnection),
 	}, nil
 }
