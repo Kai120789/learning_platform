@@ -1,4 +1,4 @@
-import { Download, Info, MoreHorizontal, Pencil, Trash2, FolderInput, CheckSquare } from "lucide-react"
+import { Download, Info, MoreHorizontal, Pencil, Trash2, FolderInput, CheckSquare, UserPlus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
     DropdownMenu,
@@ -16,6 +16,7 @@ export type MaterialItemAction =
     | "move"
     | "delete"
     | "select"
+    | "access"
 
 type MaterialsItemMenuProps = {
     canEdit: boolean
@@ -64,6 +65,13 @@ export function MaterialsItemMenu({
                     )}
                     {canEdit && (
                         <>
+                            <DropdownMenuItem
+                                className="cursor-pointer gap-2 text-sm"
+                                onClick={() => onAction("access")}
+                            >
+                                <UserPlus className="size-4" />
+                                {t("materials.menu.access")}
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="cursor-pointer gap-2 text-sm"
                                 onClick={() => onAction("select")}

@@ -1,5 +1,5 @@
 import { Folder } from "lucide-react"
-import { formatFileSize, mimeToMediaKind } from "@/entities/material"
+import { mimeToMediaKind } from "@/entities/material"
 import { Checkbox } from "@/shared/ui/Checkbox"
 import { cn } from "@/shared/lib/utils"
 import { mediaIcons } from "../lib/mediaIcons"
@@ -35,7 +35,7 @@ export function MaterialsGridView({
                             <div
                                 key={folder.id}
                                 className={cn(
-                                    "group relative flex h-full min-h-36 flex-col items-center rounded-xl p-2 text-center transition-colors hover:bg-muted/50",
+                                    "group relative flex h-full flex-col items-center rounded-xl p-2 text-center transition-colors hover:bg-muted/50",
                                     isMovingFolder(folder.id) && "opacity-40",
                                     checked && "bg-muted/50 ring-1 ring-border"
                                 )}
@@ -63,19 +63,19 @@ export function MaterialsGridView({
                                         }
                                         onOpenFolder(folder)
                                     }}
-                                    className="flex h-full w-full cursor-pointer flex-col items-center gap-2"
+                                    className="flex w-full cursor-pointer flex-col items-center gap-1.5"
                                 >
-                                    <Folder
-                                        className="size-20 shrink-0 fill-foreground/70 text-foreground/70 transition-transform group-hover:scale-[1.03]"
-                                        strokeWidth={1}
-                                    />
-                                    <div className="mt-auto w-full">
-                                        <div
-                                            className="line-clamp-2 min-h-10 overflow-hidden text-ellipsis text-sm font-medium break-words"
-                                            title={folder.title}
-                                        >
-                                            {folder.title}
-                                        </div>
+                                    <div className="flex h-16 w-full items-center justify-center">
+                                        <Folder
+                                            className="size-14 shrink-0 fill-foreground/70 text-foreground/70 transition-transform group-hover:scale-[1.03]"
+                                            strokeWidth={1}
+                                        />
+                                    </div>
+                                    <div
+                                        className="line-clamp-2 w-full overflow-hidden text-ellipsis text-sm font-medium break-words"
+                                        title={folder.title}
+                                    >
+                                        {folder.title}
                                     </div>
                                 </button>
                             </div>
@@ -95,7 +95,7 @@ export function MaterialsGridView({
                             <div
                                 key={file.id}
                                 className={cn(
-                                    "group relative flex h-full min-h-40 flex-col items-center rounded-xl p-2 text-center transition-colors hover:bg-muted/50",
+                                    "group relative flex h-full flex-col items-center rounded-xl p-2 text-center transition-colors hover:bg-muted/50",
                                     isMovingFile(file.id) && "opacity-40",
                                     checked && "bg-muted/50 ring-1 ring-border"
                                 )}
@@ -124,22 +124,19 @@ export function MaterialsGridView({
                                         }
                                         onOpenFile(file)
                                     }}
-                                    className="flex h-full w-full cursor-pointer flex-col items-center gap-2"
+                                    className="flex w-full cursor-pointer flex-col items-center gap-1.5"
                                 >
-                                    <Icon
-                                        className="size-16 shrink-0 text-foreground/75 transition-transform group-hover:scale-[1.03]"
-                                        strokeWidth={1.25}
-                                    />
-                                    <div className="mt-auto w-full space-y-1">
-                                        <div
-                                            className="line-clamp-2 min-h-10 overflow-hidden text-ellipsis text-sm font-medium break-words"
-                                            title={file.title}
-                                        >
-                                            {file.title}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            {formatFileSize(file.size)}
-                                        </div>
+                                    <div className="flex h-16 w-full items-center justify-center">
+                                        <Icon
+                                            className="size-12 shrink-0 text-foreground/75 transition-transform group-hover:scale-[1.03]"
+                                            strokeWidth={1.25}
+                                        />
+                                    </div>
+                                    <div
+                                        className="line-clamp-2 w-full overflow-hidden text-ellipsis text-sm font-medium break-words"
+                                        title={file.title}
+                                    >
+                                        {file.title}
                                     </div>
                                 </button>
                             </div>

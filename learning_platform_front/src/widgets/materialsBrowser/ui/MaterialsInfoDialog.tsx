@@ -23,7 +23,6 @@ export function MaterialsInfoDialog({
         ? [
             { label: t("materials.name"), value: target.folder.title },
             { label: t("materials.type"), value: t("materials.folders") },
-            { label: "ID", value: String(target.folder.id) },
         ]
         : [
             { label: t("materials.name"), value: target.file.title },
@@ -33,7 +32,6 @@ export function MaterialsInfoDialog({
             },
             { label: t("materials.mime"), value: target.file.mimeType || "—" },
             { label: t("materials.size"), value: formatFileSize(target.file.size) },
-            { label: "ID", value: String(target.file.id) },
         ]
 
     return (

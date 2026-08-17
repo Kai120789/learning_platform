@@ -178,7 +178,7 @@ export function GroupModal({
                             </Button>
                             <Button
                                 variant="destructive"
-                                className="border border-destructive"
+                                className="border border-destructive/30"
                                 onClick={onClickDelete}
                             >
                                 {t("common.delete")}

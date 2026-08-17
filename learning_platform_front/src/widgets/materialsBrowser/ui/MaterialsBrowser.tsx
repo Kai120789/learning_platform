@@ -46,6 +46,7 @@ import { MaterialsDeleteDialog } from "./MaterialsDeleteDialog"
 import { MaterialsDropOverlay } from "./MaterialsDropOverlay"
 import { MaterialsEmptyDropzone } from "./MaterialsEmptyDropzone"
 import { MaterialsGridView } from "./MaterialsGridView"
+import { MaterialsAccessDialog } from "./MaterialsAccessDialog"
 import { MaterialsInfoDialog } from "./MaterialsInfoDialog"
 import { MaterialsListView } from "./MaterialsListView"
 import { MaterialsRenameDialog } from "./MaterialsRenameDialog"
@@ -72,6 +73,7 @@ export function MaterialsBrowser() {
     const [isDragging, setIsDragging] = useState(false)
     const [movingItem, setMovingItem] = useState<MaterialsMovingItem | null>(null)
     const [infoTarget, setInfoTarget] = useState<MaterialsTarget | null>(null)
+    const [accessTarget, setAccessTarget] = useState<MaterialsTarget | null>(null)
     const [renameTarget, setRenameTarget] = useState<MaterialsTarget | null>(null)
     const [deleteNames, setDeleteNames] = useState<string[]>([])
     const [deleteTargets, setDeleteTargets] = useState<MaterialsTarget[]>([])
@@ -227,6 +229,10 @@ export function MaterialsBrowser() {
         if (action === "download") {
             if (target.kind !== "material") return
             console.log("скачивание...", target.file.title, target.file.mediaObjectId)
+            return
+        }
+        if (action === "access") {
+            setAccessTarget(target)
             return
         }
         if (action === "select") {
@@ -563,6 +569,14 @@ export function MaterialsBrowser() {
                     if (!open) setInfoTarget(null)
                 }}
                 target={infoTarget}
+            />
+
+            <MaterialsAccessDialog
+                open={accessTarget != null}
+                onOpenChange={(open) => {
+                    if (!open) setAccessTarget(null)
+                }}
+                target={accessTarget}
             />
 
             <MaterialsRenameDialog
