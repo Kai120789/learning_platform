@@ -22,11 +22,40 @@ func NewMaterialStorage(conn *pgxpool.Pool) *MaterialStorage {
 func (m *MaterialStorage) GetStudentMaterials(studentID int64, folderID *int64) ([]models.Material, error) {
 	var resMaterials []models.Material
 	query := `
+		WITH RECURSIVE
+		parent_chain AS (
+			SELECT f.id, f.parent_folder_id
+			FROM material_folders f
+			WHERE f.id = $2::bigint
+
+			UNION ALL
+
+			SELECT f.id, f.parent_folder_id
+			FROM parent_chain pc
+			JOIN material_folders f ON f.id = pc.parent_folder_id
+		),
+
+		inherited AS (
+			SELECT EXISTS (
+				SELECT 1
+				FROM folder_users fu
+				JOIN parent_chain pc ON pc.id = fu.folder_id
+				WHERE fu.user_id = $1
+			) AS ok
+		)
+
 		SELECT m.id, m.title, m.size, m.folder_id, m.tutor_id, m.mime_type, m.media_object_id
 		FROM materials AS m
-		JOIN material_users AS mu
-		ON mu.material_id = m.id
-		WHERE mu.user_id = $1 AND m.folder_id IS NOT DISTINCT FROM $2::bigint
+		WHERE m.folder_id IS NOT DISTINCT FROM $2::bigint
+		  AND (
+				(SELECT ok FROM inherited)
+				OR EXISTS (
+					SELECT 1
+					FROM material_users mu
+					WHERE mu.material_id = m.id AND mu.user_id = $1
+				)
+			  )
+		ORDER BY m.id
 	`
 
 	rows, err := m.conn.Query(
