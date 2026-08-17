@@ -18,14 +18,18 @@ services:
     depends_on:
       - learning-platform-minio
     restart: on-failure
+    env_file:
+      - ../.env
     entrypoint: >
       /bin/sh -c "
       echo 'Waiting for MinIO...';
-      until /usr/bin/mc alias set dockerminio http://learning-platform-minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do
+      until /usr/bin/mc alias set dockerminio http://learning-platform-minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD; do
         sleep 2;
       done;
       echo 'MinIO is up, creating bucket';
-      /usr/bin/mc mb --ignore-existing dockerminio/$MINIO_BUCKET;
+      /usr/bin/mc mb --ignore-existing dockerminio/$$MINIO_BUCKET;
+      /usr/bin/mc anonymous set download dockerminio/$$MINIO_BUCKET;
+      echo 'Anonymous download enabled for' $$MINIO_BUCKET;
       exit 0;
       "
 
