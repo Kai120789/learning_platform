@@ -1,13 +1,11 @@
-import { ChevronRight } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { cn } from "@/shared/lib/utils"
-import type { MaterialFolderMock } from "@/shared/mocks"
-import { getFolderLabel } from "../lib/folderHelpers"
+import { ChevronRight } from "lucide-react"
+import type { MaterialBreadcrumb } from "../model/types"
 
 type MaterialsBreadcrumbsProps = {
-    breadcrumbs: MaterialFolderMock[]
-    currentFolderId: string | null
-    onNavigate: (folderId: string | null) => void
+    breadcrumbs: MaterialBreadcrumb[]
+    currentFolderId: number | null
+    onNavigate: (folderId: number | null, index: number) => void
 }
 
 export function MaterialsBreadcrumbs({
@@ -16,34 +14,45 @@ export function MaterialsBreadcrumbs({
     onNavigate,
 }: MaterialsBreadcrumbsProps) {
     const { t } = useTranslation()
+    const isRoot = currentFolderId == null
 
     return (
-        <div className="flex flex-wrap items-center gap-1 text-sm">
-            <button
-                type="button"
-                onClick={() => onNavigate(null)}
-                className={cn(
-                    "cursor-pointer rounded-md py-1 transition-colors hover:bg-muted",
-                    currentFolderId == null && "font-medium"
-                )}
-            >
-                {t("materials.root")}
-            </button>
-            {breadcrumbs.map((folder) => (
-                <div key={folder.id} className="flex items-center gap-1">
-                    <ChevronRight className="size-4 text-muted-foreground" />
-                    <button
-                        type="button"
-                        onClick={() => onNavigate(folder.id)}
-                        className={cn(
-                            "cursor-pointer rounded-md px-2 py-1 transition-colors hover:bg-muted",
-                            currentFolderId === folder.id && "font-medium"
+        <nav className="flex min-w-0 flex-wrap items-center gap-x-1 text-sm text-muted-foreground">
+            {isRoot ? (
+                <span className="font-medium text-foreground">{t("materials.root")}</span>
+            ) : (
+                <button
+                    type="button"
+                    onClick={() => onNavigate(null, -1)}
+                    className="cursor-pointer rounded px-1 py-0.5 hover:bg-muted hover:text-foreground"
+                >
+                    {t("materials.root")}
+                </button>
+            )}
+
+            {breadcrumbs.map((folder, index) => {
+                const isLast = index === breadcrumbs.length - 1
+
+                return (
+                    <div key={`${folder.id}-${index}`} className="flex min-w-0 items-center gap-x-1">
+                        <ChevronRight className="size-3.5 shrink-0 opacity-50" />
+                        {isLast ? (
+                            <span className="truncate font-medium text-foreground" title={folder.title}>
+                                {folder.title}
+                            </span>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => onNavigate(folder.id, index)}
+                                className="max-w-40 cursor-pointer truncate rounded px-1 py-0.5 hover:bg-muted hover:text-foreground"
+                                title={folder.title}
+                            >
+                                {folder.title}
+                            </button>
                         )}
-                    >
-                        {getFolderLabel(folder, t)}
-                    </button>
-                </div>
-            ))}
-        </div>
+                    </div>
+                )
+            })}
+        </nav>
     )
 }

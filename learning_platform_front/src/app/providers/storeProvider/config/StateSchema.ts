@@ -1,5 +1,6 @@
 import type { LessonSchema } from '@/entities/lesson/types/types'
 import type { GroupSchema } from '@/entities/group/types/types'
+import type { MaterialSchema } from '@/entities/material/types/types'
 import type { SubjectSchema } from '@/entities/subject/types/types'
 import type { UserSchema } from '@/entities/user/types/types'
 import type { NotificationSchema } from '@/features/notifications'
@@ -14,6 +15,7 @@ export interface StateSchema {
     group: GroupSchema
     subject: SubjectSchema
     lesson: LessonSchema
+    material: MaterialSchema
 }
 
 export type StateSchemaKey = keyof StateSchema

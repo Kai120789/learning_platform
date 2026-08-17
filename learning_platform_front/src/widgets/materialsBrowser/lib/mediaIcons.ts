@@ -1,7 +1,7 @@
 import { FileText, Image, Link2, Video } from "lucide-react"
-import type { MediaType } from "@/shared/mocks"
+import type { MaterialMediaKind } from "@/entities/material"
 
-export const mediaIcons: Record<MediaType, typeof Video> = {
+export const mediaIcons: Record<MaterialMediaKind, typeof Video> = {
     VIDEO: Video,
     IMAGE: Image,
     DOCUMENT: FileText,

@@ -12,6 +12,7 @@ declare module '*.svg?url' {
 
 interface ImportMetaEnv {
 	readonly VITE_SERVER_ENDPOINT: string;
+	readonly VITE_S3_URL: string;
 }
 
 interface ImportMeta {
