@@ -16,6 +16,7 @@ type Router struct {
 	ScheduleRouter *ScheduleRouter
 	SubjectRouter  *SubjectRouter
 	MaterialRouter *MaterialRouter
+	TutorRouter    *TutorRouter
 }
 
 type Handler struct {
@@ -26,6 +27,7 @@ type Handler struct {
 	ScheduleHandler ScheduleHandler
 	SubjectHandler  SubjectHandler
 	MaterialHandler MaterialHandler
+	TutorHandler    TutorHandler
 }
 
 func New(
@@ -64,6 +66,7 @@ func New(
 		ScheduleRouter: NewScheduleRouter(),
 		SubjectRouter:  NewSubjectRouter(),
 		MaterialRouter: NewMaterialRouter(),
+		TutorRouter:    NewTutorRouter(),
 	}
 
 	router.UserRouter.UserRoutes(r, handler.UserHandler, jwtMiddleware, roleMiddleware)
@@ -73,6 +76,7 @@ func New(
 	router.ScheduleRouter.ScheduleRoutes(r, handler.ScheduleHandler, jwtMiddleware, roleMiddleware)
 	router.SubjectRouter.SubjectRoutes(r, handler.SubjectHandler, jwtMiddleware, roleMiddleware)
 	router.MaterialRouter.MaterialRoutes(r, handler.MaterialHandler, jwtMiddleware, roleMiddleware)
+	router.TutorRouter.TutorRoutes(r, handler.TutorHandler, jwtMiddleware, roleMiddleware)
 
 	return r
 }

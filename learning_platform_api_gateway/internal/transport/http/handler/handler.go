@@ -13,6 +13,7 @@ type Handler struct {
 	SubjectHandler  *SubjectHandler
 	ScheduleHandler *ScheduleHandler
 	MaterialHandler *MaterialHandler
+	TutorHandler    *TutorHandler
 }
 
 type Service struct {
@@ -23,6 +24,7 @@ type Service struct {
 	SubjectService  SubjectService
 	ScheduleService ScheduleService
 	MaterialService MaterialService
+	TutorService    TutorService
 }
 
 func New(service *Service, logger *zap.Logger, cfg *config.Config) *Handler {
@@ -34,5 +36,6 @@ func New(service *Service, logger *zap.Logger, cfg *config.Config) *Handler {
 		SubjectHandler:  NewSubjectHandler(service.SubjectService, logger),
 		ScheduleHandler: NewScheduleHandler(service.ScheduleService, logger),
 		MaterialHandler: NewMaterialHandler(service.MaterialService, logger),
+		TutorHandler:    NewTutorHandler(service.TutorService, logger),
 	}
 }
