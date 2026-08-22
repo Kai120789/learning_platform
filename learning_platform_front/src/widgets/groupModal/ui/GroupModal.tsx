@@ -110,18 +110,15 @@ export function GroupModal({
                 </DialogHeader>
 
                 <div className="flex gap-2">
-                    <Badge variant="outline" className="bg-muted">
-                        {group.subject.title}
-                    </Badge>
-                    <Badge variant="default">
-                        {group.subject.type}
+                    <Badge variant="outline" className="text-xs">
+                        {group.subject.title} · {group.subject.type}
                     </Badge>
                 </div>
 
                 <div className="mt-1">
                     <Textarea
                         disabled={!isEditMode}
-                        className="w-full break-words min-h-40 max-h-60"
+                        className="w-full break-words min-h-40 max-h-60 disabled:bg-transparent disabled:opacity-100 dark:disabled:bg-transparent"
                         value={description}
                         onChange={(e) => setDraftDescription(e.target.value)}
                     />
@@ -139,7 +136,7 @@ export function GroupModal({
                             </Button>}
                         </div>
 
-                        <div className="max-h-52 overflow-x-hidden overflow-y-auto">
+                        <div className="max-h-52 divide-y divide-border overflow-x-hidden overflow-y-auto">
                             {group.users?.length
                                 ? group.users.map((user) => (
                                     <GroupUserItem key={user.id} user={user} groupID={group.id} />

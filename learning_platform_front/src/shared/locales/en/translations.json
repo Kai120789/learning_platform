@@ -437,6 +437,7 @@
         "users": "Users",
         "addUser": "Add",
         "emptyUsers": "Add the first students to the group",
+        "noUsername": "No Telegram",
         "createSuccess": "Group created successfully",
         "createError": "Failed to create group",
         "updateSuccess": "Group updated successfully",

@@ -80,7 +80,7 @@ export function TutorsCatalog() {
                         </option>
                     ))}
                 </NativeSelect>
-                <div className="flex rounded-lg border border-border bg-secondary/60 p-0.5">
+                <div className="flex w-fit self-start rounded-lg border border-border bg-secondary/60 p-0.5">
                     <button
                         type="button"
                         onClick={() => onViewModeChange("list")}

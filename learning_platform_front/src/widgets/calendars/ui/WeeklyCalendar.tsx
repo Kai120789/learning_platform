@@ -29,7 +29,7 @@ type WeeklyScheduleProps = {
 const HOUR_START = 6
 const HOUR_COUNT = 19
 const hours = Array.from({ length: HOUR_COUNT }, (_, i) => HOUR_START + i)
-const ROW_HEIGHT_PX = 48
+const ROW_HEIGHT_PX = 56
 const EVENT_INSET_X_PX = 6
 const EVENT_INSET_Y_PX = 3
 const DAY_START_MINUTES = HOUR_START * 60

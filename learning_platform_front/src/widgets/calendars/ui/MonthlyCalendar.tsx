@@ -128,7 +128,7 @@ export default function MonthlyCalendar({
                             onClick={() => onSelectDate(day)}
                             onDoubleClick={() => onCreateAt?.(day)}
                             className={cn(
-                                "min-h-[4.5rem] cursor-pointer border p-1.5 text-left transition-colors hover:bg-muted/60",
+                                "min-h-[5.5rem] cursor-pointer border p-1.5 text-left transition-colors hover:bg-muted/60",
                                 !isSameMonth(day, month) && "bg-muted/40 text-muted-foreground",
                                 inPeriod && !isPeriodStart && !isPeriodEnd && "bg-primary/10",
                                 (isPeriodStart || isPeriodEnd) && "bg-primary/25 border-2 border-primary/60",

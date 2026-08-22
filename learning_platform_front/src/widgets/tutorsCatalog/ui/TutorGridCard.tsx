@@ -20,7 +20,7 @@ export function TutorGridCard({ tutor }: TutorGridCardProps) {
     return (
         <Link
             to={getRouteTutor(tutor.id)}
-            className="flex h-full min-h-44 flex-col rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/30"
+            className="flex h-full min-h-44 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/30"
         >
             <div className="flex items-center gap-3">
                 <Avatar className="!size-14 shrink-0 text-sm">
@@ -38,9 +38,9 @@ export function TutorGridCard({ tutor }: TutorGridCardProps) {
                 </div>
             </div>
 
-            <div className="mt-3 flex min-h-14 flex-1 flex-wrap content-start gap-1">
+            <div className="mt-3 flex min-h-14 min-w-0 flex-1 flex-wrap content-start gap-1">
                 {tutor.subjects.map((subject) => (
-                    <Badge key={subject.id} variant="outline" className="text-[10px]">
+                    <Badge key={subject.id} variant="outline" className="h-auto max-w-full min-w-0 whitespace-normal text-left text-[10px] leading-tight">
                         {subject.title} · {subject.type}
                     </Badge>
                 ))}

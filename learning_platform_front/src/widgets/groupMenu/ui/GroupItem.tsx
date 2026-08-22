@@ -26,7 +26,7 @@ export function GroupItem({ group }: GroupItemProps) {
             <Card
                 size="sm"
                 onClick={() => setIsOpen((prev) => !prev)}
-                className="h-full cursor-pointer transition-all hover:shadow-md"
+                className="h-full cursor-pointer transition-colors hover:bg-muted/30"
             >
                 <CardHeader className="flex h-full flex-col space-y-2">
                     <div className="flex items-start justify-between gap-2">
@@ -45,12 +45,9 @@ export function GroupItem({ group }: GroupItemProps) {
                         </Badge>
                     </div>
 
-                    <div className="flex min-h-5 flex-wrap gap-1.5">
-                        <Badge variant="outline" className="bg-muted text-[10px]">
-                            {group.subject.title}
-                        </Badge>
-                        <Badge variant="default" className="text-[10px]">
-                            {group.subject.type}
+                    <div className="flex min-h-5 min-w-0">
+                        <Badge variant="outline" className="h-auto max-w-full min-w-0 whitespace-normal text-left text-[10px] leading-tight">
+                            {group.subject.title} · {group.subject.type}
                         </Badge>
                     </div>
 

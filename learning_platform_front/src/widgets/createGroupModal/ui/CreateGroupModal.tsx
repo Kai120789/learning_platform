@@ -92,7 +92,7 @@ export function CreateGroupModal({
                             >
                                 {subjects && subjects.map((subject) => (
                                     <option key={subject.id} value={subject.id}>
-                                        {subject.title + " " + subject.type}
+                                        {subject.title} · {subject.type}
                                     </option>
                                 ))}
                             </NativeSelect>

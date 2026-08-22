@@ -20,14 +20,14 @@ export function TutorListRow({ tutor }: TutorListRowProps) {
     return (
         <Link
             to={getRouteTutor(tutor.id)}
-            className="flex items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30"
+            className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30 lg:flex-row lg:items-center lg:gap-4"
         >
-            <Avatar className="!size-14 shrink-0 text-sm">
-                <AvatarFallback>
-                    {getTutorInitials(tutor)}
-                </AvatarFallback>
-            </Avatar>
-            <div className="min-w-0 flex-1 space-y-2">
+            <div className="flex min-w-0 items-center gap-3 lg:w-56 lg:shrink-0">
+                <Avatar className="!size-14 shrink-0 text-sm">
+                    <AvatarFallback>
+                        {getTutorInitials(tutor)}
+                    </AvatarFallback>
+                </Avatar>
                 <div className="min-w-0">
                     <div className="truncate text-sm font-medium">
                         {formatTutorName(tutor)}
@@ -36,22 +36,26 @@ export function TutorListRow({ tutor }: TutorListRowProps) {
                         {tutor.tgUsername ? `@${tutor.tgUsername}` : t("tutors.noUsername")}
                     </div>
                 </div>
-                {tutor.subjects.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                        {tutor.subjects.map((subject) => (
-                            <Badge key={subject.id} variant="outline" className="text-[10px]">
-                                {subject.title} · {subject.type}
-                            </Badge>
-                        ))}
-                    </div>
-                )}
             </div>
-            <div className="hidden shrink-0 sm:block">
+
+            <div className="flex min-h-5 min-w-0 flex-1 flex-wrap content-start gap-1">
+                {tutor.subjects.map((subject) => (
+                    <Badge
+                        key={subject.id}
+                        variant="outline"
+                        className="h-auto max-w-full min-w-0 whitespace-normal text-left text-[10px] leading-tight"
+                    >
+                        {subject.title} · {subject.type}
+                    </Badge>
+                ))}
+            </div>
+
+            <div className="shrink-0 border-t border-border pt-2 lg:border-t-0 lg:pt-0">
                 <TutorRatingLabel
                     rating={tutor.rating}
                     reviewsCount={tutor.reviewsCount}
                     studentsCount={tutor.studentsCount}
-                    compact
+                    inline
                 />
             </div>
         </Link>

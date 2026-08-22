@@ -436,6 +436,7 @@
         "users": "Пользователи",
         "addUser": "Добавить",
         "emptyUsers": "Добавьте первых учеников в группу",
+        "noUsername": "Нет Telegram",
         "createSuccess": "Группа успешно создана",
         "createError": "Не удалось создать группу",
         "updateSuccess": "Группа успешно обновлена",
