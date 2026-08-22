@@ -1,7 +1,7 @@
 import { cn } from "@/shared/lib/utils";
 import { Label } from "@/shared/ui/Label";
 import { useState } from "react";
-import { getUserFullData } from "@/entities/user";
+import { getUserFullData, useCanEdit } from "@/entities/user";
 import { useAppSelector } from "@/app/providers/storeProvider/hooks/hooks";
 import { SectionTabs } from "../types/types";
 import { ChangeEmaildForm } from "./forms/ChangeEmailForm";
@@ -10,8 +10,9 @@ import { SettingsForm } from "./forms/SettingsForm";
 import { UserDataForm } from "./forms/UserDataForm";
 import { ChangeTgLink } from "./forms/ChangeTgLink";
 import { useTranslation } from "react-i18next";
-import { Settings, Shield, User } from "lucide-react";
+import { GraduationCap, Settings, Shield, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { TutorTeachingSettings } from "@/widgets/tutorTeachingSettings";
 
 type SettingsSection = {
     id: SectionTabs
@@ -19,15 +20,30 @@ type SettingsSection = {
     icon: LucideIcon
 }
 
-const sections: SettingsSection[] = [
+const baseSections: SettingsSection[] = [
     { id: SectionTabs.PROFILE, titleKey: "settings.tabs.profile", icon: User },
     { id: SectionTabs.ACCOUNT, titleKey: "settings.tabs.account", icon: Shield },
     { id: SectionTabs.SETTINGS, titleKey: "settings.tabs.settings", icon: Settings },
 ]
 
+const teachingSection: SettingsSection = {
+    id: SectionTabs.TEACHING,
+    titleKey: "settings.tabs.teaching",
+    icon: GraduationCap,
+}
+
 export default function SettingsPage() {
     const { t } = useTranslation()
     const userData = useAppSelector(getUserFullData)
+    const canEdit = useCanEdit()
+    const sections = canEdit
+        ? [
+            baseSections[0],
+            baseSections[1],
+            teachingSection,
+            baseSections[2],
+        ]
+        : baseSections
 
     const [active, setActive] = useState<SectionTabs>(SectionTabs.PROFILE);
 
@@ -63,6 +79,8 @@ export default function SettingsPage() {
                         userLanguage={userData.userSettings.language}
                     />
                 )
+            case SectionTabs.TEACHING:
+                return <TutorTeachingSettings />
             default:
                 return (
                     <UserDataForm

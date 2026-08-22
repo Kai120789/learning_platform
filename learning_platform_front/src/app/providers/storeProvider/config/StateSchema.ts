@@ -2,6 +2,7 @@ import type { LessonSchema } from '@/entities/lesson/types/types'
 import type { GroupSchema } from '@/entities/group/types/types'
 import type { MaterialSchema } from '@/entities/material/types/types'
 import type { SubjectSchema } from '@/entities/subject/types/types'
+import type { TutorSchema } from '@/entities/tutor/types/types'
 import type { UserSchema } from '@/entities/user/types/types'
 import type { NotificationSchema } from '@/features/notifications'
 import type { AnyAction, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit'
@@ -16,6 +17,7 @@ export interface StateSchema {
     subject: SubjectSchema
     lesson: LessonSchema
     material: MaterialSchema
+    tutor: TutorSchema
 }
 
 export type StateSchemaKey = keyof StateSchema

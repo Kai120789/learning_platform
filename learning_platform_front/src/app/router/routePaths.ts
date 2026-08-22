@@ -9,6 +9,7 @@ export enum AppRoutes {
     MATERIALS = 'materials',
     PRACTICES = 'practices',
     TUTORS = 'tutors',
+    TUTOR = 'tutor',
     SETTINGS = 'settings',
     GROUPS = 'groups'
 }
@@ -23,5 +24,6 @@ export const getRouteMain = () => '/'
 export const getRouteMaterials = () => '/materials'
 export const getRoutePractices = () => '/practices'
 export const getRouteTutors = () => '/tutors'
+export const getRouteTutor = (tutorId: number | string) => `/tutors/${tutorId}`
 export const getRouteSettings = () => '/settings'
 export const getRouteGroups = () => '/groups'

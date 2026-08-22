@@ -3,7 +3,7 @@ import {
     getRouteCourses,
     getRouteGroups,
     getRouteLogin, getRouteMain, getRouteMaterials, getRoutePractices, getRouteProfile,
-    getRouteRegister, getRouteSchedule, getRouteSettings, getRouteTutors,
+    getRouteRegister, getRouteSchedule, getRouteSettings, getRouteTutor, getRouteTutors,
     getRouteWelcome
 } from './routePaths'
 import type { AppRoutesProps } from './AppRouter'
@@ -16,6 +16,7 @@ import { ProfilePage } from "@/pages/profile";
 import { SchedulePage } from "@/pages/schedule";
 import { CoursesPage } from "@/pages/courses";
 import { TutorsPage } from "@/pages/tutors";
+import { TutorPage } from "@/pages/tutor";
 import { SettingsPage } from '@/pages/settings'
 import { AuthLayout, GuestLayout, MainLayout } from '../layouts'
 import { RegisterPage } from '@/pages/registration'
@@ -98,6 +99,14 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
         path: getRouteTutors(),
         element: (
             <TutorsPage />
+        ),
+        authOnly: true,
+        layout: <MainLayout />
+    },
+    [AppRoutes.TUTOR]: {
+        path: getRouteTutor(":tutorId"),
+        element: (
+            <TutorPage />
         ),
         authOnly: true,
         layout: <MainLayout />
