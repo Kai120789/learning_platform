@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS user_info (
-    user_id BIGINT PRIMARY KEY REFERENCES users(id),
+    user_id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
     patronymic VARCHAR(50),

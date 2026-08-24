@@ -102,7 +102,7 @@ func (u *UserBaseStorage) GetUserByEmail(email string) (*models.User, error) {
 func (u *UserBaseStorage) ChangePassword(userID int64, newPasswordHash string) error {
 	query := `
 		UPDATE users
-		SET password = $2
+		SET password_hash = $2
 		WHERE id = $1
 	`
 
@@ -161,10 +161,10 @@ func (u *UserBaseStorage) GetUsersWithPagination(request dto.GetWithPagination) 
 
 	offset := (request.Page - 1) * request.Limit
 	rows, err := u.conn.Query(context.Background(), query, request.Search, request.Limit, offset, request.Role)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("get users with pagination: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var user dto.UserShortInfo

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS schedule_slots (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    schedule_id BIGINT REFERENCES schedules(id) NOT NULL,
+    schedule_id BIGINT NOT NULL REFERENCES schedules(id) ON DELETE CASCADE,
     start_time TIMESTAMPTZ DEFAULT now(),
     status status_enum DEFAULT 'FREE' NOT NULL,
     duration BIGINT,

@@ -57,6 +57,7 @@ func (s *SubjectStorage) GetAllSubjects() ([]models.Subject, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get all subjects: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneSubject models.Subject

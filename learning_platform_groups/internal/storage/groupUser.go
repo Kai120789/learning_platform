@@ -57,6 +57,7 @@ func (g *GroupUserStorage) GetGroupsByStudentID(userID int64) ([]models.Group, e
 	if err != nil {
 		return nil, fmt.Errorf("get all user %d groups from db: %w", userID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneGroup models.Group
@@ -92,6 +93,7 @@ func (g *GroupUserStorage) GetGroupsByTutorID(tutorID int64) ([]models.Group, er
 	if err != nil {
 		return nil, fmt.Errorf("get all tutor %d groups from db: %w", tutorID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneGroup models.Group
@@ -127,6 +129,7 @@ func (g *GroupUserStorage) GetGroupUsers(groupID int64) ([]int64, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get all group %d users from db: %w", groupID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneUserID int64

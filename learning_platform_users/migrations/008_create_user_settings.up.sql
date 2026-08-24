@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS user_settings (
-    user_id BIGINT PRIMARY KEY REFERENCES users(id),
+    user_id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     is_2fa_enabled BOOLEAN DEFAULT false NOT NULL,
     is_notifications_enabled BOOLEAN DEFAULT false  NOT NULL,
     language language_enum DEFAULT 'RU' NOT NULL,

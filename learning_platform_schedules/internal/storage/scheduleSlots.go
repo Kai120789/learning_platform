@@ -35,6 +35,7 @@ func (ss *ScheduleSlotsStorage) GetAllScheduleSlots(scheduleID int64) ([]models.
 	if err != nil {
 		return nil, fmt.Errorf("get all schedule %d slots: %w", scheduleID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneScheduleSlot models.ScheduleSlot

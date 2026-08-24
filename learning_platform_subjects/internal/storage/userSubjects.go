@@ -36,6 +36,7 @@ func (u *UserSubjectStorage) GetAllUserSubjects(userID int64) ([]models.Subject,
 	if err != nil {
 		return nil, fmt.Errorf("get all user %d subjects: %w", userID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneSubject models.Subject

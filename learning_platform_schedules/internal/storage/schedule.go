@@ -58,6 +58,7 @@ func (s *ScheduleStorage) GetAllSchedules() ([]models.Schedule, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get all schedules: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneSchedule models.Schedule
@@ -95,6 +96,7 @@ func (s *ScheduleStorage) GetSchedulesByTutorID(tutorID int64) ([]models.Schedul
 	if err != nil {
 		return nil, fmt.Errorf("get schedules by tutor id %d: %w", tutorID, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var oneSchedule models.Schedule

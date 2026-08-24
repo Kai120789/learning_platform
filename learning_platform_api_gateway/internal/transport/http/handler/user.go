@@ -149,6 +149,8 @@ func (u *UserHandler) UpdateUserInfo(w http.ResponseWriter, r *http.Request) {
 			zap.Int64("userID", userID),
 			zap.Error(err),
 		)
+		http.Error(w, "failed to update user info", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -185,6 +187,8 @@ func (u *UserHandler) UpdateUserSettings(w http.ResponseWriter, r *http.Request)
 			zap.Int64("userID", userID),
 			zap.Error(err),
 		)
+		http.Error(w, "failed to update user settings", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -212,6 +216,8 @@ func (u *UserHandler) UpdateUserTheme(w http.ResponseWriter, r *http.Request) {
 			zap.Int64("userID", userID),
 			zap.Error(err),
 		)
+		http.Error(w, "failed to update user theme", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -238,6 +244,8 @@ func (u *UserHandler) UpdateUserAvatar(w http.ResponseWriter, r *http.Request) {
 			zap.Int64("userID", userID),
 			zap.Error(err),
 		)
+		http.Error(w, "failed to update user avatar", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -276,6 +284,14 @@ func (u *UserHandler) GetUsersWithPagination(w http.ResponseWriter, r *http.Requ
 		Limit:  int64(limit),
 		Role:   enum.UserRole(role),
 	})
+	if err != nil {
+		u.logger.Error(
+			"failed to get users with pagination",
+			zap.Error(err),
+		)
+		http.Error(w, "failed to get users with pagination", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

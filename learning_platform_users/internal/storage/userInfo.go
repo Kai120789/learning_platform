@@ -132,6 +132,7 @@ func (ui *UserInfoStorage) GetUsersShortInfo(userIDs []int64) ([]dto.UserShortIn
 	if err != nil {
 		return nil, fmt.Errorf("get users short info: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var user dto.UserShortInfo

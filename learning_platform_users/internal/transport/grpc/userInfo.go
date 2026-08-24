@@ -44,7 +44,7 @@ func (u *UserGRPCServer) UpdateUserInfo(
 	}
 	return &userGRPC.UpdateUserInfoResponse{
 		Name:       res.Name,
-		Surname:    res.Name,
+		Surname:    res.Surname,
 		Patronymic: utils.DBStringToOptional(res.Patronymic),
 		TgUsername: utils.DBStringToOptional(res.TgUsername),
 		City:       utils.DBStringToOptional(res.City),

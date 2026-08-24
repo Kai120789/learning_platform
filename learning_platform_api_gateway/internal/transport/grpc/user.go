@@ -72,6 +72,8 @@ func (u *UserClient) GetUserByID(id int64) (*userDto.GetUser, error) {
 		UserID:       res.GetUserId(),
 		Email:        res.GetEmail(),
 		PasswordHash: res.GetPasswordHash(),
+		Role:         protoToEnumRole(res.GetRole()),
+		Status:       protoToEnumUserStatus(res.GetStatus()),
 	}, nil
 }
 

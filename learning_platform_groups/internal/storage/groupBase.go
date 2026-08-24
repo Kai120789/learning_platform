@@ -134,6 +134,7 @@ func (g *GroupBaseStorage) GetGroups() ([]models.Group, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get all groups from db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var group models.Group
