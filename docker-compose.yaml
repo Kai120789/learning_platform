@@ -1,7 +1,7 @@
 include:
   #- metadata/kafka.yaml
   - metadata/minio.yaml
-  #- metadata/mongo.yaml
+  - metadata/mongo.yaml
   - metadata/postgres.yaml
   - metadata/redis.yaml
 
@@ -15,3 +15,4 @@ include:
   #- learning_platform_schedules/deployment/docker-compose.yaml
   - learning_platform_materials/deployment/docker-compose.yaml
   - learning_platform_tutors/deployment/docker-compose.yaml
+  - learning_platform_board/deployment/docker-compose.yaml
