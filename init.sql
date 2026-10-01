@@ -45,6 +45,14 @@ GRANT ALL PRIVILEGES ON DATABASE tutor_db TO tutor_db_user;
 \c tutor_db
 GRANT ALL ON SCHEMA public TO tutor_db_user;
 
+
+CREATE DATABASE board_db;
+CREATE USER board_db_user WITH PASSWORD 'board_db_password';
+GRANT ALL PRIVILEGES ON DATABASE board_db TO board_db_user;
+
+\c board_db
+GRANT ALL ON SCHEMA public TO board_db_user;
+
 -- service not used now
 -- CREATE DATABASE schedule_db;
 -- CREATE USER schedule_db_user WITH PASSWORD 'schedule_db_password';
