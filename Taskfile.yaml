@@ -21,6 +21,8 @@ tasks:
       - task: migrate_down_material
       - task: migrate_up_tutor
       - task: migrate_down_tutor
+      - task: migrate_up_board
+      - task: migrate_down_board
   migrate_all:
     aliases:
       - gen
@@ -33,6 +35,7 @@ tasks:
       #- migrate -path ./learning_platform_schedules/migrations -database "${SCHEDULE_DBDSN}?sslmode=disable" up
       - migrate -path ./learning_platform_materials/migrations -database "${MATERIAL_DBDSN}?sslmode=disable" up
       - migrate -path ./learning_platform_tutors/migrations -database "${TUTOR_DBDSN}?sslmode=disable" up
+      - migrate -path ./learning_platform_board/migrations -database "${BOARD_DBDSN}?sslmode=disable" up
   migrate_up_user:
     aliases:
       - gen
@@ -117,3 +120,15 @@ tasks:
     desc: "down migrations to tutor db"
     cmds:
       - migrate -path ./learning_platform_tutors/migrations -database "${TUTOR_DBDSN}?sslmode=disable" down
+  migrate_up_board:
+    aliases:
+      - gen
+    desc: "up migrations to board db"
+    cmds:
+      - migrate -path ./learning_platform_board/migrations -database "${BOARD_DBDSN}?sslmode=disable" up
+  migrate_down_board:
+    aliases:
+      - gen
+    desc: "down migrations to board db"
+    cmds:
+      - migrate -path ./learning_platform_board/migrations -database "${BOARD_DBDSN}?sslmode=disable" down
