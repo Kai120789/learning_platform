@@ -1,0 +1,15 @@
+services:
+  learning-platform-board:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    container_name: learning-platform-board
+    restart: on-failure
+    depends_on:
+      - learning-platform-postgres
+      - learning-platform-mongo
+    ports:
+      - "50060:50060"
+      - "8060:8060"
+    volumes:
+      - ..:/app
