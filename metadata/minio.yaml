@@ -1,6 +1,6 @@
 services:
   learning-platform-minio:
-    image: quay.io/minio/minio:latest
+    image: coollabsio/minio:latest
     container_name: learning-platform-minio
     restart: on-failure
     env_file:
@@ -13,7 +13,7 @@ services:
       - minio-data-learning-platform:/data
 
   learning-platform-minio-buckets:
-    image: quay.io/minio/mc:latest
+    image: coollabsio/minio:latest
     container_name: learning-platform-minio-buckets
     depends_on:
       - learning-platform-minio
