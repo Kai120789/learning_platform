@@ -20,6 +20,8 @@ type Config struct {
 	MediaServiceUrl      string
 	MaterialServiceUrl   string
 	TutorServiceUrl      string
+	BoardServiceUrl      string
+	BoardServiceHttpUrl  string
 	RedisUrl             string
 	SignedKey            string
 	AccessTokenLiveTime  int64
@@ -42,6 +44,8 @@ func GetConfig() *Config {
 	cfg.MediaServiceUrl = getEnvStringValue("MEDIA_SERVICE_URL")
 	cfg.MaterialServiceUrl = getEnvStringValue("MATERIAL_SERVICE_URL")
 	cfg.TutorServiceUrl = getEnvStringValue("TUTOR_SERVICE_URL")
+	cfg.BoardServiceUrl = getEnvStringValue("BOARD_SERVICE_URL")
+	cfg.BoardServiceHttpUrl = getEnvStringValue("BOARD_SERVICE_HTTP_URL")
 	cfg.SignedKey = getEnvStringValue("SIGNED_KEY")
 	cfg.AccessTokenLiveTime = getEnvIntValue("ACCESS_TOKEN_LIVE_TIME", 5)
 	cfg.RefreshTokenLiveTime = getEnvIntValue("REFRESH_TOKEN_LIVE_TIME", 7)

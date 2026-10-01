@@ -14,6 +14,7 @@ type Service struct {
 	MediaService    *MediaService
 	MaterialService *MaterialService
 	TutorService    *TutorService
+	BoardService    *BoardService
 }
 
 type Client struct {
@@ -26,6 +27,7 @@ type Client struct {
 	MediaClient    MediaClient
 	MaterialClient MaterialClient
 	TutorClient    TutorClient
+	BoardClient    BoardClient
 }
 
 func New(client *Client, redis *redis.RedisStorage) *Service {
@@ -42,5 +44,6 @@ func New(client *Client, redis *redis.RedisStorage) *Service {
 		MediaService:    mediaService,
 		MaterialService: NewMaterialService(client.MaterialClient, mediaService),
 		TutorService:    NewTutorService(client.TutorClient, subjectService, userService),
+		BoardService:    NewBoardService(client.BoardClient),
 	}
 }

@@ -10,6 +10,7 @@ type Client struct {
 	MediaClient    *MediaClient
 	MaterialClient *MaterialClient
 	TutorClient    *TutorClient
+	BoardClient    *BoardClient
 }
 
 func NewClient(
@@ -22,6 +23,7 @@ func NewClient(
 	mediaGrpcUrl string,
 	materialGrpcUrl string,
 	tutorGrpcUrl string,
+	boardGrpcUrl string,
 ) (*Client, error) {
 	userGrpcConnection, err := NewUserGrpcConnection(userGrpcUrl)
 	if err != nil {
@@ -68,6 +70,11 @@ func NewClient(
 		return nil, err
 	}
 
+	boardGrpcConnection, err := NewBoardGrpcConnection(boardGrpcUrl)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
 		UserClient:     NewUserClient(userGrpcConnection),
 		AuthClient:     NewAuthClient(authGrpcConnection),
@@ -78,5 +85,6 @@ func NewClient(
 		MediaClient:    NewMediaClient(mediaGrpcConnection),
 		MaterialClient: NewMaterialClient(materialGrpcConnection),
 		TutorClient:    NewTutorClient(tutorGrpcConnection),
+		BoardClient:    NewBoardClient(boardGrpcConnection),
 	}, nil
 }
