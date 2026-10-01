@@ -1,4 +1,4 @@
-FROM golang:1.25.6
+FROM golang:1.26.0
 WORKDIR /app
 RUN go install github.com/air-verse/air@latest
 COPY ../go.mod ../go.sum ./
