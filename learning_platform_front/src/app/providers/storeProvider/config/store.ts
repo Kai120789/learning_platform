@@ -9,6 +9,7 @@ import { subjectReducer } from "@/entities/subject";
 import { lessonReducer } from "@/entities/lesson";
 import { materialReducer } from "@/entities/material";
 import { tutorReducer } from "@/entities/tutor";
+import { boardReducer } from "@/entities/board";
 import { interceptor } from "@/shared/api/interceptor.ts";
 import { resetStore } from "@/shared/lib/resetStore";
 
@@ -25,6 +26,7 @@ export function createReduxStore(
         lesson: lessonReducer,
         material: materialReducer,
         tutor: tutorReducer,
+        board: boardReducer,
     };
 
     const reducerManager = createReducerManager(rootReducer);

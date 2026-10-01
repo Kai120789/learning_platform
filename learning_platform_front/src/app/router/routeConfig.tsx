@@ -1,10 +1,11 @@
 import {
     AppRoutes,
+    getRouteBoards,
     getRouteCourses,
     getRouteGroups,
     getRouteLogin, getRouteMain, getRouteMaterials, getRoutePractices, getRouteProfile,
     getRouteRegister, getRouteSchedule, getRouteSettings, getRouteTutor, getRouteTutors,
-    getRouteWelcome
+    getRouteWelcome, getRouteBoard,
 } from './routePaths'
 import type { AppRoutesProps } from './AppRouter'
 import { WelcomePage } from '@/pages/welcome'
@@ -18,9 +19,11 @@ import { CoursesPage } from "@/pages/courses";
 import { TutorsPage } from "@/pages/tutors";
 import { TutorPage } from "@/pages/tutor";
 import { SettingsPage } from '@/pages/settings'
-import { AuthLayout, GuestLayout, MainLayout } from '../layouts'
+import { AuthLayout, BoardLayout, GuestLayout, MainLayout } from '../layouts'
 import { RegisterPage } from '@/pages/registration'
 import { GroupsPage } from '@/pages/groups';
+import { BoardPage } from '@/pages/board';
+import { BoardsPage } from '@/pages/boards';
 
 export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
     [AppRoutes.WELCOME]: {
@@ -126,5 +129,21 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
         ),
         authOnly: true,
         layout: <MainLayout />
-    }
+    },
+    [AppRoutes.BOARD]: {
+        path: getRouteBoard(":boardId"),
+        element: (
+            <BoardPage />
+        ),
+        authOnly: true,
+        layout: <BoardLayout />
+    },
+    [AppRoutes.BOARDS]: {
+        path: getRouteBoards(),
+        element: (
+            <BoardsPage />
+        ),
+        authOnly: true,
+        layout: <MainLayout />
+    },
 }

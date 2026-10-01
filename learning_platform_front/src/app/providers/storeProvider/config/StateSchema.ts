@@ -1,3 +1,4 @@
+import type { BoardSchema } from '@/entities/board/model/types'
 import type { LessonSchema } from '@/entities/lesson/types/types'
 import type { GroupSchema } from '@/entities/group/types/types'
 import type { MaterialSchema } from '@/entities/material/types/types'
@@ -18,6 +19,7 @@ export interface StateSchema {
     lesson: LessonSchema
     material: MaterialSchema
     tutor: TutorSchema
+    board: BoardSchema
 }
 
 export type StateSchemaKey = keyof StateSchema

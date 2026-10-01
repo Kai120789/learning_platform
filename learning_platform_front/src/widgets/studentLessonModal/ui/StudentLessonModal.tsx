@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router-dom"
 import { Check, ExternalLink, Layout, Pen, Play, Users, Video, X } from "lucide-react"
 import type { LessonData } from "@/entities/lesson"
+import { getRouteBoard } from "@/app/router/routePaths"
 import { lessonStatusClass } from "@/shared/lib/statusStyles"
 import { useCountdown } from "@/shared/lib/useCountdown"
 import { Badge } from "@/shared/ui/Badge"
@@ -77,6 +79,7 @@ export function StudentLessonModal({
     onCancel,
 }: StudentLessonModalProps) {
     const { t } = useTranslation()
+    const navigate = useNavigate()
     const showJoinActions = Boolean(
         lesson
         && lesson.status === "IN_PROCESS"
@@ -177,7 +180,14 @@ export function StudentLessonModal({
                                         </Button>
                                     )}
                                     {lesson.boardId && (
-                                        <Button size="sm" variant="outline">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                navigate(getRouteBoard(lesson.boardId!))
+                                            }}
+                                        >
                                             <Layout className="size-3.5" />
                                             {t("lessons.board")}
                                         </Button>

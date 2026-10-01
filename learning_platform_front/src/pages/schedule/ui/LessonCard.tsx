@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router-dom"
 import { ExternalLink, Layout, Pen, Play, Check, Users, Video, X } from "lucide-react"
 import type { LessonData } from "@/entities/lesson"
+import { getRouteBoard } from "@/app/router/routePaths"
 import { lessonStatusClass } from "@/shared/lib/statusStyles"
 import { cn } from "@/shared/lib/utils"
 import { Badge } from "@/shared/ui/Badge"
@@ -33,6 +35,7 @@ export function LessonCard({
     onCancel,
 }: LessonCardProps) {
     const { t } = useTranslation()
+    const navigate = useNavigate()
     const isCancelled = lesson.status === "CANCELLED"
     const showJoinActions = Boolean(lesson.meetLink || lesson.boardId)
         && lesson.status === "IN_PROCESS"
@@ -130,7 +133,11 @@ export function LessonCard({
                                 </Button>
                             )}
                             {lesson.boardId && (
-                                <Button size="xs" variant="outline">
+                                <Button
+                                    size="xs"
+                                    variant="outline"
+                                    onClick={() => navigate(getRouteBoard(lesson.boardId!))}
+                                >
                                     <Layout className="size-3" />
                                     {t("lessons.board")}
                                 </Button>

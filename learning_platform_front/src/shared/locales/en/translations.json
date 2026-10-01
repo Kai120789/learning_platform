@@ -14,7 +14,8 @@
         "lessons": "Lessons",
         "courses": "Courses",
         "practices": "Practices",
-        "materials": "Materials"
+        "materials": "Materials",
+        "board": "Board"
     },
     "rightMenu": {
         "profile": "Profile",
@@ -455,6 +456,26 @@
         "addUsersSuccess": "Students added to the group",
         "addUsersError": "Failed to add students"
     },
+    "boards": {
+        "title": "Boards",
+        "subtitle": "Open a board any time. Students join it from a lesson",
+        "create": "Create board",
+        "createTitle": "New board",
+        "renameTitle": "Board title",
+        "name": "Title",
+        "empty": "No boards yet",
+        "emptyText": "Create the first one, then open it from a lesson",
+        "open": "Open",
+        "rename": "Rename",
+        "deleteTitle": "Delete board",
+        "deleteText": "The board \"{{title}}\" will be deleted.",
+        "createSuccess": "Board created",
+        "createError": "Failed to create board",
+        "updateSuccess": "Title updated",
+        "updateError": "Failed to update board",
+        "deleteSuccess": "Board deleted",
+        "deleteError": "Failed to delete board"
+    },
     "settings": {
         "title": "Edit profile",
         "subtitle": "Manage your personal data and preferences",
@@ -483,6 +504,48 @@
         "updateError": "Failed to update settings",
         "userUpdateSuccess": "User data updated",
         "userUpdateError": "Failed to update user data"
+    },
+    "board": {
+        "back": "Back",
+        "delete": "Delete",
+        "customColor": "Custom color",
+        "dock": {
+            "left": "Left",
+            "right": "Right",
+            "bottom": "Bottom"
+        },
+        "background": {
+            "grid": "Grid",
+            "dots": "Dots",
+            "none": "None"
+        },
+        "stroke": "Stroke",
+        "fill": "Fill",
+        "text": "Text",
+        "imageUrl": "Image URL",
+        "stack": {
+            "front": "Bring to front",
+            "forward": "Bring forward",
+            "backward": "Send backward",
+            "back": "Send to back"
+        },
+        "reconnect": "Reconnect",
+        "status": {
+            "connecting": "connecting",
+            "open": "socket open",
+            "closed": "socket closed"
+        },
+        "tools": {
+            "select": "Select",
+            "line": "Line",
+            "pen": "Pen",
+            "rect": "Rectangle",
+            "ellipse": "Ellipse",
+            "triangle": "Triangle",
+            "arrow": "Arrow",
+            "text": "Text",
+            "image": "Image"
+        }
     },
     "roles": {
         "STUDENT": "Student",

@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
 import { createLesson } from "@/entities/lesson"
+import { getBoards, getTutorBoards } from "@/entities/board"
 import { getUserFullData } from "@/entities/user"
 import { notificationActions } from "@/features/notifications"
 import { Button } from "@/shared/ui/Button"
@@ -13,8 +14,6 @@ import {
     toDateTimeLocalValue,
     useLessonStudentsSelection,
 } from "@/widgets/lessonForm"
-
-const TUTOR_BOARDS_STUB: { id: number; title: string }[] = []
 
 type CreateLessonModalProps = {
     isOpen: boolean
@@ -30,6 +29,7 @@ export function CreateLessonModal({
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const userData = useAppSelector(getUserFullData)
+    const boards = useAppSelector(getBoards) ?? []
 
     const initialStart = toDateTimeLocalValue(defaultStartTime ?? new Date())
     const [meetLink, setMeetLink] = useState("")
@@ -39,6 +39,11 @@ export function CreateLessonModal({
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const students = useLessonStudentsSelection({ isOpen })
+
+    useEffect(() => {
+        if (!isOpen) return
+        dispatch(getTutorBoards())
+    }, [dispatch, isOpen])
 
     const resetForm = () => {
         setMeetLink("")
@@ -115,7 +120,7 @@ export function CreateLessonModal({
                         onDurationChange={setDuration}
                         boardId={boardId}
                         onBoardIdChange={setBoardId}
-                        boards={TUTOR_BOARDS_STUB}
+                        boards={boards}
                         showBoard
                     />
 

@@ -11,7 +11,9 @@ export enum AppRoutes {
     TUTORS = 'tutors',
     TUTOR = 'tutor',
     SETTINGS = 'settings',
-    GROUPS = 'groups'
+    GROUPS = 'groups',
+    BOARD = 'board',
+    BOARDS = 'boards',
 }
 
 export const getRouteWelcome = () => '/welcome'
@@ -27,3 +29,5 @@ export const getRouteTutors = () => '/tutors'
 export const getRouteTutor = (tutorId: number | string) => `/tutors/${tutorId}`
 export const getRouteSettings = () => '/settings'
 export const getRouteGroups = () => '/groups'
+export const getRouteBoards = () => '/boards'
+export const getRouteBoard = (boardId: number | string) => `/board/${boardId}`

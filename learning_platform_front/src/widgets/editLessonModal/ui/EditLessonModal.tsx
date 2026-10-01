@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useAppDispatch } from "@/app/providers/storeProvider/hooks/hooks"
+import { useAppDispatch, useAppSelector } from "@/app/providers/storeProvider/hooks/hooks"
 import { updateLesson, type LessonData } from "@/entities/lesson"
+import { getBoards, getTutorBoards } from "@/entities/board"
 import { notificationActions } from "@/features/notifications"
 import { Button } from "@/shared/ui/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/Dialog"
@@ -26,10 +27,12 @@ export function EditLessonModal({
 }: EditLessonModalProps) {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
+    const boards = useAppSelector(getBoards) ?? []
 
     const [meetLink, setMeetLink] = useState("")
     const [startTime, setStartTime] = useState("")
     const [duration, setDuration] = useState(60)
+    const [boardId, setBoardId] = useState<number | "">("")
     const [initialUserIDs, setInitialUserIDs] = useState<number[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [activeLessonId, setActiveLessonId] = useState<number | null>(null)
@@ -48,9 +51,15 @@ export function EditLessonModal({
         setMeetLink(lesson.meetLink ?? "")
         setStartTime(toDateTimeLocalValue(lesson.startTime))
         setDuration(lesson.duration)
+        setBoardId(lesson.boardId ?? "")
         setInitialUserIDs(lesson.userIds)
         setIsSubmitting(false)
     }, [activeLessonId, isOpen, lesson])
+
+    useEffect(() => {
+        if (!isOpen) return
+        dispatch(getTutorBoards())
+    }, [dispatch, isOpen])
 
     const onOpenChange = (open: boolean) => {
         setIsOpen(open)
@@ -88,7 +97,7 @@ export function EditLessonModal({
         setIsSubmitting(true)
         const response = await dispatch(updateLesson({
             id: lesson.id,
-            board_id: lesson.boardId ?? null,
+            board_id: boardId === "" ? null : boardId,
             meet_link: meetLink.trim() || null,
             start_time: new Date(startTime).toISOString(),
             duration,
@@ -132,6 +141,10 @@ export function EditLessonModal({
                         onStartTimeChange={setStartTime}
                         duration={duration}
                         onDurationChange={setDuration}
+                        boardId={boardId}
+                        onBoardIdChange={setBoardId}
+                        boards={boards}
+                        showBoard
                     />
 
                     <LessonStudentsPicker
